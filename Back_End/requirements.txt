@@ -1,2 +1,4 @@
 fastapi[standard]==0.114.1
 uvicorn==0.30.6
+pyjwt==2.9.0
+passlib[bcrypt]==3.2.0
