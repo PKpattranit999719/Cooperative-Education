@@ -33,6 +33,11 @@ fake_users_db2 = {
     }
 }
 
+
+
+
+
+
 def authenticate(username: str, password: str) -> Optional[dict]:
     user = fake_users_db.get(username)
     admin = fake_users_db2.get(username)
@@ -66,3 +71,5 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
         return User(username=data["username"], name=data["full_name"], role=data["role"])
     except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
+    
+
