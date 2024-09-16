@@ -20,7 +20,7 @@ def Login(login_form: OAuth2PasswordRequestForm = Depends(),db: Session = Depend
         raise HTTPException(status_code=401, detail="Incorrect username or password")
     print(data.role)
     token = cerate_token(data.email, data.role)
-    return Token(access_token=token, token_type="bearer")
+    return Token(Access_Token=token, Token_Type="bearer")
 
 #admin
 @app.get("/admin",response_model=List[UserSchema])
@@ -41,7 +41,7 @@ async def CreateAdmin(userC:UserCreate,db:Session = Depends(get_db)):
             raise HTTPException(status_code=400, detail="Email already exists") 
         else:
             password_hash = CeratePassword(userC.password)
-            db_Admin = Admin(name=userC.name,email=userC.email,password=password_hash,RoomID=None)
+            db_Admin = Admin(name=userC.name,email=userC.email,password=password_hash)
             db.add(db_Admin)
             db.commit()
             db.refresh(db_Admin)
@@ -165,8 +165,8 @@ async def myRoombyID(user:UserSchema = Depends(get_current_user),db:Session = De
         raise HTTPException(status_code=403, detail="Not enough permissions")
     try:
         db_room = db.query(Room).filter(Room.Owner_admin == user.ID).all()
-        rooms = [RoomSchema(Room=r.ID_Room, name=r.name,key=r.key) for r in db_room]
-        return myRoom(name_owner=user.name,Room=rooms)
+        rooms = [RoomSchema(Room_ID=r.ID_Room, name=r.name,key=r.key) for r in db_room]
+        return myRoom(Name_Owner=user.name,List_Room=rooms)
     except HTTPException as e:
         raise e
     except SQLAlchemyError as db_error:
@@ -187,7 +187,7 @@ async def CreateRoom(room:RoomCertae,user:UserSchema = Depends(get_current_user)
             checkKey = db.query(Room).filter(Room.key == key).first()
             if(checkKey is None):
                 break
-        db_room = Room(Owner_admin=user.ID,name=room.name,key=key)
+        db_room = Room(Owner_admin=user.ID,name=room.Name_Room,key=key)
         db.add(db_room)
         db.commit()
         db.refresh(db_room)
@@ -199,7 +199,7 @@ async def CreateRoom(room:RoomCertae,user:UserSchema = Depends(get_current_user)
         raise HTTPException(status_code=500,detail={f"Intern; Server Error:{str(e)}"})
 
 #Delete
-app.delete("/admin/room/{ID}")
+@app.delete("/admin/room/{ID}")
 async def DeleteRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -217,12 +217,12 @@ async def DeleteRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Sessi
 
 #Lesson
 #Create
-app.post("/admin/lesson")
+@app.post("/admin/lesson")
 async def CreateLesson(lesson:LesssonCerate,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
            raise HTTPException(status_code=403, detail="Not enough permissions")
-        db_lesson = Lesson(name_lesson=lesson.name_lsessopn)
+        db_lesson = Lesson(name_lesson=lesson.Name_Lsesson)
         db.add(db_lesson)
         db.commit()
         db.refresh(db_lesson)
@@ -235,7 +235,7 @@ async def CreateLesson(lesson:LesssonCerate,user:UserSchema = Depends(get_curren
 
 #น่าจะระเบิด map ไม่ตรง
 #GET 
-app.get('/lesson',response_model=List[LessonSchema])
+@app.get('/lesson',response_model=List[LessonSchema])
 async def ReadAllLesson(db:Session = Depends(get_db)):
     try:
         return db.query(Lesson).all()
@@ -246,18 +246,18 @@ async def ReadAllLesson(db:Session = Depends(get_db)):
         raise HTTPException(status_code=500,detail={f"Intern; Server Error:{str(e)}"})
 
 #update
-app.get('/admin/lesson')
+@app.put('/admin/lesson')
 async def UpdateLesson(lesson:LessonSchema,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
            raise HTTPException(status_code=403, detail="Not enough permissions")
-        db_lesson = db.query(Lesson).filter(Lesson.ID_Lesson == lesson.ID).first()
+        db_lesson = db.query(Lesson).filter(Lesson.ID_Lesson == lesson.ID_Lesson).first()
         if(db_lesson is None):
             raise HTTPException(status_code=404, detail="NOT FOUND")
-        db_lesson.name_lesson = lesson.lesson
+        db_lesson.name_lesson = lesson.Name_Lesson
         db.commit()
         db.refresh(db_lesson)
-        return {"message": f"update lesson ID:{lesson.ID}"}
+        return {"message": f"update lesson ID:{lesson.ID_Lesson}"}
     except HTTPException as e:
         raise e
     except Exception as e:
@@ -265,7 +265,7 @@ async def UpdateLesson(lesson:LessonSchema,user:UserSchema = Depends(get_current
         raise HTTPException(status_code=500,detail={f"Intern; Server Error:{str(e)}"})
     
 #Delete
-app.delete("/admin/lesson/{ID}")
+@app.delete("/admin/lesson/{ID}")
 async def DeleteLesson(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -275,7 +275,6 @@ async def DeleteLesson(ID:int,user:UserSchema = Depends(get_current_user),db:Ses
             raise HTTPException(status_code=404, detail="NOT FOUND")
         db.delete(db_lesson)
         db.commit()
-        db.refresh(db_lesson)
         return {"message": f"delete lesson ID:{ID}"}
     except HTTPException as e:
         raise e
@@ -287,16 +286,17 @@ async def DeleteLesson(ID:int,user:UserSchema = Depends(get_current_user),db:Ses
 #question 
 #Create
 @app.post('/admin/question')
-async def CreateQuestion(question:ChoiceSchema,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+async def CreateQuestion(question:QuestionSchema,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
            raise HTTPException(status_code=403, detail="Not enough permissions")
-        db_question = Question(question.Lesson,question.Answer,question.RoomID,question.Question_set)
+        db_question = Question(QuestionText=question.QuestionText,Lesson=question.Lesson_ID,Answer=question.Answer,RoomID=question.Room_ID,Question_set=question.Question_set)
         db.add(db_question)
         db.commit()
         db.refresh(db_question)
-        for c in question.Choice:
-            db_choice = Choice(db_question.ID_Question,c.Choice_Text,c.Is_Correct)
+        for c in question.List_Choice:
+            db_choice = Choice(ID_Question=db_question.ID_Question,Choice_Text=c.Choice_Text,
+                               Is_Correct=c.Is_Correct)
             db.add(db_choice)
         db.commit()
         return {"message": f"Created Question ID: {db_question.ID_Question}"}
@@ -307,12 +307,12 @@ async def CreateQuestion(question:ChoiceSchema,user:UserSchema = Depends(get_cur
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})
 
 #GETAllByRoom,lesson,set สำหรับgetข้อสอบของแต่ละroomที่แบ่งบทแบ่งชุด เอาไว้สอบ
-@app.post('/question',response_model=list[QuestionReponse])
+@app.post('/question',response_model=QuestionReponse)
 async def ReadAllQuestionForTest(questionForTest:QuestionForTest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
            raise HTTPException(status_code=403, detail="Not enough permissions")
-        db_question = db.query(Question).filter(Question.RoomID == questionForTest.RoomID,Question.Lesson == QuestionForTest.Lesson,Question.Question_set == questionForTest.Set).all()
+        db_question = db.query(Question).filter(Question.RoomID == questionForTest.Room_ID,Question.Lesson == questionForTest.Lesson_ID,Question.Question_set == questionForTest.Question_Set).all()
         q_response = []
         for q in db_question:
             db_choice = db.query(Choice).filter(Choice.ID_Question == q.ID_Question).all()
@@ -320,12 +320,12 @@ async def ReadAllQuestionForTest(questionForTest:QuestionForTest,user:UserSchema
                                               QuestionText=q.QuestionText,
                                               ID_lesson=q.Lesson,
                                               Answer=q.Answer,
-                                              RoomID=q.RoomID,
+                                              Room_ID=q.RoomID,
                                               Question_set=q.Question_set,
-                                              Choice=[ChoiceReponse(ID=c.ID,Choice_Text=c.Choice_Text,Is_Correct=c.Is_Correct)for c in db_choice]
+                                              List_Choice=[ChoiceReponse(ID_Choice=c.ID,Choice_Text=c.Choice_Text,Is_Correct=c.Is_Correct)for c in db_choice]
                                               ))  
-        db_totalQuestion = db.query(func.count(Question.ID_Question).label('total')).filter(Question.RoomID == questionForTest.RoomID,Question.Lesson == QuestionForTest.Lesson,Question.Question_set == questionForTest.Set).group_by(Question.Question_set,Question.Lesson,Question.RoomID).first()
-        return QuestionReponse(TotalQusetion=db_totalQuestion.total if db_totalQuestion else 0,Question=q_response)
+        db_totalQuestion = db.query(func.count(Question.ID_Question).label('total')).filter(Question.RoomID == questionForTest.Room_ID,Question.Lesson == questionForTest.Lesson_ID,Question.Question_set == questionForTest.Question_Set).group_by(Question.Question_set,Question.Lesson,Question.RoomID).first()
+        return QuestionReponse(TotalQusetion=db_totalQuestion.total if db_totalQuestion else 0,List_Question=q_response)
     except HTTPException as e:
         raise e
     except Exception  as e:
@@ -338,21 +338,21 @@ async def UpdateQuestion(question:QuestionRequest,user:UserSchema = Depends(get_
     try:
         if(user.role != "admin"):
            raise HTTPException(status_code=403, detail="Not enough permissions")
-        db_question = db.query(Question).filter(Question.ID_Question == question.ID).first()
+        db_question = db.query(Question).filter(Question.ID_Question == question.ID_Question).first()
         if not db_question:
             raise HTTPException(status_code=404, detail="Question not found")        
         #update question
         db_question.QuestionText = question.QuestionText
-        db_question.Lesson = question.lesson
+        db_question.Lesson = question.Lesson_ID
         db_question.Answer = question.Answer
-        db_question.RoomID = question.RoomID
+        db_question.RoomID = question.Room_ID
         db_question.Question_set = question.Question_set
         db.commit()
         #update choice
-        for c in question.Choice:
-            db_choice = db.query(Choice).filter(Choice.ID == c.ID).first()
+        for c in question.List_Choice:
+            db_choice = db.query(Choice).filter(Choice.ID == c.ID_Choice).first()
             if not db_choice:
-                raise HTTPException(status_code=404, detail=f"Choice with ID {c.ID} not found")
+                raise HTTPException(status_code=404, detail=f"Choice with ID {c.ID_Choice} not found")
             db_choice.Choice_Text = c.Choice_Text
             db_choice.Is_Correct = c.Is_Correct
         db.commit()
@@ -393,12 +393,12 @@ async def CerateScoreHistory(score:ScoreHistoryRequest,user:UserSchema = Depends
     try:
         if(user.role != "admin"):
            raise HTTPException(status_code=403, detail="Not enough permissions") 
-        db_score = ScoreHistory(Score=score.Score,total_question=score.total_question,Date=score.Date,UserID=score.Date,Lesson=score.Lesson)
+        db_score = ScoreHistory(Score=score.Score,total_question=score.total_question,Date=score.Date,UserID=score.UserID,Lesson=score.Lesson_ID,Question_set=score.Question_set)
         db.add(db_score)
         db.commit()
         db.refresh(db_score)
-        for UA in score.UserAns:
-            db_userans = UserAns(ID_SocreHistory=UA.ID_SocreHistory,ID_Choice=UA.ID_Choice)
+        for UA in score.UserAns_List:
+            db_userans = UserAns(ID_SocreHistory=db_score.ID_ScoreHistory,ID_Choice=UA.ID_Choice)
             db.add(db_userans)
         db.commit()
         return {"message": f"Cerate Scoreistory ID: {db_score.ID_ScoreHistory}"}
@@ -424,14 +424,78 @@ async def GetScoreHistorybyUser(user:UserSchema = Depends(get_current_user),db:S
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})     
     
 
-#GetUserAns Bylesson,set,user 
-@app.post("/user/scorebylesson")
-async def GetUserAnsByLessonSetUser(score:ScoreHistoryRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+#GetUserAns Bylesson,set,user ข้อสอบ พร้อมuserตอบ
+@app.post("/user/scorebylesson/{ID}", response_model=ScoreHistoryReponsebyUser)
+async def GetUserAnsByLessonSetUser(ID: int, user: UserSchema = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
+        db_score = db.query(ScoreHistory).filter(ScoreHistory.ID_ScoreHistory == ID).first()
+        db_user = db.query(User).filter(User.ID == user.ID).first()
+        if not db_score:
+            raise HTTPException(status_code=404, detail="History not found")
 
-        return {"message": f"Cerate Scoreistory ID: {sss}"}
+        db_question = db.query(Question).filter(Question.RoomID == db_user.RoomID,
+                                                Question.Lesson == db_score.Lesson,
+                                                Question.Question_set == db_score.Question_set
+                                                ).all()
+
+        userans = []
+        for q in db_question:
+            db_choice = db.query(Choice).filter(Choice.ID_Question == q.ID_Question).all()
+            choice_repo = []
+            for c in db_choice:
+                choice_repo.append(ChoiceReponse(ID_Choice=c.ID, Choice_Text=c.Choice_Text, Is_Correct=c.Is_Correct))
+            
+            db_userAns = db.query(UserAns).filter(UserAns.ID_Choice.in_([c.ID for c in db_choice])).first()
+            if db_userAns:
+                db_AnsChoice = db.query(Choice).filter(Choice.ID == db_userAns.ID_Choice).first()
+                userAns_repo = UserAnsReponse(ID_UserAns=db_userAns.ID,
+                                              ID_SocreHistory=db_userAns.ID_SocreHistory,
+                                              Choice_Ans=ChoiceReponse(ID_Choice=db_AnsChoice.ID, 
+                                                                   Choice_Text=db_AnsChoice.Choice_Text, 
+                                                                   Is_Correct=db_AnsChoice.Is_Correct))
+            else:
+                userAns_repo = None
+            
+            userans.append(UserAnsAll(ID_Question=q.ID_Question,
+                                      QuestionText=q.QuestionText,
+                                      Question_set=q.Question_set,
+                                      Lesson_ID=q.Lesson,
+                                      Answer=q.Answer,
+                                      Room_ID=q.RoomID,
+                                      List_Choice=choice_repo,
+                                      ChoiceUserAns=userAns_repo
+                                      ))
+
+        return ScoreHistoryReponsebyUser(ID_ScoreHistory=db_score.ID_ScoreHistory,
+                                         Score=db_score.Score,
+                                         total_question=db_score.total_question,
+                                         Date=db_score.Date,
+                                         UserID=db_score.UserID,
+                                         Lesson_ID=db_score.Lesson,
+                                         Question_set=db_score.Question_set,
+                                         UserAns_List=userans
+                                         )
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")    
+
+#delete 
+@app.delete('/admin/score/{ID}')
+async def DeleteScore(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+    try:
+        if(user.role != "admin"):
+           raise HTTPException(status_code=403, detail="Not enough permissions") 
+        db_score = db.query(ScoreHistory).filter(ScoreHistory.ID_ScoreHistory == ID).first()
+        db_userAns = db.query(UserAns).filter(UserAns.ID_SocreHistory == db_score.ID_ScoreHistory).all()
+        for userAns in db_userAns:
+            db.delete(userAns)
+        db.delete(db_score)
+        db.commit()
+        return {"message": f"Delete score ID:{ID}"}
     except HTTPException as e:
         raise e
     except Exception  as e:
         db.rollback()
-        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})     
+        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})  
