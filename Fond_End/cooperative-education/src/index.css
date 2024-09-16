@@ -7,7 +7,6 @@
 }
 
 body {
-  
   font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -15,7 +14,8 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: lightblue;
+  background: url('./Components/Assets/background.jpg')no-repeat;
+  background-size: cover;
 }
 
 code {

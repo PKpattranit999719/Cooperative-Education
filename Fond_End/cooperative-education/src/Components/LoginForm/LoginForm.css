@@ -1,6 +1,9 @@
 .wrapper {
     width: 420px;
-    background: slateblue;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(30px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     color: #fff;
     border-radius: 10px;
     padding: 30px 40px;
@@ -37,7 +40,7 @@
 .input-box .icon {
     position: absolute;
     right: 20px;
-    top: 50%;
+    top: 35%;
     transform: translate(-50%);
     font-size: 16px;
 }
@@ -46,7 +49,7 @@
     display: flex;
     justify-content: space-between;
     font-size: 14.5px;
-    margin: -15px 0 15 px;
+    margin: -15px 0 15px;
 }
 
 .remember-forgot label input {
