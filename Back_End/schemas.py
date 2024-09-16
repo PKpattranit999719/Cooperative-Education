@@ -4,8 +4,8 @@ from typing import List,Optional
 
 
 class Token(BaseModel):
-    Access_Token: str
-    Token_Type                                                                                                                                                                                                                           : str
+    access_token: str
+    token_type:str
 
 class UserSchema(BaseModel):
     ID:int
@@ -130,5 +130,8 @@ class ScoreHistoryReponse(BaseModel):
     Question_set:int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
+
+class RoomKey(BaseModel):
+    Room_Key:str

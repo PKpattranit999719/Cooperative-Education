@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
-from auth import get_current_user, authenticate, cerate_token,CeratePassword
+from auth import get_current_user, authenticate, create_token,CreatePassword
 from schemas import *
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import List
@@ -18,9 +18,8 @@ def Login(login_form: OAuth2PasswordRequestForm = Depends(),db: Session = Depend
     data = authenticate(login_form.username, login_form.password,db)
     if not data:
         raise HTTPException(status_code=401, detail="Incorrect username or password")
-    print(data.role)
-    token = cerate_token(data.email, data.role)
-    return Token(Access_Token=token, Token_Type="bearer")
+    token = create_token(data.email, data.role)
+    return Token(access_token=token, token_type="Bearer")
 
 #admin
 @app.get("/admin",response_model=List[UserSchema])
@@ -40,7 +39,7 @@ async def CreateAdmin(userC:UserCreate,db:Session = Depends(get_db)):
         if userCheck != None or adminCheck != None:
             raise HTTPException(status_code=400, detail="Email already exists") 
         else:
-            password_hash = CeratePassword(userC.password)
+            password_hash = CreatePassword(userC.password)
             db_Admin = Admin(name=userC.name,email=userC.email,password=password_hash)
             db.add(db_Admin)
             db.commit()
@@ -60,7 +59,7 @@ async def UpdateUser(userP:UserCreate,user:UserSchema = Depends(get_current_user
     if(user.role != "admin"):
         raise HTTPException(status_code=403, detail="Not enough permissions")
     try:
-        userP.password = CeratePassword(userP.password)
+        userP.password = CreatePassword(userP.password)
         db_admin = db.query(Admin).filter(Admin.ID == user.ID).first()
         for key,value in userP.model_dump().items():
             setattr(db_admin,key,value)
@@ -108,7 +107,7 @@ async def CreateUser(userC:UserCreate,db:Session = Depends(get_db)):
         if userCheck != None or adminCheck != None:
             raise HTTPException(status_code=400, detail="Email already exists") 
         else:
-            password_hash = CeratePassword(userC.password)
+            password_hash = CreatePassword(userC.password)
             db_user = User(name=userC.name,email=userC.email,password=password_hash,RoomID=None)
             db.add(db_user)
             db.commit()
@@ -126,7 +125,7 @@ async def UpdateUser(userP:UserCreate,user:UserSchema = Depends(get_current_user
     if(user.role != "user"):
         raise HTTPException(status_code=403, detail="Not enough permissions")
     try:
-        userP.password = CeratePassword(userP.password)
+        userP.password = CreatePassword(userP.password)
         db_user = db.query(User).filter(User.ID == user.ID).first()
         for key,value in userP.model_dump().items():
             setattr(db_user,key,value)
@@ -174,7 +173,45 @@ async def myRoombyID(user:UserSchema = Depends(get_current_user),db:Session = De
         raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
     except Exception as e:
         raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
+
+#UserAddRoomBykey
+@app.post("/user/RoombyKey")
+async def AddRoomByKey(key:RoomKey,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):  
+    if(user.role != "user"):    
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    try:
+        db_Room = db.query(Room).filter(Room.key == key.Room_Key).first()
+        if(db_Room is None):
+            raise HTTPException(status_code=404,detail="Not Found Room")
+        db_user = db.query(User).filter(User.ID == user.ID).first()
+        db_user.RoomID = db_Room.ID_Room 
+        db.add(db_user)
+        db.commit()
+        return {"message":f"join to Room:{db_Room.name} success "}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
     
+#exitUserRoom
+@app.delete("/user/DeleteUserRoom/{ID}")
+async def ExitRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):  
+    if(user.role != "user"):    
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    try:
+        db_user = db.query(User).filter(User.ID == user.ID).first()
+        db_user.RoomID = None
+        db.add(db_user)
+        db.commit()
+        return {"message":"exit  Room to success"}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
+    
+
 #Create
 @app.post('/admin/room')
 async def CreateRoom(room:RoomCertae,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
