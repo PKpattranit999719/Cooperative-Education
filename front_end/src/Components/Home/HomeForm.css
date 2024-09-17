@@ -1,9 +1,14 @@
 .container {
     display: flex;
-    flex-direction: row; /* Display forms in a row (horizontal) */
-    justify-content: space-between; /* Adds space between the forms */
-    gap: 40px; /* Adds a gap of 40px between the forms */
-    align-items: flex-start; /* Align forms at the top */
+    flex-direction: column; /* Vertical arrangement for container */
+    gap: 40px; /* Space between forms and table sections */
+    align-items: center;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: row; /* Align forms side by side horizontally */
+    gap: 40px; /* Space between Create Class and Add Student forms */
 }
 
 .wrapper {
@@ -21,10 +26,6 @@
     font-size: 36px;
     text-align: center;
     margin-bottom: 20px;
-}
-
-.wrapper h2 {
-    font-size: 36px;
 }
 
 .wrapper .input-box {
@@ -69,28 +70,47 @@
 .wrapper button {
     width: 48%;
     height: 45px;
-    background: #fff;
     border: none;
     outline: none;
     border-radius: 40px;
     cursor: pointer;
     font-size: 16px;
-    color: #333;
     font-weight: 700;
     margin: 10px 0;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
 }
 
-.wrapper button:hover {
-    background: #f0f0f0;
+.wrapper .create-button {
+    background: #28a745; /* Green color */
+    color: #fff;
 }
 
-.wrapper form button:first-of-type {
-    background-color: #f44336;
-    color: white;
+.wrapper .cancel-button {
+    background: #dc3545; /* Red color */
+    color: #fff;
 }
 
-.wrapper form button:last-of-type {
-    background-color: #4caf50;
+.wrapper .create-button:hover {
+    background: #218838; /* Darker green on hover */
+}
+
+.wrapper .cancel-button:hover {
+    background: #c82333; /* Darker red on hover */
+}
+
+.wrapper table {
+    width: 100%;
+    margin-top: 20px;
     color: white;
+    border-collapse: collapse;
+}
+
+.wrapper table th, .wrapper table td {
+    border: 1px solid rgba(255, 255, 255, .5);
+    padding: 10px;
+    text-align: left;
+}
+
+.wrapper table th {
+    background-color: rgba(255, 255, 255, .2);
 }
