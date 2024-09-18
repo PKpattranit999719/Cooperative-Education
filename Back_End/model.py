@@ -59,4 +59,4 @@ class UserAns(Base):
     __tablename__ = "UserAns"
     ID  = Column(Integer,primary_key=True,index=True)
     ID_SocreHistory  = Column(Integer,ForeignKey('scoreHistory.ID_ScoreHistory'))
-    ID_Choice = Column(Integer,ForeignKey('choce.ID'))
+    ID_Choice = Column(Integer,ForeignKey('choice.ID'))

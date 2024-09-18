@@ -14,20 +14,19 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 #ตรวจสอบตอน login 
-def authenticate(eamil: str, password: str,db: Session):
+def authenticate(email: str, password: str,db: Session):
     try:
-        user =  db.query(User).filter(eamil == User.email).first()
-        admin = db.query(Admin).filter(eamil == Admin.email).first()
+        user =  db.query(User).filter(User.email == email).first()
+        admin = db.query(Admin).filter(Admin.email == email).first()
         role = ""
-        if admin != None:
+        data = None
+        if admin is not None:
             data = admin
             role = "admin"
-        if user != None:
+        if user is  not None:
             data = user
             role = "user"
-        if not data:
-            return None
-        if not verify_password(password, data.password):
+        if not verify_password(password,data.password):
             return None
         return UserSchema(ID=data.ID,email=data.email,name=data.name,role=role)
     except Exception as e:
@@ -38,21 +37,21 @@ def verify_password(password: str, hash_password: str) -> bool:
     return pwd_context.verify(password, hash_password)
 
 #สร้าง token
-def cerate_token(email: str, role: str) -> str:
+def create_token(email: str, role: str) -> str:
     payload = {"email": email, "role": role}
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-def CeratePassword(password:str):
+def CreatePassword(password:str):
     hash_password = pwd_context.hash(password)
     return hash_password 
 
 #ตรวจสิทธิ์
 def get_current_user(token: str = Depends(oauth2_scheme),db: Session = Depends(get_db)):
     try:
+        print(token)
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         role = payload.get("role")
         email = payload.get("email")
-        print(email)
         if role == "admin":
             data = db.query(Admin).filter(email == Admin.email).first()
         elif role == "user":

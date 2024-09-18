@@ -1,11 +1,11 @@
 from pydantic import BaseModel,Field
 from datetime import date
-from typing import List
+from typing import List,Optional
 
 
 class Token(BaseModel):
     access_token: str
-    token_type: str
+    token_type:str
 
 class UserSchema(BaseModel):
     ID:int
@@ -19,29 +19,29 @@ class UserCreate(BaseModel):
     password: str
 
 class RoomSchema(BaseModel):
-    Room:int
+    Room_ID:int
     name:str
     key:str
 
 class RoomCertae(BaseModel):
-    name:str
+    Name_Room:str
 
 class myRoom(BaseModel):
-    name_owner:str 
-    Room: List[RoomSchema]
+    Name_Owner:str 
+    List_Room: List[RoomSchema]
 
 class LessonSchema(BaseModel):
-    ID:int
-    lesson:str
+    ID_Lesson:int = Field(alias="ID_Lesson")
+    Name_Lesson:str = Field(alias="name_lesson")
 
 class LesssonCerate(BaseModel):
-    name_lsessopn:str
+    Name_Lsesson:str
 
 #เอาไว้รับจากfont ขอข้อสอบ
 class QuestionForTest(BaseModel):
-    RoomID:int
-    Set:int
-    Lesson:int
+    Room_ID:int
+    Question_Set:int
+    Lesson_ID:int
 
 
 class ChoiceSchema(BaseModel):
@@ -50,83 +50,142 @@ class ChoiceSchema(BaseModel):
 
 
 class ChoiceReponse(BaseModel):
-    ID:int
+    ID_Choice:int
     Choice_Text : str
     Is_Correct : bool
 
 class QuestionSchema(BaseModel):
     QuestionText: str
-    lesson : int
+    Lesson_ID : int
     Answer : str
-    RoomID: int
+    Room_ID: int
     Question_set: str
-    Choice : List[ChoiceSchema]
+    List_Choice : List[ChoiceSchema]
 
 class QuestionRequest(BaseModel):
-    ID:int
+    ID_Question:int
     QuestionText: str
-    lesson : int
+    Lesson_ID : int
     Answer : str
-    RoomID: int
-    Question_set: str
-    Choice : List[ChoiceReponse]
+    Room_ID: int
+    Question_set: int
+    List_Choice : List[ChoiceReponse]
 
 class QuestionSet(BaseModel):
-    ID:int
+    ID_Question:int
     QuestionText: str
     ID_lesson: int
     Answer : str
-    RoomID: int
+    Room_ID: int
     Question_set: int
-    Choice : List[ChoiceReponse]
+    List_Choice : List[ChoiceReponse]
 
 
 class QuestionReponse(BaseModel):
     TotalQusetion:int
-    Question:List[QuestionSet]
+    List_Question:List[QuestionSet]
 
 
 class UserAnsRequest(BaseModel):
-    ID_SocreHistory:int
     ID_Choice:int
 
 class UserAnsReponse(BaseModel):
-    ID:int
+    ID_UserAns:int
     ID_SocreHistory:int
-    Choice:ChoiceReponse #choice ที่ตอบ
-    Question:QuestionSet #คำถามและเฉลยของข้อนั้น
+    Choice_Ans:ChoiceReponse #choice ที่ตอบ
 
 class ScoreHistoryRequest(BaseModel):
     Score:int
     total_question:int
     Date:date
     UserID:int
-    Lesson:int
-    UserAns: List[UserAnsRequest]
+    Lesson_ID:int
+    Question_set:int
+    UserAns_List: List[UserAnsRequest]
 
+class UserAnsAll(QuestionRequest):
+    ChoiceUserAns : Optional[UserAnsReponse]
+
+#ส่งข้อสอบและเฉลยไปด้วย
 class ScoreHistoryReponsebyUser(BaseModel):
-    ID:int
+    ID_ScoreHistory:int
     Score:int
     total_question:int
     Date:date
     UserID:int
-    Lesson:int
+    Lesson_ID:int
     Question_set:int
-    UserAns: List[UserAnsReponse] #คำถามที่userตอบทั้งหมด
+    UserAns_List: List[UserAnsAll] #คำถามที่userตอบทั้งหมด
+
+
+
 
 class ScoreHistoryReponse(BaseModel):
-    ID:int = Field(alias="ID_ScoreHistory")
+    ID_ScoreHistory:int = Field(alias="ID_ScoreHistory")
     Score:int
     total_question:int
     Date:date
     UserID:int
-    Lesson:int
+    Lesson_ID:int = Field(alias="Lesson")
     Question_set:int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
-class ScoreHistoryRequest(BaseModel):
+
+class RoomKey(BaseModel):
+    Room_Key:str
+
+class MeanScoreToSet(BaseModel):
+    QuestionSet:int
+    MeanScore:float
+
+class MeanScoreRequest(BaseModel):
+    RoomID:int
+    LessonID:int
+
+class MeanScoreReponse(BaseModel):
+    TotalSet:int
+    LessonID:int
+    Lesson:str
+    MeanScoreSet: List[MeanScoreToSet]
+
+class QuestionTureFlase(BaseModel):
+    QuestionID:int
+    Question:str
+    Ans:str
+    Is_Correct:int
+    Is_NotCorrect:int
+
+class GraphQuestionRequest(BaseModel):
+    LessonID:int
+    RoomID:int
+    Question_set:int
+
+class GraphQuestionReponse(BaseModel):
+    LessonID:int
+    Lesson:str
+    RoomID:int
+    Question_set:int
+    Question:List[QuestionTureFlase]
+
+class QuestionsetbyRoomRequest(BaseModel):
+    RoomID:int
+    Question_set:int
+
+class QuestionsetbyRoomReponse(BaseModel):
+    RoomID:int
+    LessonID:int
+    Lesson:str
+    Question_set:int
+    TotalQuestion:int
+
+
+class ScoreBylessonReponse(BaseModel):
     ID:int
-    lesson : int
-    set : int
+    email: str
+    name: str
+    role: str
+    RoomID: int
+    Room:str
+    Score:List[ScoreHistoryReponse]
