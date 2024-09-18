@@ -33,8 +33,8 @@ h1{
 }
 
 .lesson{
-    flex: 0 0 calc(33.33% - 20 px);
-    max-width: calc(33.33% - 20 px);
+    flex: 0 0 calc(33.33% - 20px);
+    max-width: calc(33.33% - 20px);
     width: 100%;
     background: #fff;
     border-radius: 10px;
