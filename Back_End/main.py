@@ -10,7 +10,7 @@ from sqlalchemy import func
 from model import *
 import random
 import string
-
+from collections import defaultdict
 app = FastAPI()
 
 @app.post("/login")
@@ -87,6 +87,108 @@ async def DeleteUser(user:UserSchema = Depends(get_current_user),db : Session = 
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internl Server Error:{str(e)}"})
+
+#Dasdbord mean score ของแต่ละชุด,บท,ห้อง
+@app.post("/admin/meanscore",response_model=MeanScoreReponse)
+async def Meanscore(meanrequest:MeanScoreRequest,user:UserSchema = Depends(get_current_user),db : Session = Depends(get_db)):
+    if(user.role != "admin"):
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    MeanSet = []
+    Totalset = 0
+    try:
+        db_ScoreHis = (db.query(ScoreHistory.Lesson,Lesson.name_lesson,User.RoomID,
+                                ScoreHistory.Question_set,
+                                func.sum(ScoreHistory.Score).label("TotalScore"),
+                                func.sum(ScoreHistory.total_question).label("TotalQuestion"))
+                       .join(User,ScoreHistory.UserID == User.ID)
+                       .join(Lesson,ScoreHistory.Lesson == Lesson.ID_Lesson)
+                       .filter(User.RoomID == meanrequest.RoomID,
+                               ScoreHistory.Lesson == meanrequest.LessonID)
+                       .group_by(ScoreHistory.Question_set)
+                       .all())
+        for Mean in db_ScoreHis:
+            MeanSet.append(MeanScoreToSet(QuestionSet=Mean.Question_set,MeanScore=(Mean.TotalScore/Mean.TotalQuestion)*100))
+            Totalset = Totalset + 1
+        return MeanScoreReponse(TotalSet=Totalset,Lesson=db_ScoreHis[0].name_lesson
+                                ,LessonID=db_ScoreHis[0].Lesson,MeanScoreSet=MeanSet)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail={f"Internl Server Error:{str(e)}"})
+
+
+#โครตงง
+#Dasdbord ดูUserตอบถูกผิดของแต่ละข้อ,ชุด,บท
+@app.post("/admin/QuestionTureFalse", response_model=GraphQuestionReponse)
+async def GraphQuestion(qusetreqquest: GraphQuestionRequest, user: UserSchema = Depends(get_current_user), db: Session = Depends(get_db)):
+    try:
+        # Query จำนวนการตอบถูก
+        db_UserAnsTrue = (db.query(Question.ID_Question, Question.Lesson, Lesson.name_lesson,
+                                   Question.RoomID, Question.Question_set, Question.QuestionText,
+                                   Question.Answer, func.count(UserAns.ID).label('CountTrue'))
+                          .join(Lesson, Question.Lesson == Lesson.ID_Lesson)
+                          .join(Choice, Question.ID_Question == Choice.ID_Question)
+                          .join(UserAns, Choice.ID == UserAns.ID_Choice)
+                          .filter(Question.Lesson == qusetreqquest.LessonID,
+                                  Question.RoomID == qusetreqquest.RoomID,
+                                  Question.Question_set == qusetreqquest.Question_set,
+                                  Choice.Is_Correct == True)
+                          .group_by(Question.ID_Question)
+                          .all())
+
+        # Query จำนวนการตอบผิด
+        db_UserAnsFalse = (db.query(Question.ID_Question, Question.Lesson, Lesson.name_lesson,
+                                    Question.RoomID, Question.Question_set, Question.QuestionText,
+                                    Question.Answer, func.count(UserAns.ID).label('CountFalse'))
+                           .join(Lesson, Question.Lesson == Lesson.ID_Lesson)
+                           .join(Choice, Question.ID_Question == Choice.ID_Question)
+                           .join(UserAns, Choice.ID == UserAns.ID_Choice)
+                           .filter(Question.Lesson == qusetreqquest.LessonID,
+                                   Question.RoomID == qusetreqquest.RoomID,
+                                   Question.Question_set == qusetreqquest.Question_set,
+                                   Choice.Is_Correct == False)
+                           .group_by(Question.ID_Question)
+                           .all())
+
+        # สร้าง dictionaries สำหรับการตอบถูกและตอบผิด
+        true_counts = {ans.ID_Question: ans for ans in db_UserAnsTrue}
+        false_counts = {ans.ID_Question: ans for ans in db_UserAnsFalse}
+
+        # รวมข้อมูล
+        questions = []
+        for q_id in set(true_counts.keys()).union(false_counts.keys()):
+            true_ans = true_counts.get(q_id)
+            false_ans = false_counts.get(q_id)
+
+            question = QuestionTureFlase(
+                QuestionID=q_id,
+                Question=true_ans.QuestionText if true_ans else false_ans.QuestionText,
+                Ans=true_ans.Answer if true_ans else "",
+                Is_Correct=true_ans.CountTrue if true_ans else 0,
+                Is_NotCorrect=false_ans.CountFalse if false_ans else 0
+            )
+            questions.append(question)
+
+        # Response
+        response = GraphQuestionReponse(
+            LessonID=qusetreqquest.LessonID,
+            Lesson=db_UserAnsTrue[0].name_lesson if db_UserAnsTrue else "",
+            RoomID=qusetreqquest.RoomID,
+            Question_set=qusetreqquest.Question_set,
+            Question=questions
+        )
+
+        return response
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail={f"Internal Server Error: {str(e)}"})
+
+
+
 
 #user
 #GetAll
@@ -211,6 +313,19 @@ async def ExitRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Session
         db.rollback()
         raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
     
+#list user in Room
+@app.get("/admin/UserRoom/{ID}",response_model=List[UserSchema])
+async def listUser(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)): 
+    if(user.role != "admin"):    
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    try:
+        db_user = db.query(User).filter(User.RoomID == ID).all()
+        return [UserSchema(email=u.email,ID=u.ID,name=u.name,role='user') for u in db_user]
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")   
 
 #Create
 @app.post('/admin/room')
@@ -423,6 +538,25 @@ async def DeleteQuestion(ID:int,user:UserSchema = Depends(get_current_user),db:S
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})  
 
+#ดูข้อสอบในRoom
+@app.post("/admin/questionset/",response_model=List[QuestionsetbyRoomReponse])
+async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+    try:
+        if(user.role != "admin"):
+           raise HTTPException(status_code=403, detail="Not enough permissions") 
+        db_QuestSet = (db.query(Question.RoomID,Question.Lesson,Lesson.name_lesson,Question.Question_set,
+                                func.count(Question.ID_Question).label("TotalQuestion"))
+                       .join(Lesson,Question.Lesson == Lesson.ID_Lesson)
+                       .filter(Question.RoomID == questRequest.RoomID,
+                               Question.Question_set == questRequest.Question_set)
+                       .group_by(Question.Lesson).all())
+        return [QuestionsetbyRoomReponse(TotalQuestion=q.TotalQuestion,RoomID=q.RoomID,Lesson=q.name_lesson,LessonID=q.Lesson,Question_set=q.Question_set) for q in db_QuestSet]
+    except HTTPException as e:
+        raise e
+    except Exception  as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"}) 
+
 #ScoreHistory
 #Cerate
 @app.post("/admin/score")
@@ -531,6 +665,22 @@ async def DeleteScore(ID:int,user:UserSchema = Depends(get_current_user),db:Sess
         db.delete(db_score)
         db.commit()
         return {"message": f"Delete score ID:{ID}"}
+    except HTTPException as e:
+        raise e
+    except Exception  as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})  
+    
+#ดูscore แต่ละบท 
+@app.get('/scorebylesson/{ID}',response_model=ScoreBylessonReponse)
+async def ScoreBylesson(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+    try:
+        db_scorebylesson = (db.query(ScoreHistory).filter(ScoreHistory.UserID == ID).all())
+        db_user = db.query(User).filter(User.ID == ID).first()
+        db_Room = db.query(Room).filter(Room.ID_Room == User.RoomID).first()
+        return ScoreBylessonReponse(ID=db_user.ID,email=db_user.email,name=db_user.name,
+                                    role="user",RoomID=db_Room.ID_Room,
+                                    Room=db_Room.name,Score=db_scorebylesson)
     except HTTPException as e:
         raise e
     except Exception  as e:

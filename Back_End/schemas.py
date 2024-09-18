@@ -135,3 +135,57 @@ class ScoreHistoryReponse(BaseModel):
 
 class RoomKey(BaseModel):
     Room_Key:str
+
+class MeanScoreToSet(BaseModel):
+    QuestionSet:int
+    MeanScore:float
+
+class MeanScoreRequest(BaseModel):
+    RoomID:int
+    LessonID:int
+
+class MeanScoreReponse(BaseModel):
+    TotalSet:int
+    LessonID:int
+    Lesson:str
+    MeanScoreSet: List[MeanScoreToSet]
+
+class QuestionTureFlase(BaseModel):
+    QuestionID:int
+    Question:str
+    Ans:str
+    Is_Correct:int
+    Is_NotCorrect:int
+
+class GraphQuestionRequest(BaseModel):
+    LessonID:int
+    RoomID:int
+    Question_set:int
+
+class GraphQuestionReponse(BaseModel):
+    LessonID:int
+    Lesson:str
+    RoomID:int
+    Question_set:int
+    Question:List[QuestionTureFlase]
+
+class QuestionsetbyRoomRequest(BaseModel):
+    RoomID:int
+    Question_set:int
+
+class QuestionsetbyRoomReponse(BaseModel):
+    RoomID:int
+    LessonID:int
+    Lesson:str
+    Question_set:int
+    TotalQuestion:int
+
+
+class ScoreBylessonReponse(BaseModel):
+    ID:int
+    email: str
+    name: str
+    role: str
+    RoomID: int
+    Room:str
+    Score:List[ScoreHistoryReponse]
