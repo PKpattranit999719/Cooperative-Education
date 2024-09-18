@@ -31,7 +31,7 @@ const HomeForm = () => {
             <div className='form-group'>
                 <div className='wrapper'>
                     <form onSubmit={handleCreateClass}>
-                        <h1>Create Class</h1>
+                        <h2>Create Class</h2>
                         <div className='input-box'>
                             <input
                                 type="text"

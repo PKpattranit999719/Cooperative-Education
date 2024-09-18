@@ -19,7 +19,7 @@ section{
     align-items: center;
 }
 
-h1{
+.container h1{
     font-size: 50px;
     line-height: 60px;
     text-align: center;

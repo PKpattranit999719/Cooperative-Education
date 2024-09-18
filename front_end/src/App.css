@@ -1,38 +1,180 @@
-.App {
-  text-align: center;
+:root {
+  --navbar-height: 56px;
+  --light: #f6f6f9;
+  --primary: #1976D2;
+  --light-primary: #CFE8FF;
+  --grey: #eee;
+  --dark-grey: #AAAAAA;
+  --dark: #363949;
+  --danger: #D32F2F;
+  --light-danger: #FECDD3;
+  --warning: #FBC02D;
+  --light-warning: #FFF2C6;
+  --success: #388E3C;
+  --light-success: #BBF7D0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app-layout {
   display: flex;
-  flex-direction: column;
+  min-height: 100vh;
+  flex-direction: row;
+  background: url('./Components/Assets/background.jpg')no-repeat;
+  background-size: cover;
+}
+
+.app-body {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  flex-grow: 1;
+  margin-top: var(--navbar-height); /* Adjusted to avoid overlapping with navbar */
+  overflow: hidden;
+}
+
+.navbar {
+  background: var(--primary);
+  color: white;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 10px 20px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 10; /* Ensure navbar stays on top */
+  height: var(--navbar-height);
+}
+
+.profile-logout {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.profile-logout a {
+  color: #333; /* Dark grey for a light background */
+  transition: color 0.3s ease;
+}
+
+
+.side-menu {
+  list-style: none;
+  padding: 0;
+  height: calc(100vh - var(--navbar-height)); /* Ensure the sidebar fits within the viewport */
+  overflow-y: auto; /* Enable scrolling if the sidebar content overflows */
+  position: fixed; /* Fixes sidebar positioning */
+  top: var(--navbar-height); /* Ensure it starts below the navbar */
+  width: 250px; /* Sidebar width */
+  background: var(--light); /* Background color */
+}
+
+.side-menu li {
+  padding: 15px 20px;
+  margin: 10px 0; /* Added more space between items */
+  border-radius: 8px; /* Rounded corners for better aesthetics */
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.side-menu .icon {
+  font-size: 20px;
+  margin-right: 15px; /* Adjusted margin for better icon-text spacing */
+}
+
+.side-menu .text.hide {
+  opacity: 0;
+  display: none;
+}
+
+.side-menu .text.show {
+  opacity: 1;
+  display: block;
+}
+
+.side-menu li a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--dark);
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.side-menu li a span.bx {
+  font-size: 20px;
+  margin-right: 15px; /* Adjusted margin for better spacing */
+}
+
+.side-menu li.active {
+  background: var(--primary);
+  color: #fff;
+  border-left: 5px solid var(--primary); /* Visual cue for active item */
+}
+
+.side-menu li.active a {
+  color: #fff;
+}
+
+.side-menu li:hover {
+  background: rgba(0, 86, 179, 0.1);
+}
+
+.side-menu li:hover a {
+  color: var(--primary);
+}
+
+.main-content {
+  flex-grow: 1;
+  margin-top: var(--navbar-height); /* Ensure content starts below the navbar */
+  margin-left: 50px; /* Space for the fixed sidebar */
+  padding: 20px;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+}
+
+.content {
+  width: calc(100% - 250px);
+  margin-left: 250px;
+  transition: all 0.3s ease;
+}
+
+.content.sidebar-closed {
+  width: calc(100% - 80px);
+  margin-left: 80px;
+}
+
+.classroom-tabs {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.tab-link {
+  padding: 10px 20px;
+  background-color: #f1f1f1;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  margin-right: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.tab-link.active {
+  background-color: #036596;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.tab-content {
+  padding: 20px;
+  border: 1px solid #ddd;
+  background-color: #fff;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.tab-link:hover {
+  background-color: #ddd;
 }
