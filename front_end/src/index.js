@@ -14,6 +14,8 @@ import History from "./Components/History/History";
 import Lesson from "./Components/Lesson/Lesson";
 import Class from "./Components/Class/Class"
 import Sidebar from "./Components/share/Sidebar";
+import LoginForm from "./Components/LoginForm/LoginForm";
+import RegisterForm from "./Components/Register/RegisterForm";
 
 const AppLayout = () => (
   <>
@@ -28,17 +30,39 @@ const AppLayout = () => (
     </div>
   </>
 );
+const LoginLayout = () => (
+  <>
+    <div className="app-layout">
+    
+      <div className="">
+        
+        <div className="main-content">
+          <Outlet />
+        </div>
+      </div>
+    </div>
+  </>
+);
 
 const router = createBrowserRouter(
+  
   createRoutesFromElements(
+  <>
     <Route element={<AppLayout />}>
       <Route path="/" element={<Home />} />
       <Route path="/history" element={<History />} />
       <Route path="/lesson" element={<Lesson />} />
       <Route path="/class" element={<Class />} />
     </Route>
+    <Route element={<LoginLayout />}>
+    <Route path="/login" element={<LoginForm />}/>
+    <Route path="/register" element={<RegisterForm />}/>
+    </Route>
+  </>
   )
 );
+
+
 
 // const router = createBrowserRouter([
 //   {
@@ -62,4 +86,5 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById("root")).render(
   <RouterProvider router={router} />
+  
 );

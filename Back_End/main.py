@@ -11,7 +11,17 @@ from model import *
 import random
 import string
 from collections import defaultdict
+from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Allow your React frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
 
 @app.post("/login",tags=["Login"],summary="สำหรับLoginทั้งUserและAdmin",description="ส่งTokenและข้อมูลของผู้Login")
 def Login(login_form: OAuth2PasswordRequestForm = Depends(),db: Session = Depends(get_db)):
