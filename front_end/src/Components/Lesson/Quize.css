@@ -71,8 +71,8 @@ h5 {
     background-color: rgb(0, 88, 204);
 }
 
-.button-container button:first-child {
-    background-color: rgb(0, 99, 229); 
+.button-container button:nth-child(2) {
+    background-color: lightseagreen; 
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     transition: all 0.2s linear; 
 }
@@ -81,8 +81,8 @@ h5 {
     background-color: rgb(0, 88, 204);
 }
 
-.button-container button:first-child {
-    background-color: rgb(0, 99, 229); 
+.button-container button:last-child {
+    background-color: rgb(255, 35, 35); 
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     transition: all 0.2s linear; 
 }
