@@ -1,10 +1,14 @@
-import { createBrowserRouter } from 'react-router-dom';
-import Home from './Home'; 
-import Lesson from './Lesson';
-import Class from './Class';
-import Quiz from './Quiz';
-import Login from './Login';
-import Register from './Register';
+import { Outlet  , createBrowserRouter } from 'react-router-dom';
+import Home from '../Pages/AdminPage/Home/Home'; 
+import Lesson from '../Pages/AdminPage/Lesson/Lesson';
+import Class from '../Pages/AdminPage/Class/Class';
+import Quiz from '../Pages/AdminPage/Quiz/Quiz';
+import Login from '../Pages/Shared/Login/Login';
+import Register from '../Pages/Shared/Register/Register';
+import Navbar from './Navbar'
+import Sidebar from './Sidebar'
+import '../../App.css'
+import History from '../Pages/AdminPage/History/History';
 
 const AppLayout = () => (
     <>
@@ -34,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/history",
+        element: <History />,
       },
       {
         path: "/lesson",

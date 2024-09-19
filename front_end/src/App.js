@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouterProvider } from 'react-router-dom';
-import router from './Routes'; // Make sure this path points to where Routes.js is located
+import router from '../src/Components/Share/Routes'; 
 
 const App = () => {
   return (

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../../App.css";
+import "./Navbar.css"
 import { FaUser, FaSignOutAlt } from "react-icons/fa";
 
 function Navbar() {

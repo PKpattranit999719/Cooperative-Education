@@ -1,10 +1,10 @@
 import React from "react";
-import "./RegisterForm.css";
+import "./Register.css";
 import { FaUser } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { FaLock } from "react-icons/fa";
 
-const RegisterForm = () => {
+const Register = () => {
   return (
     <div className="wrapper">
       <form action="">
@@ -52,4 +52,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default Register;

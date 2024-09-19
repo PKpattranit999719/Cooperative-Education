@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './HomeForm.css';
+import './Home.css';
 import { FaBookReader } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
 import { PiStudent } from "react-icons/pi";

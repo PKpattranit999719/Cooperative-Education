@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import { Helmet } from 'react-helmet';
 // import '@fortawesome/fontawesome-free/css/all.min.css';
 // import LightbulbIcon from '@mui/icons-material/Lightbulb'; ลองใช้2ตัวนี้แล้วแดง
-import "./Quize.css";
+import "./Quiz.css";
 
 class Quize extends Component {
 
