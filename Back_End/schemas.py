@@ -3,15 +3,16 @@ from datetime import date
 from typing import List,Optional
 
 
-class Token(BaseModel):
-    access_token: str
-    token_type:str
 
 class UserSchema(BaseModel):
     ID:int
     email: str
     name: str
     role: str
+
+class UserReponse(UserSchema):
+    access_token: str
+    token_type:str
 
 class UserCreate(BaseModel):
     email: str
@@ -173,6 +174,7 @@ class QuestionsetbyRoomRequest(BaseModel):
     RoomID:int
     Question_set:int
 
+
 class QuestionsetbyRoomReponse(BaseModel):
     RoomID:int
     LessonID:int
@@ -180,6 +182,10 @@ class QuestionsetbyRoomReponse(BaseModel):
     Question_set:int
     TotalQuestion:int
 
+class QuestionsetbyUserRequest(QuestionsetbyRoomRequest):
+    UserID : int
+
+class QuestionsetbyUserReponse(QuestionsetbyRoomReponse):
 
 class ScoreBylessonReponse(BaseModel):
     ID:int

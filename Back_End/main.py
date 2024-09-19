@@ -11,15 +11,25 @@ from model import *
 import random
 import string
 from collections import defaultdict
+from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
-@app.post("/login")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Allow your React frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
+
+@app.post("/login",tags=["Login"],summary="สำหรับLoginทั้งUserและAdmin",description="ส่งTokenและข้อมูลของผู้Login")
 def Login(login_form: OAuth2PasswordRequestForm = Depends(),db: Session = Depends(get_db)):
     data = authenticate(login_form.username, login_form.password,db)
     if not data:
         raise HTTPException(status_code=401, detail="Incorrect username or password")
     token = create_token(data.email, data.role)
-    return Token(access_token=token, token_type="Bearer")
+    return UserReponse(ID=data.ID,email=data.email,name=data.name,role=data.role,access_token=token, token_type="Bearer")
 
 #admin
 @app.get("/admin",response_model=List[UserSchema])
@@ -483,7 +493,31 @@ async def ReadAllQuestionForTest(questionForTest:QuestionForTest,user:UserSchema
     except Exception  as e:
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})   
-    
+
+#ดูข้อสอบที่ยังไม่ได้ทำ
+@app.post("/admin/questionuser/",response_model=List[QuestionsetbyRoomReponse])
+async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+    try:
+        if(user.role != "admin"):
+           raise HTTPException(status_code=403, detail="Not enough permissions") 
+        db_QuestSet = (db.query(Question.RoomID,Question.Lesson,Lesson.name_lesson,Question.Question_set,
+                                func.count(Question.ID_Question).label("TotalQuestion"))
+                       .join(Lesson,Question.Lesson == Lesson.ID_Lesson)
+                       .filter(Question.RoomID == questRequest.RoomID,
+                               Question.Question_set == questRequest.Question_set)
+                       .group_by(Question.Lesson).all())
+        db_QuserionUser = (db.query(ScoreHistory.Lesson,Lesson.name_lesson)
+                           .join(Lesson,Lesson.ID_Lesson == ScoreHistory.Lesson)
+                           .join(User,User.ID == ScoreHistory.UserID)
+                           .filter())
+        return [QuestionsetbyRoomReponse(TotalQuestion=q.TotalQuestion,RoomID=q.RoomID,Lesson=q.name_lesson,LessonID=q.Lesson,Question_set=q.Question_set) for q in db_QuestSet]
+    except HTTPException as e:
+        raise e
+    except Exception  as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"}) 
+
+
 #update ต้องupdate choiceด้วย 
 @app.put('/admin/question')
 async def UpdateQuestion(question:QuestionRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
