@@ -282,7 +282,7 @@ async def DeleteUser(user:UserSchema = Depends(get_current_user),db : Session = 
 #Room
 #GetMyRoomByIDAdmin
 @app.get("/admin/myRoom",response_model=myRoom,
-         tags=["Room"],summary="ดูlsit Room ที่adminเป็นคนสร้าง")
+         tags=["Room"],summary="ดูlist Room ที่adminเป็นคนสร้าง")
 async def myRoombyID(user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     if(user.role != "admin"):    
         raise HTTPException(status_code=403, detail="Not enough permissions")
