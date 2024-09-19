@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
-import { FaUser, FaLock } from "react-icons/fa";
+import { FaLock } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
+import { Link } from 'react-router-dom';
 
 const LoginForm = () => {
-    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -71,7 +71,7 @@ const LoginForm = () => {
                 <button type="submit">Login</button>
 
                 <div className="register-link">
-                    <p>Don't have an account? <a href="#">Register</a></p>
+                    <p>Don't have an account? <Link to="/register">Register</Link></p>
                 </div>
             </form>
         </div>
