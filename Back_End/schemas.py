@@ -186,6 +186,7 @@ class QuestionsetbyUserRequest(QuestionsetbyRoomRequest):
     UserID : int
 
 class QuestionsetbyUserReponse(QuestionsetbyRoomReponse):
+    UserID : int
 
 class ScoreBylessonReponse(BaseModel):
     ID:int

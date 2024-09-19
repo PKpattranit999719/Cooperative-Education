@@ -23,7 +23,8 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-@app.post("/login",tags=["Login"],summary="สำหรับLoginทั้งUserและAdmin",description="ส่งTokenและข้อมูลของผู้Login")
+@app.post("/login",
+          tags=["Login"],summary="สำหรับLoginทั้งUserและAdmin",description="ส่งTokenและข้อมูลของผู้Login")
 def Login(login_form: OAuth2PasswordRequestForm = Depends(),db: Session = Depends(get_db)):
     data = authenticate(login_form.username, login_form.password,db)
     if not data:
@@ -32,7 +33,8 @@ def Login(login_form: OAuth2PasswordRequestForm = Depends(),db: Session = Depend
     return UserReponse(ID=data.ID,email=data.email,name=data.name,role=data.role,access_token=token, token_type="Bearer")
 
 #admin
-@app.get("/admin",response_model=List[UserSchema])
+@app.get("/admin",response_model=List[UserSchema],
+         tags=["admin"],summary="list รายชื่อ admin ทั้งหมด",description="ใช้ไหม ไม่รู้ ทำมาก่อน")
 async def readAll(user:UserSchema = Depends(get_current_user),db: Session = Depends(get_db)):
     if(user.role != "admin"):
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -41,7 +43,8 @@ async def readAll(user:UserSchema = Depends(get_current_user),db: Session = Depe
 
 #Create
 #public endpoint 
-@app.post("/admin",response_model=UserCreate)
+@app.post("/admin",response_model=UserCreate,
+          tags=["admin"],summary="register admin ไม่ต้องAuth")
 async def CreateAdmin(userC:UserCreate,db:Session = Depends(get_db)):
     try:
         userCheck = db.query(User).filter(User.email == userC.email).first()
@@ -64,7 +67,8 @@ async def CreateAdmin(userC:UserCreate,db:Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
 #UPDATE
-@app.put("/admin",response_model=UserCreate)
+@app.put("/admin",response_model=UserCreate,
+         tags=["admin"],summary="updateหรือเปลี่ยนProfileAdmin")
 async def UpdateUser(userP:UserCreate,user:UserSchema = Depends(get_current_user),db :Session = Depends(get_db)):
     if(user.role != "admin"):
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -82,7 +86,7 @@ async def UpdateUser(userP:UserCreate,user:UserSchema = Depends(get_current_user
         db.rollback() 
         raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
 #DELETE
-@app.delete("/admin")
+@app.delete("/admin",tags=["admin"],summary="ลบ ID Admin")
 async def DeleteUser(user:UserSchema = Depends(get_current_user),db : Session = Depends(get_db)):
     if(user.role != "admin"):
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -98,8 +102,10 @@ async def DeleteUser(user:UserSchema = Depends(get_current_user),db : Session = 
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internl Server Error:{str(e)}"})
 
-#Dasdbord mean score ของแต่ละชุด,บท,ห้อง
-@app.post("/admin/meanscore",response_model=MeanScoreReponse)
+#Dasdboard mean score ของแต่ละชุด,บท,ห้อง
+@app.post("/admin/meanscore",response_model=MeanScoreReponse,
+          tags=["DashBoard"],summary="ดู mean score แบ่งตามชุด,บท,ห้อง",
+          description="ต้องใช้ RoomID,LessonID ส่งออกไปเป็นlist mean score")
 async def Meanscore(meanrequest:MeanScoreRequest,user:UserSchema = Depends(get_current_user),db : Session = Depends(get_db)):
     if(user.role != "admin"):
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -130,7 +136,8 @@ async def Meanscore(meanrequest:MeanScoreRequest,user:UserSchema = Depends(get_c
 
 #โครตงง
 #Dasdbord ดูUserตอบถูกผิดของแต่ละข้อ,ชุด,บท
-@app.post("/admin/QuestionTureFalse", response_model=GraphQuestionReponse)
+@app.post("/admin/QuestionTureFalse", response_model=GraphQuestionReponse,
+          tags=["DashBoard"],summary="ดู โดยรวมว่าคนมีกี่คนที่ตอบถูกและผิดในแต่ละข้อ")
 async def GraphQuestion(qusetreqquest: GraphQuestionRequest, user: UserSchema = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
         # Query จำนวนการตอบถูก
@@ -202,7 +209,8 @@ async def GraphQuestion(qusetreqquest: GraphQuestionRequest, user: UserSchema = 
 
 #user
 #GetAll
-@app.get("/user",response_model=List[UserSchema])
+@app.get("/user",response_model=List[UserSchema],
+         tags=["User"],summary="list  userทั้งหมด แบบไม่สนเหี้ยอะไรเลย")
 async def ReadAllUser(user:UserSchema = Depends(get_current_user),db: Session = Depends(get_db)):
     if(user.role != "user"):
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -211,7 +219,8 @@ async def ReadAllUser(user:UserSchema = Depends(get_current_user),db: Session = 
 
 #Create
 #public endpoint 
-@app.post("/user",response_model=UserCreate)
+@app.post("/user",response_model=UserCreate,
+          tags=["User"],summary="register User")
 async def CreateUser(userC:UserCreate,db:Session = Depends(get_db)):
     try:
         userCheck = db.query(User).filter(User.email == userC.email).first()
@@ -232,7 +241,8 @@ async def CreateUser(userC:UserCreate,db:Session = Depends(get_db)):
         raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
 
 #UPDATE
-@app.put("/user",response_model=UserCreate)
+@app.put("/user",response_model=UserCreate,
+         tags=["Usre"],summary="update User")
 async def UpdateUser(userP:UserCreate,user:UserSchema = Depends(get_current_user),db :Session = Depends(get_db)):
     if(user.role != "user"):
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -251,7 +261,8 @@ async def UpdateUser(userP:UserCreate,user:UserSchema = Depends(get_current_user
         raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
     
 #DELETE
-@app.delete("/user")
+@app.delete("/user",
+            tags=["User"],summary="Delete User")
 async def DeleteUser(user:UserSchema = Depends(get_current_user),db : Session = Depends(get_db)):
     if(user.role != "user"):
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -270,7 +281,8 @@ async def DeleteUser(user:UserSchema = Depends(get_current_user),db : Session = 
 
 #Room
 #GetMyRoomByIDAdmin
-@app.get("/admin/myRoom",response_model=myRoom)
+@app.get("/admin/myRoom",response_model=myRoom,
+         tags=["Room"],summary="ดูlsit Room ที่adminเป็นคนสร้าง")
 async def myRoombyID(user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     if(user.role != "admin"):    
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -287,7 +299,8 @@ async def myRoombyID(user:UserSchema = Depends(get_current_user),db:Session = De
         raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
 
 #UserAddRoomBykey
-@app.post("/user/RoombyKey")
+@app.post("/user/RoombyKey",
+          tags=["Room"],summary="Add User เข้า Room ให้User ใส่key ")
 async def AddRoomByKey(key:RoomKey,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):  
     if(user.role != "user"):    
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -307,7 +320,8 @@ async def AddRoomByKey(key:RoomKey,user:UserSchema = Depends(get_current_user),d
         raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
     
 #exitUserRoom
-@app.delete("/user/DeleteUserRoom/{ID}")
+@app.delete("/user/DeleteUserRoom/{ID}",
+            tags=["Room"],summary="exit User Room")
 async def ExitRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):  
     if(user.role != "user"):    
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -324,7 +338,8 @@ async def ExitRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Session
         raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
     
 #list user in Room
-@app.get("/admin/UserRoom/{ID}",response_model=List[UserSchema])
+@app.get("/admin/UserRoom/{ID}",response_model=List[UserSchema],
+         tags=["Room"],summary="list  user ทั้งหมดในRoomนั้น")
 async def listUser(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)): 
     if(user.role != "admin"):    
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -338,7 +353,8 @@ async def listUser(ID:int,user:UserSchema = Depends(get_current_user),db:Session
         raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")   
 
 #Create
-@app.post('/admin/room')
+@app.post('/admin/room',
+          tags=["Room"],summary="สร้าง Room")
 async def CreateRoom(room:RoomCertae,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -361,7 +377,8 @@ async def CreateRoom(room:RoomCertae,user:UserSchema = Depends(get_current_user)
         raise HTTPException(status_code=500,detail={f"Intern; Server Error:{str(e)}"})
 
 #Delete
-@app.delete("/admin/room/{ID}")
+@app.delete("/admin/room/{ID}",
+            tags=["Room"],summary="delete Room ตาม IDRoom")
 async def DeleteRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -379,7 +396,8 @@ async def DeleteRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Sessi
 
 #Lesson
 #Create
-@app.post("/admin/lesson")
+@app.post("/admin/lesson",
+          tags=["Lesson"],summary="สร้าง Lesson")
 async def CreateLesson(lesson:LesssonCerate,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -397,7 +415,8 @@ async def CreateLesson(lesson:LesssonCerate,user:UserSchema = Depends(get_curren
 
 #น่าจะระเบิด map ไม่ตรง
 #GET 
-@app.get('/lesson',response_model=List[LessonSchema])
+@app.get('/lesson',response_model=List[LessonSchema],
+         tags=["Lesson"],summary="lsit Lesson ทั้งหมด")
 async def ReadAllLesson(db:Session = Depends(get_db)):
     try:
         return db.query(Lesson).all()
@@ -408,7 +427,8 @@ async def ReadAllLesson(db:Session = Depends(get_db)):
         raise HTTPException(status_code=500,detail={f"Intern; Server Error:{str(e)}"})
 
 #update
-@app.put('/admin/lesson')
+@app.put('/admin/lesson',
+         tags=["Lesson"],summary="Update Lesson")
 async def UpdateLesson(lesson:LessonSchema,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -427,7 +447,8 @@ async def UpdateLesson(lesson:LessonSchema,user:UserSchema = Depends(get_current
         raise HTTPException(status_code=500,detail={f"Intern; Server Error:{str(e)}"})
     
 #Delete
-@app.delete("/admin/lesson/{ID}")
+@app.delete("/admin/lesson/{ID}",
+            tags=["Lesson"],summary="Delete Lesson")
 async def DeleteLesson(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -447,7 +468,8 @@ async def DeleteLesson(ID:int,user:UserSchema = Depends(get_current_user),db:Ses
 
 #question 
 #Create
-@app.post('/admin/question')
+@app.post('/admin/question',
+          tags=["Question"],summary="สร้าง คำถาม พร้อม ตัวเลือก")
 async def CreateQuestion(question:QuestionSchema,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -468,58 +490,10 @@ async def CreateQuestion(question:QuestionSchema,user:UserSchema = Depends(get_c
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})
 
-#GETAllByRoom,lesson,set สำหรับgetข้อสอบของแต่ละroomที่แบ่งบทแบ่งชุด เอาไว้สอบ
-@app.post('/question',response_model=QuestionReponse)
-async def ReadAllQuestionForTest(questionForTest:QuestionForTest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
-    try:
-        if(user.role != "admin"):
-           raise HTTPException(status_code=403, detail="Not enough permissions")
-        db_question = db.query(Question).filter(Question.RoomID == questionForTest.Room_ID,Question.Lesson == questionForTest.Lesson_ID,Question.Question_set == questionForTest.Question_Set).all()
-        q_response = []
-        for q in db_question:
-            db_choice = db.query(Choice).filter(Choice.ID_Question == q.ID_Question).all()
-            q_response.append(QuestionSet(ID_Question=q.ID_Question,
-                                              QuestionText=q.QuestionText,
-                                              ID_lesson=q.Lesson,
-                                              Answer=q.Answer,
-                                              Room_ID=q.RoomID,
-                                              Question_set=q.Question_set,
-                                              List_Choice=[ChoiceReponse(ID_Choice=c.ID,Choice_Text=c.Choice_Text,Is_Correct=c.Is_Correct)for c in db_choice]
-                                              ))  
-        db_totalQuestion = db.query(func.count(Question.ID_Question).label('total')).filter(Question.RoomID == questionForTest.Room_ID,Question.Lesson == questionForTest.Lesson_ID,Question.Question_set == questionForTest.Question_Set).group_by(Question.Question_set,Question.Lesson,Question.RoomID).first()
-        return QuestionReponse(TotalQusetion=db_totalQuestion.total if db_totalQuestion else 0,List_Question=q_response)
-    except HTTPException as e:
-        raise e
-    except Exception  as e:
-        db.rollback()
-        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})   
-
-#ดูข้อสอบที่ยังไม่ได้ทำ
-@app.post("/admin/questionuser/",response_model=List[QuestionsetbyRoomReponse])
-async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
-    try:
-        if(user.role != "admin"):
-           raise HTTPException(status_code=403, detail="Not enough permissions") 
-        db_QuestSet = (db.query(Question.RoomID,Question.Lesson,Lesson.name_lesson,Question.Question_set,
-                                func.count(Question.ID_Question).label("TotalQuestion"))
-                       .join(Lesson,Question.Lesson == Lesson.ID_Lesson)
-                       .filter(Question.RoomID == questRequest.RoomID,
-                               Question.Question_set == questRequest.Question_set)
-                       .group_by(Question.Lesson).all())
-        db_QuserionUser = (db.query(ScoreHistory.Lesson,Lesson.name_lesson)
-                           .join(Lesson,Lesson.ID_Lesson == ScoreHistory.Lesson)
-                           .join(User,User.ID == ScoreHistory.UserID)
-                           .filter())
-        return [QuestionsetbyRoomReponse(TotalQuestion=q.TotalQuestion,RoomID=q.RoomID,Lesson=q.name_lesson,LessonID=q.Lesson,Question_set=q.Question_set) for q in db_QuestSet]
-    except HTTPException as e:
-        raise e
-    except Exception  as e:
-        db.rollback()
-        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"}) 
-
 
 #update ต้องupdate choiceด้วย 
-@app.put('/admin/question')
+@app.put('/admin/question',
+        tags=["Question"],summary="Update คำถามและตัวเลือก")
 async def UpdateQuestion(question:QuestionRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -550,7 +524,8 @@ async def UpdateQuestion(question:QuestionRequest,user:UserSchema = Depends(get_
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})  
     
 #delete ต้องdelete choice ด้วย
-@app.delete('/admin/question/{ID}')
+@app.delete('/admin/question/{ID}',
+            tags=["Question"],summary="ลบหมด")
 async def DeleteQuestion(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -573,7 +548,8 @@ async def DeleteQuestion(ID:int,user:UserSchema = Depends(get_current_user),db:S
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})  
 
 #ดูข้อสอบในRoom
-@app.post("/admin/questionset/",response_model=List[QuestionsetbyRoomReponse])
+@app.post("/admin/questionset/",response_model=List[QuestionsetbyRoomReponse],
+        tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท,Room ออกเป็นlist เอาไว้ดู")
 async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -590,10 +566,79 @@ async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchem
     except Exception  as e:
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"}) 
+    
+#GETAllByRoom,lesson,set สำหรับgetข้อสอบของแต่ละroomที่แบ่งบทแบ่งชุด เอาไว้สอบ
+@app.post('/question',response_model=QuestionReponse,
+          tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท เอาไว้ใช้สอบ")
+async def ReadAllQuestionForTest(questionForTest:QuestionForTest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+    try:
+        if(user.role != "admin"):
+           raise HTTPException(status_code=403, detail="Not enough permissions")
+        db_question = db.query(Question).filter(Question.RoomID == questionForTest.Room_ID,Question.Lesson == questionForTest.Lesson_ID,Question.Question_set == questionForTest.Question_Set).all()
+        q_response = []
+        for q in db_question:
+            db_choice = db.query(Choice).filter(Choice.ID_Question == q.ID_Question).all()
+            q_response.append(QuestionSet(ID_Question=q.ID_Question,
+                                              QuestionText=q.QuestionText,
+                                              ID_lesson=q.Lesson,
+                                              Answer=q.Answer,
+                                              Room_ID=q.RoomID,
+                                              Question_set=q.Question_set,
+                                              List_Choice=[ChoiceReponse(ID_Choice=c.ID,Choice_Text=c.Choice_Text,Is_Correct=c.Is_Correct)for c in db_choice]
+                                              ))  
+        db_totalQuestion = db.query(func.count(Question.ID_Question).label('total')).filter(Question.RoomID == questionForTest.Room_ID,Question.Lesson == questionForTest.Lesson_ID,Question.Question_set == questionForTest.Question_Set).group_by(Question.Question_set,Question.Lesson,Question.RoomID).first()
+        return QuestionReponse(TotalQusetion=db_totalQuestion.total if db_totalQuestion else 0,List_Question=q_response)
+    except HTTPException as e:
+        raise e
+    except Exception  as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})   
+
+
+#ดูข้อสอบที่ยังไม่ได้ทำ
+@app.post("/admin/questionuser/",response_model=List[QuestionsetbyUserReponse],
+          tags=["Question"],summary="ดูข้อสอบที่Userยังไม่ได้ทำ",description="ต้องใช้ค่าIDRoom,ชุดข้อสอบ,IDUser")
+async def QuestionSetbyRoom(questRequest:QuestionsetbyUserRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+    try:
+        if(user.role != "admin"):
+           raise HTTPException(status_code=403, detail="Not enough permissions") 
+        db_QuestSet = (db.query(Question.RoomID,Question.Lesson,Lesson.name_lesson,Question.Question_set,
+                                func.count(Question.ID_Question).label("TotalQuestion"))
+                       .join(Lesson,Question.Lesson == Lesson.ID_Lesson)
+                       .filter(Question.RoomID == questRequest.RoomID,
+                               Question.Question_set == questRequest.Question_set)
+                       .group_by(Question.Lesson).all())
+        db_QuserionUser = (db.query(ScoreHistory.Lesson,Lesson.name_lesson)
+                           .join(Lesson,Lesson.ID_Lesson == ScoreHistory.Lesson)
+                           .join(User,User.ID == ScoreHistory.UserID)
+                           .filter(User.ID == questRequest.UserID,
+                                   User.RoomID == questRequest.RoomID,
+                                   Question.Question_set == questRequest.Question_set).all())
+                # หาคำถามที่ยังไม่ได้ทำ (โดยการเปรียบเทียบกับคำถามทั้งหมด)
+        completed_lessons = {q.Lesson for q in db_QuserionUser}  # บทที่ทำแล้ว
+        
+        response = [
+            QuestionsetbyUserReponse(UserID = questRequest.UserID,
+                TotalQuestion=q.TotalQuestion,
+                RoomID=q.RoomID,
+                Lesson=q.name_lesson,
+                LessonID=q.Lesson,
+                Question_set=q.Question_set
+            ) 
+            for q in db_QuestSet if q.Lesson not in completed_lessons
+        ]
+        return response
+    except HTTPException as e:
+        raise e
+    except Exception  as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"}) 
+
 
 #ScoreHistory
 #Cerate
-@app.post("/admin/score")
+@app.post("/admin/score",
+          tags=["Score"],summary="สร้างScoreHistory หลังตรวจคำตอบเสร็จ")
 async def CerateScoreHistory(score:ScoreHistoryRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -615,7 +660,8 @@ async def CerateScoreHistory(score:ScoreHistoryRequest,user:UserSchema = Depends
         
 #ลืมทำget scoreHistoryโง่ๆ
 #getbyuser
-@app.get("/user/scorebyuser",response_model=List[ScoreHistoryReponse])
+@app.get("/user/scorebyuser",response_model=List[ScoreHistoryReponse],
+         tags=["Score"],summary="get scoreHistoryโง่ๆ เอาไว้ให้Userดูความน่าสมเพช")
 async def GetScoreHistorybyUser(user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "user"):
@@ -630,7 +676,8 @@ async def GetScoreHistorybyUser(user:UserSchema = Depends(get_current_user),db:S
     
 
 #GetUserAns Bylesson,set,user ข้อสอบ พร้อมuserตอบ
-@app.post("/user/scorebylesson/{ID}", response_model=ScoreHistoryReponsebyUser)
+@app.post("/user/scorebylesson/{ID}", response_model=ScoreHistoryReponsebyUser,
+         tags=["DashBoard"],summary="ดู ScoreHistory+ข้อสอบ+สิ่งที่userตอบ")
 async def GetUserAnsByLessonSetUser(ID: int, user: UserSchema = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
         db_score = db.query(ScoreHistory).filter(ScoreHistory.ID_ScoreHistory == ID).first()
@@ -687,7 +734,8 @@ async def GetUserAnsByLessonSetUser(ID: int, user: UserSchema = Depends(get_curr
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")    
 
 #delete 
-@app.delete('/admin/score/{ID}')
+@app.delete('/admin/score/{ID}',
+             tags=["Score"],summary="Delete ScoreHistory")
 async def DeleteScore(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -706,7 +754,8 @@ async def DeleteScore(ID:int,user:UserSchema = Depends(get_current_user),db:Sess
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})  
     
 #ดูscore แต่ละบท 
-@app.get('/scorebylesson/{ID}',response_model=ScoreBylessonReponse)
+@app.get('/scorebylesson/{ID}',response_model=ScoreBylessonReponse,
+          tags=["Score"],summary="ดูScoreแต่ละบทของUser")
 async def ScoreBylesson(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         db_scorebylesson = (db.query(ScoreHistory).filter(ScoreHistory.UserID == ID).all())
