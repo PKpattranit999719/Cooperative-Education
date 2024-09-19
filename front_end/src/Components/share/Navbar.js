@@ -14,17 +14,6 @@ function Navbar() {
     localStorage.removeItem('token');
   };
 
-
-  const handleLogout = () => {
-
-
-    localStorage.removeItem('email');
-    localStorage.removeItem('name');
-    localStorage.removeItem('role');
-    localStorage.removeItem('token');
-    
-  };
-
   return (
     <div className="app-layout">
       <div className="navbar">
