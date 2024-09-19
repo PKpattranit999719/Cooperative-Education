@@ -28,10 +28,4 @@ export const SidebarData = [
     icon: <FaIcons.FaChalkboardTeacher />,
     cName: "nav-text",
   },
-  {
-    title: "Logout",
-    path: "/logout",
-    icon: <AiIcons.AiOutlineLogout />,
-    cName: "nav-text logout", // You can customize the style for the logout button
-  },
 ];
