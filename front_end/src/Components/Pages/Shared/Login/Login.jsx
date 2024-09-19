@@ -5,7 +5,6 @@ import { FaUser, FaLock } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 
 const Login = () => {
-    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -31,6 +30,11 @@ const Login = () => {
             if (response.ok) {
                 // Handle successful login
                 console.log('Login successful:', result);
+                localStorage.setItem('email', result.email);
+                localStorage.setItem('name', result.name);
+                localStorage.setItem('role', result.role);
+                localStorage.setItem('token', result.access_token);
+
             } else {
                 // Handle login failure
                 console.log('Login failed:', result.detail);
@@ -72,7 +76,7 @@ const Login = () => {
                 <button type="submit">Login</button>
 
                 <div className="register-link">
-                <p>Don't have an account? <Link to="/register">Register</Link></p>
+                    <p>Don't have an account? <Link to="/register">Register</Link></p>
                 </div>
             </form>
         </div>

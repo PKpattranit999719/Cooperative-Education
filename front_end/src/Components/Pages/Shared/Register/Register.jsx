@@ -3,13 +3,15 @@ import "./Register.css";
 import { FaUser } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { FaLock } from "react-icons/fa";
-
+import { useNavigate } from "react-router-dom";
 const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('');
+  const navigate = useNavigate(); 
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,30 +24,31 @@ const Register = () => {
 
     const url = role === "teacher" ? "http://localhost:8000/admin" : "http://localhost:8000/user";
     
-    const formData = new URLSearchParams();
-    formData.append("email", email);
-    formData.append("name", username);
-    formData.append("password", password);
+    // const formData = new URLSearchParams();
+    // formData.append("email", email);
+    // formData.append("name", username);
+    // formData.append("password", password);
 
-    // const payload = {
-    //   username: username,
-    //   email: email,
-    //   password: password,
-    //   role: role,
-    // };
+    const payload = {
+      email: email,
+      name: username,
+      password: password,
+    };
 
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
         },
-      body: formData.toString(),
+      body: JSON.stringify(payload),
     });
 
       if (response.ok) {
         const result = await response.json();
         console.log("Registration successful:", result);
+        navigate("/login");
+        
       } else {
         console.error("Registration failed:", await response.json());
       }
@@ -127,6 +130,4 @@ const Register = () => {
     </div>
   );
 };
-
-
 export default Register;
