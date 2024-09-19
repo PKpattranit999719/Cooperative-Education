@@ -7,7 +7,7 @@ import Login from '../Pages/Shared/Login/Login';
 import Register from '../Pages/Shared/Register/Register';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import PrivateRoute from '../Share/PrivateRoutes';
+import PrivateRoute from '../Shared/PrivateRoutes';
 import '../../App.css';
 import History from '../Pages/AdminPage/History/History';
 
