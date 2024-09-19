@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import "./Login.css";
+import { Link } from "react-router-dom";
 import { FaUser, FaLock } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 
@@ -71,7 +72,7 @@ const Login = () => {
                 <button type="submit">Login</button>
 
                 <div className="register-link">
-                    <p>Don't have an account? <a href="#">Register</a></p>
+                <p>Don't have an account? <Link to="/register">Register</Link></p>
                 </div>
             </form>
         </div>
