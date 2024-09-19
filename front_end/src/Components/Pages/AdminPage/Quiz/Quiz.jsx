@@ -1,56 +1,127 @@
-import React, {Component, Fragment} from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-// import '@fortawesome/fontawesome-free/css/all.min.css';
-// import LightbulbIcon from '@mui/icons-material/Lightbulb'; ลองใช้2ตัวนี้แล้วแดง
 import "./Quiz.css";
 
-class Quize extends Component {
+const Quize = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [questions, setQuestions] = useState([]);
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [lessonID, setLessonID] = useState(null);
+    const [questionSet, setQuestionSet] = useState(null);
+    const [roomID, setRoomID] = useState(null);
 
+    useEffect(() => {
+        if (location.state) {
+            const { lessonID, questionSet, roomID } = location.state;
+            setLessonID(lessonID);
+            setQuestionSet(questionSet);
+            setRoomID(roomID);
+            fetchQuestions(lessonID, questionSet, roomID);
+        }
+    }, [location.state]);
 
-    increaseCount = () => {
-        this.setState({
-            counter: 5
-        });
-    };
+    const fetchQuestions = async (lessonID, questionSet, roomID) => {
+        const token = localStorage.getItem("token");
 
-    render() {
-        return (
-            <Fragment>
-                <Helmet><title>Quize Page</title></Helmet>
-                <div className='questions'>
-                    <div className='lifeline-container'>
-                        <p>
-                            <span className='mid mid-set-center mid-24px lifeline-icon'></span>2
-                        </p>
-                        <p>
-                            2:15<span className='mid mid-lightbuib-on-outline mid-24px lifeline-icon'></span>2
-                        </p>
-                    </div>
-                    <div>
-                        <p>
-                            <span>1 of 15</span>
-                            <spam className="mid mid-clock-outline mid-24px"></spam>
-                        </p>
-                    </div>
-                    <h5>Google was founded in what year?</h5>
-                    <div className='options-container'>
-                        <p className='option'>1997</p>
-                        <p className='option'>1998</p>
-                    </div>
-                    <div className='options-container'>
-                    <p className='option'>1999</p>
-                    <p className='option'>2000</p>
-                    </div>
+        if (!token) {
+            console.error("No token found");
+            return;
+        }
 
-                    <div className='botton-container'>
-                        <button>Previous</button>
-                        <button>Next</button>
-                        <button>Quit</button>
-                    </div>
-                </div>
-            </Fragment>
-        )
+        try {
+            const response = await fetch('http://localhost:8000/question', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    Room_ID: roomID,
+                    Question_Set: questionSet,
+                    Lesson_ID: lessonID
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            setQuestions(result.List_Question);
+        } catch (error) {
+            console.error("Fetch error:", error.message);
+        }
     }
-}
+
+    const handleNextQuestion = () => {
+        setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, questions.length - 1));
+    }
+
+    const handlePreviousQuestion = () => {
+        setCurrentQuestionIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+    }
+
+    const handleQuit = () => {
+        navigate('/lesson'); // นำทางกลับไปที่หน้า Lesson
+    }
+
+    const currentQuestion = questions[currentQuestionIndex];
+
+    return (
+        <>
+            <Helmet><title>Quiz Page</title></Helmet>
+            <div className='questions'>
+                <div className='lifeline-container'>
+                    <p>
+                        <span className='mid mid-set-center mid-24px lifeline-icon'></span>2
+                    </p>
+                    <p>
+                        2:15<span className='mid mid-lightbuib-on-outline mid-24px lifeline-icon'></span>2
+                    </p>
+                </div>
+                <div>
+                    <p>
+                        <span>{currentQuestionIndex + 1} of {questions.length}</span>
+                        <span className="mid mid-clock-outline mid-24px"></span>
+                    </p>
+                </div>
+
+                {currentQuestion ? (
+                    <div className='question-item'>
+                        <h5>{currentQuestion.QuestionText}</h5>
+                        <div className='options-container'>
+                            {currentQuestion.List_Choice.map((choice) => (
+                                <p key={choice.ID_Choice} className='option'>
+                                    {choice.Choice_Text}
+                                    {choice.Is_Correct && ' (Correct)'}
+                                </p>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    <p>Loading questions...</p>
+                )}
+
+                <div className='button-container'>
+                    <button
+                        onClick={handlePreviousQuestion}
+                        disabled={currentQuestionIndex === 0}
+                    >
+                        Previous
+                    </button>
+                    <button
+                        onClick={handleNextQuestion}
+                        disabled={currentQuestionIndex === questions.length - 1}
+                    >
+                        Next
+                    </button>
+                    <button onClick={handleQuit}>Quit</button>
+                </div>
+            </div>
+        </>
+    );
+};
 
 export default Quize;
