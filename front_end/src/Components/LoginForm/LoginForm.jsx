@@ -30,6 +30,11 @@ const LoginForm = () => {
             if (response.ok) {
                 // Handle successful login
                 console.log('Login successful:', result);
+                localStorage.setItem('email', result.email);
+                localStorage.setItem('name', result.name);
+                localStorage.setItem('role', result.role);
+                localStorage.setItem('token', result.access_token);
+
             } else {
                 // Handle login failure
                 console.log('Login failed:', result.detail);
