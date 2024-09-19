@@ -6,13 +6,10 @@ import { FaUser, FaSignOutAlt } from "react-icons/fa";
 
 function Navbar() {
   const handleLogout = () => {
-
-
     localStorage.removeItem('email');
     localStorage.removeItem('name');
     localStorage.removeItem('role');
     localStorage.removeItem('token');
-    
   };
 
   return (
