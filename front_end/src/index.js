@@ -14,6 +14,7 @@ import History from "./Components/History/History";
 import Lesson from "./Components/Lesson/Lesson";
 import Class from "./Components/Class/Class"
 import Sidebar from "./Components/share/Sidebar";
+import Quize from "./Components/Lesson/Quize";
 
 const AppLayout = () => (
   <>
@@ -36,6 +37,7 @@ const router = createBrowserRouter(
       <Route path="/history" element={<History />} />
       <Route path="/lesson" element={<Lesson />} />
       <Route path="/class" element={<Class />} />
+      <Route path="/quize" element={<Quize />} />
     </Route>
   )
 );
