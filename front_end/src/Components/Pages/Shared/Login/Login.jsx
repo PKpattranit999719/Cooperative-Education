@@ -3,7 +3,7 @@ import './LoginForm.css';
 import { FaUser, FaLock } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 
-const LoginForm = () => {
+const Login = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -78,4 +78,4 @@ const LoginForm = () => {
     );
 };
 
-export default LoginForm;
+export default Login;

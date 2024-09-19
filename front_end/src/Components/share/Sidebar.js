@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import "../../App.css";
+import "./Sidebar.css";
 import { SidebarData } from "./SidebarData";
 
 function Sidebar() {

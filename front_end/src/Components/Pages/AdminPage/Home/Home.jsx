@@ -4,7 +4,7 @@ import { FaBookReader } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
 import { PiStudent } from "react-icons/pi";
 
-const HomeForm = () => {
+const Home = () => {
     const [classrooms, setClassrooms] = useState([]); // State for classrooms
     const [students, setStudents] = useState([]); // State for students
     const [className, setClassName] = useState('');
@@ -133,4 +133,4 @@ const HomeForm = () => {
     );
 };
 
-export default HomeForm;
+export default Home;

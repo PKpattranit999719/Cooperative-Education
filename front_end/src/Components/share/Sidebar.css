@@ -1,0 +1,64 @@
+.side-menu {
+    list-style: none;
+    padding: 0;
+    height: calc(100vh - var(--navbar-height)); /* Ensure the sidebar fits within the viewport */
+    overflow-y: auto; /* Enable scrolling if the sidebar content overflows */
+    position: fixed; /* Fixes sidebar positioning */
+    top: var(--navbar-height); /* Ensure it starts below the navbar */
+    width: 250px; /* Sidebar width */
+    background: var(--light); /* Background color */
+  }
+  
+  .side-menu li {
+    padding: 15px 20px;
+    margin: 10px 0; /* Added more space between items */
+    border-radius: 8px; /* Rounded corners for better aesthetics */
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  
+  .side-menu .icon {
+    font-size: 20px;
+    margin-right: 15px; /* Adjusted margin for better icon-text spacing */
+  }
+  
+  .side-menu .text.hide {
+    opacity: 0;
+    display: none;
+  }
+  
+  .side-menu .text.show {
+    opacity: 1;
+    display: block;
+  }
+  
+  .side-menu li a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--dark);
+    font-size: 16px;
+    transition: color 0.3s ease;
+  }
+  
+  .side-menu li a span.bx {
+    font-size: 20px;
+    margin-right: 15px; /* Adjusted margin for better spacing */
+  }
+  
+  .side-menu li.active {
+    background: var(--primary);
+    color: #fff;
+    border-left: 5px solid var(--primary); /* Visual cue for active item */
+  }
+  
+  .side-menu li.active a {
+    color: #fff;
+  }
+  
+  .side-menu li:hover {
+    background: rgba(0, 86, 179, 0.1);
+  }
+  
+  .side-menu li:hover a {
+    color: var(--primary);
+  }
