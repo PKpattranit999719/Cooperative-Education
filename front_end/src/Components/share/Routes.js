@@ -1,13 +1,14 @@
-import { Outlet  , createBrowserRouter } from 'react-router-dom';
+import { Outlet, createBrowserRouter } from 'react-router-dom';
 import Home from '../Pages/AdminPage/Home/Home'; 
 import Lesson from '../Pages/AdminPage/Lesson/Lesson';
 import Class from '../Pages/AdminPage/Class/Class';
 import Quiz from '../Pages/AdminPage/Quiz/Quiz';
 import Login from '../Pages/Shared/Login/Login';
 import Register from '../Pages/Shared/Register/Register';
-import Navbar from './Navbar'
-import Sidebar from './Sidebar'
-import '../../App.css'
+import Navbar from './Navbar';
+import Sidebar from './Sidebar';
+import PrivateRoute from '../Share/PrivateRoutes';
+import '../../App.css';
 import History from '../Pages/AdminPage/History/History';
 
 const AppLayout = () => (
@@ -22,14 +23,7 @@ const AppLayout = () => (
         </div>
       </div>
     </>
-  );
-  const LoginLayout = () => (
-    <>   
-          <div className="login-layout">
-            <Outlet />
-          </div>
-    </>
-  );
+);
 
 const router = createBrowserRouter([
   {
@@ -37,36 +31,35 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: <PrivateRoute element={Home} />, 
       },
       {
         path: "/history",
-        element: <History />,
+        element: <PrivateRoute element={History} />, 
       },
       {
         path: "/lesson",
-        element: <Lesson />,
+        element: <PrivateRoute element={Lesson} />, 
       },
       {
         path: "/class",
-        element: <Class />,
+        element: <PrivateRoute element={Class} />, 
       },
       {
         path: "/quiz",
-        element: <Quiz />,
+        element: <PrivateRoute element={Quiz} />, 
       },
     ],
   },
   {
-    element: <LoginLayout />,
     children: [
       {
         path: "/login",
-        element: <Login />, // Adjusted to the correct component
+        element: <Login />,
       },
       {
         path: "/register",
-        element: <Register />, // Adjusted to the correct component
+        element: <Register />,
       },
     ],
   },

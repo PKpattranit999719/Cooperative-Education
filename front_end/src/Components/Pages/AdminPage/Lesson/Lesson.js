@@ -45,7 +45,7 @@ const navigate = useNavigate();
   ]);
 
   const handleExploreClick = () => {
-    navigate("/quize"); // นำทางไปที่ /quize
+    navigate("/quiz"); // นำทางไปที่ /quize
   };
 
   return (

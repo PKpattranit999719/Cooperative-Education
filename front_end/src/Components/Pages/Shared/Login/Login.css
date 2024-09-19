@@ -1,3 +1,14 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background: lightblue;
+    background: url('../../../../Components/Assets/background.jpg') no-repeat;
+    background-size: cover;
+}
+
 .wrapper {
     width: 420px;
     background: transparent;
@@ -8,6 +19,7 @@
     border-radius: 10px;
     padding: 30px 40px;
 }
+
 
 .wrapper h1 {
     font-size: 36px;
