@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaLock } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate(); 
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent the default form submission
@@ -34,7 +35,7 @@ const Login = () => {
                 localStorage.setItem('name', result.name);
                 localStorage.setItem('role', result.role);
                 localStorage.setItem('token', result.access_token);
-
+                navigate("/")
             } else {
                 // Handle login failure
                 console.log('Login failed:', result.detail);
