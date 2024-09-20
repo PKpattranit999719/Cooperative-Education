@@ -6,14 +6,14 @@ const Lesson = () => {
   const navigate = useNavigate();
   const [lessons, setLesson] = useState([]); // ตั้งค่าเริ่มต้นเป็น array ว่าง
   const [showroom, setShowroom] = useState([]); // State for classrooms
-  const [RoomID, setRoomID] = useState("1"); // State สำหรับ RoomID
-  const [Question_set, setQuestionSet] = useState("1"); // State สำหรับ Question_set
+  const [Question_set, setQuestion_set] = useState("1"); // State สำหรับ RoomID
+  const [year, setYear] = useState("1"); // State สำหรับ Question_set
 
   useEffect(() => {
     const fetchLessonData = async () => {
       const formData = {
-        RoomID: RoomID,
         Question_set: Question_set,
+        year: year,
       };
 
       try {
@@ -49,7 +49,7 @@ const Lesson = () => {
     };
 
     fetchLessonData();
-  }, [RoomID, Question_set]); // เรียกใช้ฟังก์ชันเมื่อ RoomID หรือ Question_set เปลี่ยนแปลง
+  }, [year, Question_set]); // เรียกใช้ฟังก์ชันเมื่อ RoomID หรือ Question_set เปลี่ยนแปลง
 
   useEffect(() => {
     const fetchRoomData = async () => {
@@ -81,22 +81,21 @@ const Lesson = () => {
     fetchRoomData();
   }, []);
 
-  const handleExploreClick = (lessonID, questionSet, roomID) => {
+  const handleExploreClick = (lessonID, questionSet) => {
     navigate("/quiz", {
       state: {
         lessonID: lessonID,
         questionSet: questionSet,
-        roomID: roomID,
       },
     });
   };
 
-  const handleRoomClick = (roomID) => {
-    setRoomID(roomID); // เก็บค่า RoomID เมื่อเลือกห้อง
+  const handleYearClick = (year) => {
+    setYear(year); // เก็บค่า year เมื่อเลือกห้อง
   };
 
   const handleQuestionSetChange = (event) => {
-    setQuestionSet(event.target.value); // เก็บค่า Question_set จาก dropdown
+    setQuestion_set(event.target.value); // เก็บค่า Question_set จาก dropdown
   };
 
   return (
@@ -106,13 +105,13 @@ const Lesson = () => {
 
       
         <div className="button-group">
-          <button className="bth" value={1}>
+          <button className="bth" value={1} onClick={() => handleYearClick(1)}>
             ประถมศึกษาปีที่ 1
           </button>
-          <button className="bth" value={2}>
+          <button className="bth" value={2} onClick={() => handleYearClick(2)}>
             ประถมศึกษาปีที่ 2
           </button>
-          <button className="bth" value={3}>
+          <button className="bth" value={3} onClick={() => handleYearClick(3)}>
             ประถมศึกษาปีที่ 3
           </button>
         </div>
@@ -128,7 +127,6 @@ const Lesson = () => {
             <option value="1">ชุดที่ 1</option>
             <option value="2">ชุดที่ 2</option>
             <option value="3">ชุดที่ 3</option>
-            <option value="custom">ชุดที่คุณสร้าง</option>
           </select>
         </div>
 
@@ -142,7 +140,7 @@ const Lesson = () => {
               <button
                 className="bth"
                 onClick={() =>
-                  handleExploreClick(row.LessonID, row.Question_set, RoomID)
+                  handleExploreClick(row.LessonID, row.Question_set)
                 }
               >
                 Explore

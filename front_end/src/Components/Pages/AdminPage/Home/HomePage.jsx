@@ -44,6 +44,7 @@ const Home = () => {
     const token = localStorage.getItem("token");
     const formData = {
       Name_Room: classRoom,
+      Year: year
     };
     e.preventDefault();
     try {
@@ -185,7 +186,7 @@ const Home = () => {
               <tr key={row.Room_ID}>
                 <td>{row.name}</td>
                 <td>{row.key}</td>
-                <td>{row.year}</td>
+                <td>{row.Year}</td>
               </tr>
             ))}
           </tbody>
