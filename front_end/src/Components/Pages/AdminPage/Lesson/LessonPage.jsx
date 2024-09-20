@@ -101,55 +101,55 @@ const Lesson = () => {
 
   return (
     <div className="lesson-container">
-     <div className='form-group'>
-      <h1>Lesson</h1>
+      <div className="form-group">
+        <h1>Lesson</h1>
 
-      {/* ปุ่มสำหรับเลือกห้องเรียน */}
-      <div className="button-group">
-        {showroom.map((row) => (
-          <div key={row.Room_ID}>
-            <div className="button-group">
-        <button className="bth" value={1}>ประถมศึกษาปีที่ 1</button>
-        <button className="bth" value={2}>ประถมศึกษาปีที่ 2</button>
-        <button className="bth" value={3}>ประถมศึกษาปีที่ 3</button>
-      </div>
-          </div>
-        ))}
-      </div>
+      
+        <div className="button-group">
+          <button className="bth" value={1}>
+            ประถมศึกษาปีที่ 1
+          </button>
+          <button className="bth" value={2}>
+            ประถมศึกษาปีที่ 2
+          </button>
+          <button className="bth" value={3}>
+            ประถมศึกษาปีที่ 3
+          </button>
+        </div>
 
-      {/* Dropdown สำหรับชุดของข้อสอบ */}
-      <div className="dropdown-group">
-        <label htmlFor="exam-set">เลือกชุดของข้อสอบ:</label>
-        <select
-          id="exam-set"
-          className="dropdown"
-          onChange={handleQuestionSetChange}
-        >
-          <option value="1">ชุดที่ 1</option>
-          <option value="2">ชุดที่ 2</option>
-          <option value="3">ชุดที่ 3</option>
-          <option value="custom">ชุดที่คุณสร้าง</option>
-        </select>
-      </div>
+        {/* Dropdown สำหรับชุดของข้อสอบ */}
+        <div className="dropdown-group">
+          <label htmlFor="exam-set">เลือกชุดของข้อสอบ:</label>
+          <select
+            id="exam-set"
+            className="dropdown"
+            onChange={handleQuestionSetChange}
+          >
+            <option value="1">ชุดที่ 1</option>
+            <option value="2">ชุดที่ 2</option>
+            <option value="3">ชุดที่ 3</option>
+            <option value="custom">ชุดที่คุณสร้าง</option>
+          </select>
+        </div>
 
-      {/* แสดงรายการบทเรียน */}
-      <div className="lessons">
-        {lessons.map((row) => (
-          <div key={row.LessonID} className="lesson">
-            <h3>{row.Lesson}</h3>
-            <p>จำนวนคำถาม: {row.TotalQuestion}</p>
-            <p>ชุดข้อสอบ: {row.Question_set}</p>
-            <button
-              className="bth"
-              onClick={() =>
-                handleExploreClick(row.LessonID, row.Question_set, RoomID)
-              }
-            >
-              Explore
-            </button>
-          </div>
-        ))}
-      </div>
+        {/* แสดงรายการบทเรียน */}
+        <div className="lessons">
+          {lessons.map((row) => (
+            <div key={row.LessonID} className="lesson">
+              <h3>{row.Lesson}</h3>
+              <p>จำนวนคำถาม: {row.TotalQuestion}</p>
+              <p>ชุดข้อสอบ: {row.Question_set}</p>
+              <button
+                className="bth"
+                onClick={() =>
+                  handleExploreClick(row.LessonID, row.Question_set, RoomID)
+                }
+              >
+                Explore
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
