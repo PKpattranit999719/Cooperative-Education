@@ -408,6 +408,20 @@ async def DeleteRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Sessi
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Intern; Server Error:{str(e)}"})
 
+#GetRoomUser
+@app.get('/user/roomuser',response_model=RoomSchema,
+         tags=["Room"])
+async def UserRoom(user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+    try:
+        if(user.role != "user"):
+           raise HTTPException(status_code=403, detail="Not enough permissions")
+        db_room = db.query(Room).filter(Room.ID_Room == user.RoomID).first()
+        return RoomSchema(Room_ID=db_room.ID_Room,name=db_room.name,key=db_room.key,Year=db_room.year)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail={f"Intern; Server Error:{str(e)}"})
 #Lesson
 #Create
 @app.post("/admin/lesson",
@@ -653,6 +667,7 @@ async def QuestionSetbyRoom(user:UserSchema = Depends(get_current_user),db:Sessi
         
         response = [
             QuestionsetbyUserReponse(UserID = user.ID,
+                Year=db_room.year,
                 TotalQuestion=q.TotalQuestion,
                 Lesson=q.name_lesson,
                 LessonID=q.Lesson,
