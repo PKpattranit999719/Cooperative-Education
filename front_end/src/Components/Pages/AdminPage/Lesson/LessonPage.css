@@ -10,10 +10,6 @@
     width: 100%;
     margin: auto;
     padding: 0px 20px;
-    background: rgba(255, 255, 255, 0.1); /* เพิ่มพื้นหลังแบบโปร่งแสง */
-    border: 2px solid rgba(255, 255, 255, .2);
-    backdrop-filter: blur(30px);
-    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     border-radius: 10px;
     text-align: center; /* ตั้งค่าให้อยู่ตรงกลาง */
 }
@@ -43,7 +39,7 @@ section{
 .bth{
     border: none;
     outline: none;
-    background: #1d39c4;
+    background: hsl(230, 74%, 44%);
     color: #fff;
     border-radius: 18px;
     max-width: 120px;
@@ -66,6 +62,11 @@ section{
 .dropdown-group {
     margin-bottom: 20px;
     text-align: center;
+    color: #fff;
+}
+
+.dropdown-group label{
+    margin-right: 10px;
 }
 
 .dropdown {
@@ -80,6 +81,7 @@ section{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: center;
 }
 
 .lesson{
@@ -96,6 +98,20 @@ section{
 
 .lesson:hover{
     border-color: #1d39c4;
+}
+
+.lesson-wrapper{
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(30px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.lesson-wrapper h1{
+    color: #fff;
+    font-size: 36px;
 }
 
 @media (max-width: 969px){

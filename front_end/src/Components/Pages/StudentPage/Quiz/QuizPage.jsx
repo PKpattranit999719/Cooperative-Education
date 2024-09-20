@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import "./QuizPage.css";
 
-const StudentQuize = () => {
+const QuizPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [questions, setQuestions] = useState([]);
@@ -131,4 +131,4 @@ const StudentQuize = () => {
   );
 };
 
-export default StudentQuize;
+export default QuizPage;
