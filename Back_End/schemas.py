@@ -23,9 +23,11 @@ class RoomSchema(BaseModel):
     Room_ID:int
     name:str
     key:str
+    Year:int
 
 class RoomCertae(BaseModel):
     Name_Room:str
+    Year:int
 
 class myRoom(BaseModel):
     Name_Owner:str 
