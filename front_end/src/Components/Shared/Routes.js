@@ -1,64 +1,97 @@
-import { Outlet, createBrowserRouter } from 'react-router-dom';
-import Home from '../Pages/AdminPage/Home/HomePage'; 
-import Lesson from '../Pages/AdminPage/Lesson/LessonPage';
-import Class from '../Pages/AdminPage/Class/ClassPage';
-import Result from '../Pages/AdminPage/Result/ResultPage';
-import Login from '../Pages/Shared/Login/LoginPage';
-import Register from '../Pages/Shared/Register/RegisterPage';
-import Navbar from './Navbar';
-import Sidebar from './Sidebar';
-import PrivateRoute from '../Shared/PrivateRoutes';
-import '../../App.css';
-import History from '../Pages/AdminPage/History/HistoryPage';
-import Welcome from '../Pages/Shared/Welcome/WelcomePage';
-import QuizPage from '../Pages/StudentPage/Quiz/QuizPage';
-import HomeStudent from '../Pages/StudentPage/Home/HomeStudent'
+import { Outlet, createBrowserRouter } from "react-router-dom";
+import Home from "../Pages/AdminPage/Home/HomePage"; 
+import Lesson from "../Pages/AdminPage/Lesson/LessonPage";
+import Class from "../Pages/AdminPage/Class/ClassPage";
+import Result from "../Pages/AdminPage/Result/ResultPage";
 
-const AppLayout = () => (
-    <>
-      <div className="app-layout">
-        <Navbar />
-        <div className="app-body">
-          <Sidebar />
-          <div className="main-content">
-            <Outlet />
-          </div>
+//shared
+import Login from "../Pages/Shared/Login/LoginPage";
+import Register from "../Pages/Shared/Register/RegisterPage";
+import Navbar from "./Navbar";
+import Sidebar from "./Sidebar";
+import PrivateRoute from "../Shared/PrivateRoutes";
+import "../../App.css";
+import History from "../Pages/AdminPage/History/HistoryPage";
+import Welcome from "../Pages/Shared/Welcome/WelcomePage";
+
+// student
+import QuizPage from "../Pages/StudentPage/Quiz/QuizPage";
+import HomeStudent from "../Pages/StudentPage/Home/HomeStudent";
+import LessonStudent from "../Pages/StudentPage/Lesson/StudentLesson";
+import Sidebarstudent from '../Pages/StudentPage/Sidebarstudent/Sidestu'; 
+
+// Admin Layout
+const AdminLayout = () => (
+  <>
+    <div className="app-layout">
+      <Navbar />
+      <div className="app-body">
+        <Sidebar />
+        <div className="main-content">
+          <Outlet />
         </div>
       </div>
-    </>
+    </div>
+  </>
 );
 
+// User Layout
+const UserLayout = () => (
+  <>
+    <div className="app-layout">
+      <Navbar />
+      <div className="app-body">
+        <Sidebarstudent />
+        <div className="main-content">
+          <Outlet />
+        </div>
+      </div>
+    </div>
+  </>
+);
+
+// Check role function
+const checkUserRole = () => {
+  const role = localStorage.getItem("role");
+  return role === "admin" ? <AdminLayout /> : <UserLayout />;
+};
+
+// Define the router
 const router = createBrowserRouter([
   {
-    element: <AppLayout />,
+    element: checkUserRole(), // Choose layout based on role
     children: [
       {
         path: "/history",
-        element: <PrivateRoute element={History} />, 
+        element: <PrivateRoute element={History} />,
       },
       {
         path: "/lesson",
-        element: <PrivateRoute element={Lesson} />, 
+        element: <PrivateRoute element={Lesson} />,
       },
       {
         path: "/class",
-        element: <PrivateRoute element={Class} />, 
+        element: <PrivateRoute element={Class} />,
       },
       {
         path: "/result",
-        element: <PrivateRoute element={Result} />, 
+        element: <PrivateRoute element={Result} />,
       },
       {
         path: "/home",
-        element: <PrivateRoute element={Home} />, 
+        element: <PrivateRoute element={Home} />,
       },
       {
         path: "/quiz",
-        element: <QuizPage />, 
+        element: <QuizPage />,
       },
       {
         path: "/homestudent",
-        element: <HomeStudent />, 
+        element: <HomeStudent />,
+      },
+      {
+        path: "/lessonstudent",
+        element: <LessonStudent />,
       },
     ],
   },
@@ -74,7 +107,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/",
-        element: <Welcome />, 
+        element: <Welcome />,
       },
     ],
   },
