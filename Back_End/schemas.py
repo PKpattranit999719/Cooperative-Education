@@ -9,6 +9,7 @@ class UserSchema(BaseModel):
     email: str
     name: str
     role: str
+    RoomID:Optional[int]
 
 class UserReponse(UserSchema):
     access_token: str
@@ -179,7 +180,6 @@ class QuestionsetbyRoomReponse(BaseModel):
     Year:int
     LessonID:int
     Lesson:str
-    Question_set:int
     TotalQuestion:int
 
 class QuestionsetbyUserRequest(QuestionsetbyRoomRequest):

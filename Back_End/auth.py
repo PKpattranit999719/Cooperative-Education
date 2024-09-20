@@ -23,12 +23,14 @@ def authenticate(email: str, password: str,db: Session):
         if admin is not None:
             data = admin
             role = "admin"
+            roomID = None
         if user is  not None:
             data = user
             role = "user"
+            roomID = user.RoomID
         if not verify_password(password,data.password):
             return None
-        return UserSchema(ID=data.ID,email=data.email,name=data.name,role=role)
+        return UserSchema(ID=data.ID,email=data.email,name=data.name,role=role,RoomID=roomID)
     except Exception as e:
         raise HTTPException(status_code=500,detail={f"Internl Server Error:{str(e)}"})
 
@@ -54,14 +56,16 @@ def get_current_user(token: str = Depends(oauth2_scheme),db: Session = Depends(g
         email = payload.get("email")
         if role == "admin":
             data = db.query(Admin).filter(email == Admin.email).first()
+            roomID = None
         elif role == "user":
             data = db.query(User).filter(email == User.email).first()
+            roomID = data.RoomID
         else:
             raise HTTPException(status_code=403, detail="Invalid role")
         if data is None:
             raise HTTPException(status_code=404, detail=role+" not found")
         #return เพราะต้องส่ง role ไปด้วย
-        return UserSchema(ID=data.ID,email=data.email,name=data.name,role=role)
+        return UserSchema(ID=data.ID,email=data.email,name=data.name,role=role,RoomID=roomID)
     except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
     

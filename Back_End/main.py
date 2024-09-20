@@ -30,7 +30,7 @@ def Login(login_form: OAuth2PasswordRequestForm = Depends(),db: Session = Depend
     if not data:
         raise HTTPException(status_code=401, detail="Incorrect username or password")
     token = create_token(data.email, data.role)
-    return UserReponse(ID=data.ID,email=data.email,name=data.name,role=data.role,access_token=token, token_type="Bearer")
+    return UserReponse(ID=data.ID,email=data.email,name=data.name,role=data.role,access_token=token, token_type="Bearer",RoomID=data.RoomID)
 
 #admin
 @app.get("/admin",response_model=List[UserSchema],
@@ -39,7 +39,7 @@ async def readAll(user:UserSchema = Depends(get_current_user),db: Session = Depe
     if(user.role != "admin"):
         raise HTTPException(status_code=403, detail="Not enough permissions")
     data = db.query(Admin).all()
-    return [UserSchema(ID=u.ID,email=u.email, name=u.name, role="admin") for u in data]
+    return [UserSchema(ID=u.ID,email=u.email, name=u.name, role="admin",RoomID=None) for u in data]
 
 #Create
 #public endpoint 
@@ -229,7 +229,7 @@ async def ReadAllUser(user:UserSchema = Depends(get_current_user),db: Session = 
     if(user.role != "user"):
         raise HTTPException(status_code=403, detail="Not enough permissions")
     data = db.query(User).all()
-    return [UserSchema(ID=u.ID,email=u.email, name=u.name, role="user") for u in data]
+    return [UserSchema(ID=u.ID,email=u.email, name=u.name, role="user",RoomID=None) for u in data]
 
 #Create
 #public endpoint 
@@ -632,34 +632,30 @@ async def ReadAllQuestionForTest(questionForTest:QuestionForTest,user:UserSchema
 
 
 #ดูข้อสอบที่ยังไม่ได้ทำ
-@app.post("/admin/questionuser/",response_model=List[QuestionsetbyUserReponse],
+@app.get("/user/questionuser/",response_model=List[QuestionsetbyUserReponse],
           tags=["Question"],summary="ดูข้อสอบที่Userยังไม่ได้ทำ",description="ต้องใช้ค่าIDRoom,ชุดข้อสอบ,IDUser")
-async def QuestionSetbyRoom(questRequest:QuestionsetbyUserRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+async def QuestionSetbyRoom(user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
-        if(user.role != "admin"):
+        if(user.role != "user"):
            raise HTTPException(status_code=403, detail="Not enough permissions") 
-        db_QuestSet = (db.query(Question.RoomID,Question.Lesson,Lesson.name_lesson,Question.Question_set,
+        db_user = db.query(User).filter(User.ID == user.ID).first()
+        db_room = db.query(Room).filter(Room.ID_Room == db_user.RoomID).first()
+        db_QuestSet = (db.query(Question.Lesson,Lesson.name_lesson,
                                 func.count(Question.ID_Question).label("TotalQuestion"))
                        .join(Lesson,Question.Lesson == Lesson.ID_Lesson)
-                       .filter(Question.RoomID == questRequest.RoomID,
-                               Question.Question_set == questRequest.Question_set)
                        .group_by(Question.Lesson).all())
         db_QuserionUser = (db.query(ScoreHistory.Lesson,Lesson.name_lesson)
                            .join(Lesson,Lesson.ID_Lesson == ScoreHistory.Lesson)
                            .join(User,User.ID == ScoreHistory.UserID)
-                           .filter(User.ID == questRequest.UserID,
-                                   User.RoomID == questRequest.RoomID,
-                                   Question.Question_set == questRequest.Question_set).all())
+                           .filter(User.ID == user.ID).all())
                 # หาคำถามที่ยังไม่ได้ทำ (โดยการเปรียบเทียบกับคำถามทั้งหมด)
         completed_lessons = {q.Lesson for q in db_QuserionUser}  # บทที่ทำแล้ว
         
         response = [
-            QuestionsetbyUserReponse(UserID = questRequest.UserID,
+            QuestionsetbyUserReponse(UserID = user.ID,
                 TotalQuestion=q.TotalQuestion,
-                RoomID=q.RoomID,
                 Lesson=q.name_lesson,
                 LessonID=q.Lesson,
-                Question_set=q.Question_set
             ) 
             for q in db_QuestSet if q.Lesson not in completed_lessons
         ]
