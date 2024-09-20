@@ -321,7 +321,7 @@ async def AddRoomByKey(key:RoomKey,user:UserSchema = Depends(get_current_user),d
     
 #exitUserRoom
 @app.delete("/user/DeleteUserRoom/{ID}",
-            tags=["Room"],summary="exit User Room")
+            tags=["Room"],summary="exit User Room ใช้ RoomID")
 async def ExitRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):  
     if(user.role != "user"):    
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -339,7 +339,7 @@ async def ExitRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Session
     
 #list user in Room
 @app.get("/admin/UserRoom/{ID}",response_model=List[UserSchema],
-         tags=["Room"],summary="list  user ทั้งหมดในRoomนั้น")
+         tags=["Room"],summary="list  user ทั้งหมดในRoomนั้น ใช้ RoomID")
 async def listUser(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)): 
     if(user.role != "admin"):    
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -474,7 +474,7 @@ async def CreateQuestion(question:QuestionSchema,user:UserSchema = Depends(get_c
     try:
         if(user.role != "admin"):
            raise HTTPException(status_code=403, detail="Not enough permissions")
-        db_question = Question(QuestionText=question.QuestionText,Lesson=question.Lesson_ID,Answer=question.Answer,RoomID=question.Room_ID,Question_set=question.Question_set)
+        db_question = Question(QuestionText=question.QuestionText,Lesson=question.Lesson_ID,Answer=question.Answer,Question_set=question.Question_set)
         db.add(db_question)
         db.commit()
         db.refresh(db_question)
@@ -546,9 +546,9 @@ async def DeleteQuestion(ID:int,user:UserSchema = Depends(get_current_user),db:S
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})  
 
-#ดูข้อสอบแบบปี
+#ดูข้อสอบแบบปี admin
 @app.post("/admin/questionset/",response_model=List[QuestionsetbyRoomReponse],
-        tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท,Room ออกเป็นlist เอาไว้ดู")
+        tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท,Room ออกเป็นlist เอาไว้ดูของ admin")
 async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
@@ -566,7 +566,30 @@ async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchem
     except Exception  as e:
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"}) 
-    
+
+#ดูข้อสอบแบบปี admin
+@app.post("/admin/questionset/",response_model=List[QuestionsetbyRoomReponse],
+        tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท,Room ออกเป็นlist เอาไว้ดูของ admin")
+async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+    try:
+        if(user.role != "user"):
+           raise HTTPException(status_code=403, detail="Not enough permissions") 
+        db_QuestSet = (db.query(Question.Lesson,Lesson.name_lesson,Question.Question_set,
+                                func.count(Question.ID_Question).label("TotalQuestion"),
+                                Lesson.year)
+                       .join(Lesson,Question.Lesson == Lesson.ID_Lesson)
+                       .join()
+                       .filter(Question.Question_set == questRequest.Question_set,
+                               Lesson.year == questRequest.year)
+                       .group_by(Question.Lesson).all())
+        return [QuestionsetbyRoomReponse(TotalQuestion=q.TotalQuestion,Year=q.year,Lesson=q.name_lesson,LessonID=q.Lesson,Question_set=q.Question_set) for q in db_QuestSet]
+    except HTTPException as e:
+        raise e
+    except Exception  as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"}) 
+
+
 #GETAllByRoom,lesson,set สำหรับgetข้อสอบของแต่ละroomที่แบ่งบทแบ่งชุด เอาไว้สอบ
 @app.post('/question',response_model=QuestionReponse,
           tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท เอาไว้ใช้สอบ")
