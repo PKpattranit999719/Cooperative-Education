@@ -60,7 +60,6 @@ class QuestionSchema(BaseModel):
     QuestionText: str
     Lesson_ID : int
     Answer : str
-    Room_ID: int
     Question_set: str
     List_Choice : List[ChoiceSchema]
 

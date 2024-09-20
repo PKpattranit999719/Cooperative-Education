@@ -505,7 +505,6 @@ async def UpdateQuestion(question:QuestionRequest,user:UserSchema = Depends(get_
         db_question.QuestionText = question.QuestionText
         db_question.Lesson = question.Lesson_ID
         db_question.Answer = question.Answer
-        db_question.RoomID = question.Room_ID
         db_question.Question_set = question.Question_set
         db.commit()
         #update choice
@@ -586,7 +585,7 @@ async def ReadAllQuestionForTest(questionForTest:QuestionForTest,user:UserSchema
                                               Question_set=q.Question_set,
                                               List_Choice=[ChoiceReponse(ID_Choice=c.ID,Choice_Text=c.Choice_Text,Is_Correct=c.Is_Correct)for c in db_choice]
                                               ))  
-        db_totalQuestion = db.query(func.count(Question.ID_Question).label('total')).filter(Question.RoomID == questionForTest.Room_ID,Question.Lesson == questionForTest.Lesson_ID,Question.Question_set == questionForTest.Question_Set).group_by(Question.Question_set,Question.Lesson,Question.RoomID).first()
+        db_totalQuestion = db.query(func.count(Question.ID_Question).label('total')).filter(Question.Lesson == questionForTest.Lesson_ID,Question.Question_set == questionForTest.Question_Set).group_by(Question.Question_set,Question.Lesson).first()
         return QuestionReponse(TotalQusetion=db_totalQuestion.total if db_totalQuestion else 0,List_Question=q_response)
     except HTTPException as e:
         raise e
