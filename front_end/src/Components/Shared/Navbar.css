@@ -1,0 +1,25 @@
+.navbar {
+    background: var(--primary);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 10; /* Ensure navbar stays on top */
+    height: var(--navbar-height);
+}
+
+.profile-logout {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+} 
+
+.profile-logout a {
+    color: #333; /* Dark grey for a light background */
+    transition: color 0.3s ease;
+}

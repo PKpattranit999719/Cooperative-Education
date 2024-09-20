@@ -1,9 +1,18 @@
 import React from "react";
-import { Link } from "react-router-dom";
+
+import { Link} from "react-router-dom"; // เพิ่ม useNavigate
+
 import "../../App.css";
+import "./Navbar.css"
 import { FaUser, FaSignOutAlt } from "react-icons/fa";
 
 function Navbar() {
+  const handleLogout = () => {
+    localStorage.removeItem('email');
+    localStorage.removeItem('name');
+    localStorage.removeItem('role');
+    localStorage.removeItem('token');
+  };
 
   return (
     <div className="app-layout">
@@ -13,7 +22,7 @@ function Navbar() {
           <Link to="/profile" aria-label="Profile">
             <FaUser size={20} />
           </Link>
-          <Link to="/logout" aria-label="Logout">
+          <Link to="/login" aria-label="Logout" onClick={handleLogout}>
             <FaSignOutAlt size={20} />
           </Link>
         </div>

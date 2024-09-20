@@ -1,30 +1,84 @@
-import React, { useState } from 'react';
-import './HomeForm.css';
-import { FaBookReader } from "react-icons/fa";
+import React, { useState, useEffect  } from 'react';
+import './HomePage.css';
+// import { FaBookReader } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
-import { PiStudent } from "react-icons/pi";
+// import { PiStudent } from "react-icons/pi";
 
-const HomeForm = () => {
-    const [classrooms, setClassrooms] = useState([]); // State for classrooms
-    const [students, setStudents] = useState([]); // State for students
-    const [className, setClassName] = useState('');
+const Home = () => {
+    const [showroom, setShowroom] = useState([]); // State for classrooms
     const [classRoom, setClassRoom] = useState('');
-    const [studentId, setStudentId] = useState('');
-    const [studentRoom, setStudentRoom] = useState('');
 
-    const handleCreateClass = (e) => {
+
+    useEffect(() => {
+        const fetchRoomData = async () => {
+          try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+              console.error("No token found");
+              return;
+            }
+            const response = await fetch("http://localhost:8000/admin/myRoom", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            });
+    
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const result = await response.json();
+            
+    
+            setShowroom(result.List_Room);
+    
+            
+          } catch (error) {
+            console.error("Fetch error:", error.message);
+          }
+        };
+    
+        fetchRoomData();
+      }, []);
+
+
+    const handleCreateClass = async (e) => {
+        const token = localStorage.getItem("token");
+        const formData = {
+            "Name_Room": classRoom
+          }
         e.preventDefault();
-        setClassrooms([...classrooms, { name: className, room: classRoom }]);
-        setClassName('');
-        setClassRoom('');
+        try {
+            const response = await fetch("http://localhost:8000/admin/room", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${token}`,
+              },
+              body: JSON.stringify(formData), 
+            });
+      
+            const result = await response.json();
+      
+            if (response.ok) {
+              
+              console.log("Login successful:", result);
+              window.location.reload();
+            } else {
+              
+              console.log("Login failed:", result.detail);
+            }
+          } catch (error) {
+            console.error("Error during login:", error);
+          }
+        
     };
 
-    const handleAddStudent = (e) => {
-        e.preventDefault();
-        setStudents([...students, { id: studentId, room: studentRoom }]);
-        setStudentId('');
-        setStudentRoom('');
-    };
+    
+    
+    
 
     return (
         <div className='container'>
@@ -32,20 +86,11 @@ const HomeForm = () => {
                 <div className='wrapper'>
                     <form onSubmit={handleCreateClass}>
                         <h2>Create Class</h2>
+                        
                         <div className='input-box'>
                             <input
                                 type="text"
-                                placeholder='Class Name'
-                                value={className}
-                                onChange={(e) => setClassName(e.target.value)}
-                                required
-                            />
-                            <FaBookReader className='icon' />
-                        </div>
-                        <div className='input-box'>
-                            <input
-                                type="text"
-                                placeholder='Room'
+                                placeholder='Name Room'
                                 value={classRoom}
                                 onChange={(e) => setClassRoom(e.target.value)}
                                 required
@@ -54,13 +99,13 @@ const HomeForm = () => {
                         </div>
 
                         <div className='button-group'>
-                            <button type="button" className="cancel-button" onClick={() => { setClassName(''); setClassRoom(''); }}>Cancel</button>
+                            <button type="button" className="cancel-button" onClick={() => {  setClassRoom(''); }}>Cancel</button>
                             <button type="submit" className="create-button">Create</button>
                         </div>
                     </form>
                 </div>
 
-                <div className='wrapper'>
+                {/* <div className='wrapper'>
                     <form onSubmit={handleAddStudent}>
                         <h2>Add Student</h2>
                         <div className='input-box'>
@@ -89,7 +134,7 @@ const HomeForm = () => {
                             <button type="submit" className="create-button">Add</button>
                         </div>
                     </form>
-                </div>
+                </div> */}
             </div>
 
             <div className='wrapper'>
@@ -102,16 +147,16 @@ const HomeForm = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {classrooms.map((classroom, index) => (
-                            <tr key={index}>
-                                <td>{classroom.name}</td>
-                                <td>{classroom.room}</td>
+                        {showroom.map((row) => (
+                            <tr key={row.Room_ID}>
+                                <td>{row.name}</td>
+                                <td>{row.key}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
 
-                <h2>Students</h2>
+                {/* <h2>Students</h2>
                 <table>
                     <thead>
                         <tr>
@@ -127,10 +172,10 @@ const HomeForm = () => {
                             </tr>
                         ))}
                     </tbody>
-                </table>
+                </table> */}
             </div>
         </div>
     );
 };
 
-export default HomeForm;
+export default Home;

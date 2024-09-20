@@ -1,3 +1,14 @@
+.register-body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background: lightblue;
+    background: url('../../../../Components/Assets/background.jpg') no-repeat;
+    background-size: cover;
+}
+
 .wrapper {
     width: 420px;
     background: transparent;
@@ -95,3 +106,23 @@
 .register-link p a:hover {
     text-decoration: underline;
 }
+
+.input-box {
+    /* เพิ่มการจัดสไตล์ที่ต้องการสำหรับ input-box */
+    width: 100%; 
+    display: flex;
+    justify-content: center;
+  }
+  
+  .radio-group {
+    display: flex;
+    gap: 70px;
+    align-items: center;
+  }
+  
+  .radio-group label {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
