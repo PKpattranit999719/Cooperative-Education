@@ -10,6 +10,7 @@ import Sidebar from './Sidebar';
 import PrivateRoute from '../Shared/PrivateRoutes';
 import '../../App.css';
 import History from '../Pages/AdminPage/History/History';
+import Welcome from '../Pages/Shared/Welcome/welcome';
 
 const AppLayout = () => (
     <>
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
         path: "/quiz",
         element: <PrivateRoute element={Quiz} />, 
       },
+      {
+        path: "/welcome",
+        element: <PrivateRoute element={Welcome} />, 
+      },
     ],
   },
   {
@@ -60,6 +65,10 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <Register />,
+      },
+      {
+        path: "/welcome",
+        element: <PrivateRoute element={Welcome} />, 
       },
     ],
   },
