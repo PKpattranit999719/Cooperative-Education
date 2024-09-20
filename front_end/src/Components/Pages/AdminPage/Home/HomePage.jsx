@@ -81,7 +81,7 @@ const Home = () => {
     
 
     return (
-        <div className='container'>
+        <div className='home-container'>
             <div className='form-group'>
                 <div className='wrapper'>
                     <form onSubmit={handleCreateClass}>
