@@ -25,48 +25,52 @@ const ResultPage = () => {
   const [fetchedQuestions, setFetchedQuestions] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
+  const [results, setResults] = useState([]);
 
-  // Fetch the API when the component mounts
   useEffect(() => {
     if (location.state) {
       const { lessonID, questionSet } = location.state;
-
+  
       // API Call
       fetchQuestions(lessonID, questionSet);
     } else {
       console.error("No lessonID or questionSet provided");
     }
   }, [location.state]);
-
+  
   const fetchQuestions = async (lessonID, questionSet) => {
     try {
       const token = localStorage.getItem("token");
+      const payload = {
+        Question_Set: questionSet,
+        Lesson_ID: lessonID,
+      };
+      console.log(payload);
       if (!token) {
         console.error("No token found");
         return;
       }
+      
       const response = await fetch("http://localhost:8000/question", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          Question_Set: questionSet,
-          Lesson_ID: lessonID,
-        }),
+        body: JSON.stringify(payload), // ส่ง payload ที่นี่
       });
-
+  
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-
+  
       const result = await response.json();
       setFetchedQuestions(result.List_Question); // Assuming the API returns a list of questions
     } catch (error) {
       console.error("Error fetching questions:", error);
     }
   };
+  
 
   const handleAnswerChange = (index, value) => {
     const updatedAnswers = [...answers];
@@ -76,8 +80,21 @@ const ResultPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(`Form submitted with answers: ${JSON.stringify(answers)}`);
-    console.log("Submitted Answers:", answers);
+    checkAnswers(); // ตรวจสอบคำตอบเมื่อส่งฟอร์ม
+  };
+
+  const checkAnswers = () => {
+    const newResults = fetchedQuestions.map((question, index) => {
+      const selectedAnswer = answers[index];
+      const correctChoice = question.List_Choice.find(choice => choice.Is_Correct);
+      return {
+        questionText: question.QuestionText,
+        selectedAnswer,
+        isCorrect: selectedAnswer === correctChoice.Choice_Text,
+        correctAnswer: correctChoice.Choice_Text
+      };
+    });
+    setResults(newResults);
   };
 
   return (
@@ -85,9 +102,7 @@ const ResultPage = () => {
       {fetchedQuestions.length > 0 ? (
         fetchedQuestions.map((question, index) => (
           <div key={index} className="question-card">
-            <h2>
-              ข้อที่ {index + 1} 
-            </h2>
+            <h2>ข้อที่ {index + 1}</h2>
             <label>{question.QuestionText}</label>
             <div className="options">
               {question.List_Choice.map((choice, optionIndex) => (
@@ -97,11 +112,9 @@ const ResultPage = () => {
                     name={`question-${index}`}
                     value={choice.Choice_Text}
                     checked={answers[index] === choice.Choice_Text}
-                    onChange={() =>
-                      handleAnswerChange(index, choice.Choice_Text)
-                    }
+                    onChange={() => handleAnswerChange(index, choice.Choice_Text)}
                   />
-                  {choice.Choice_Text}
+                  {choice.Choice_Text} {choice.Is_Correct && <span>✅</span>}
                 </label>
               ))}
             </div>
@@ -110,9 +123,22 @@ const ResultPage = () => {
       ) : (
         <p>Loading questions...</p>
       )}
-      
+
+      {results.length > 0 && (
+        <div className="results">
+          <h2>Results:</h2>
+          {results.map((result, index) => (
+            <div key={index} className={`result ${result.isCorrect ? 'correct' : 'incorrect'}`}>
+              <p>คำถาม: {result.questionText}</p>
+              <p>คำตอบที่เลือก: {result.selectedAnswer}</p>
+              <p>{result.isCorrect ? "ถูกต้อง!" : `ผิด! คำตอบที่ถูกต้องคือ: ${result.correctAnswer}`}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </form>
   );
 };
+
 
 export default ResultPage;

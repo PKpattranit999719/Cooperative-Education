@@ -1,10 +1,11 @@
+import React, { useState, useEffect } from "react";
 import { Outlet, createBrowserRouter } from "react-router-dom";
-import Home from "../Pages/AdminPage/Home/HomePage"; 
+import Home from "../Pages/AdminPage/Home/HomePage";
 import Lesson from "../Pages/AdminPage/Lesson/LessonPage";
 import Class from "../Pages/AdminPage/Class/ClassPage";
 import Result from "../Pages/AdminPage/Result/ResultPage";
 
-//shared
+// shared
 import Login from "../Pages/Shared/Login/LoginPage";
 import Register from "../Pages/Shared/Register/RegisterPage";
 import Navbar from "./Navbar";
@@ -18,7 +19,7 @@ import Welcome from "../Pages/Shared/Welcome/WelcomePage";
 import QuizPage from "../Pages/StudentPage/Quiz/QuizPage";
 import HomeStudent from "../Pages/StudentPage/Home/HomeStudent";
 import LessonStudent from "../Pages/StudentPage/Lesson/StudentLesson";
-import Sidebarstudent from '../Pages/StudentPage/Sidebarstudent/Sidestu'; 
+import Sidebarstudent from "../Pages/StudentPage/Sidebarstudent/Sidestu";
 
 // Admin Layout
 const AdminLayout = () => (
@@ -50,16 +51,28 @@ const UserLayout = () => (
   </>
 );
 
-// Check role function
-const checkUserRole = () => {
-  const role = localStorage.getItem("role");
+// RoleChecker component
+const RoleChecker = () => {
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("role");
+    setRole(storedRole);
+  }, []);
+
+  // If role is not determined yet, show loading or a placeholder
+  if (!role) {
+    return <div>Loading...</div>;
+  }
+
+  // Render appropriate layout based on role
   return role === "admin" ? <AdminLayout /> : <UserLayout />;
 };
 
 // Define the router
 const router = createBrowserRouter([
   {
-    element: checkUserRole(), // Choose layout based on role
+    element: <RoleChecker />, // Use RoleChecker to determine layout
     children: [
       {
         path: "/history",
