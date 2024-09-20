@@ -122,6 +122,15 @@ async def Meanscore(meanrequest:MeanScoreRequest,user:UserSchema = Depends(get_c
                                ScoreHistory.Lesson == meanrequest.LessonID)
                        .group_by(ScoreHistory.Question_set)
                        .all())
+                # ตรวจสอบว่ามีข้อมูลในผลลัพธ์หรือไม่
+        if not db_ScoreHis:
+            raise HTTPException(status_code=404, detail="No score history found for the given RoomID and LessonID")
+
+        for Mean in db_ScoreHis:
+            # ตรวจสอบว่าจำนวนคำถามไม่เป็นศูนย์เพื่อป้องกันหารด้วยศูนย์
+            if Mean.TotalQuestion == 0:
+                raise HTTPException(status_code=400, detail="Total questions cannot be zero")
+
         for Mean in db_ScoreHis:
             MeanSet.append(MeanScoreToSet(QuestionSet=Mean.Question_set,MeanScore=(Mean.TotalScore/Mean.TotalQuestion)*100))
             Totalset = Totalset + 1
@@ -142,13 +151,16 @@ async def GraphQuestion(qusetreqquest: GraphQuestionRequest, user: UserSchema = 
     try:
         # Query จำนวนการตอบถูก
         db_UserAnsTrue = (db.query(Question.ID_Question, Question.Lesson, Lesson.name_lesson,
-                                   Question.RoomID, Question.Question_set, Question.QuestionText,
-                                   Question.Answer, func.count(UserAns.ID).label('CountTrue'))
+                                    Question.Question_set, Question.QuestionText,Room.ID_Room,
+                                    Question.Answer, func.count(UserAns.ID).label('CountTrue'))
                           .join(Lesson, Question.Lesson == Lesson.ID_Lesson)
                           .join(Choice, Question.ID_Question == Choice.ID_Question)
                           .join(UserAns, Choice.ID == UserAns.ID_Choice)
+                          .join(ScoreHistory, UserAns.ID_SocreHistory == ScoreHistory.ID_ScoreHistory)
+                          .join(User,User.ID == ScoreHistory.ID_ScoreHistory)
+                          .join(Room,Room.ID_Room == User.RoomID)
                           .filter(Question.Lesson == qusetreqquest.LessonID,
-                                  Question.RoomID == qusetreqquest.RoomID,
+                                  Room.ID_Room == qusetreqquest.RoomID,
                                   Question.Question_set == qusetreqquest.Question_set,
                                   Choice.Is_Correct == True)
                           .group_by(Question.ID_Question)
@@ -156,13 +168,16 @@ async def GraphQuestion(qusetreqquest: GraphQuestionRequest, user: UserSchema = 
 
         # Query จำนวนการตอบผิด
         db_UserAnsFalse = (db.query(Question.ID_Question, Question.Lesson, Lesson.name_lesson,
-                                    Question.RoomID, Question.Question_set, Question.QuestionText,
+                                    Room.ID_Room, Question.Question_set, Question.QuestionText,
                                     Question.Answer, func.count(UserAns.ID).label('CountFalse'))
                            .join(Lesson, Question.Lesson == Lesson.ID_Lesson)
                            .join(Choice, Question.ID_Question == Choice.ID_Question)
                            .join(UserAns, Choice.ID == UserAns.ID_Choice)
+                           .join(ScoreHistory, UserAns.ID_SocreHistory == ScoreHistory.ID_ScoreHistory)
+                           .join(User,User.ID == ScoreHistory.ID_ScoreHistory)
+                           .join(Room,Room.ID_Room == User.RoomID)
                            .filter(Question.Lesson == qusetreqquest.LessonID,
-                                   Question.RoomID == qusetreqquest.RoomID,
+                                   Room.ID_Room == qusetreqquest.RoomID,
                                    Question.Question_set == qusetreqquest.Question_set,
                                    Choice.Is_Correct == False)
                            .group_by(Question.ID_Question)
@@ -416,7 +431,7 @@ async def CreateLesson(lesson:LesssonCerate,user:UserSchema = Depends(get_curren
 #น่าจะระเบิด map ไม่ตรง
 #GET 
 @app.get('/lesson/{ID}',response_model=List[LessonSchema],
-         tags=["Lesson"],summary="lsit Lesson ทั้งหมด")
+         tags=["Lesson"],summary="list Lesson ทั้งหมด")
 async def ReadAllLesson(ID:int,db:Session = Depends(get_db)):
     try:
         return db.query(Lesson).filter(Lesson.year == ID).all()
@@ -567,20 +582,22 @@ async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchem
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"}) 
 
-#ดูข้อสอบแบบปี admin
-@app.post("/admin/questionset/",response_model=List[QuestionsetbyRoomReponse],
-        tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท,Room ออกเป็นlist เอาไว้ดูของ admin")
-async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+#ดูข้อสอบแบบปี user
+@app.post("/user/questionset/{ID}",response_model=List[QuestionsetbyRoomReponse],
+        tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท,Room ออกเป็นlist เอาไว้ดูของ user ใช้ID ของ Question_set")
+async def QuestionSetbyRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "user"):
-           raise HTTPException(status_code=403, detail="Not enough permissions") 
+           raise HTTPException(status_code=403, detail="Not enough permissions")
+        db_room = (db.query(Room.year,User)
+                    .join(Room,Room.ID_Room == User.RoomID)
+                    .filter(User.ID == user.ID).first())
         db_QuestSet = (db.query(Question.Lesson,Lesson.name_lesson,Question.Question_set,
                                 func.count(Question.ID_Question).label("TotalQuestion"),
                                 Lesson.year)
                        .join(Lesson,Question.Lesson == Lesson.ID_Lesson)
-                       .join()
-                       .filter(Question.Question_set == questRequest.Question_set,
-                               Lesson.year == questRequest.year)
+                       .filter(Question.Question_set == ID,
+                               Lesson.year == db_room.year)
                        .group_by(Question.Lesson).all())
         return [QuestionsetbyRoomReponse(TotalQuestion=q.TotalQuestion,Year=q.year,Lesson=q.name_lesson,LessonID=q.Lesson,Question_set=q.Question_set) for q in db_QuestSet]
     except HTTPException as e:
@@ -595,8 +612,6 @@ async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchem
           tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท เอาไว้ใช้สอบ")
 async def ReadAllQuestionForTest(questionForTest:QuestionForTest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
-        if(user.role != "admin"):
-           raise HTTPException(status_code=403, detail="Not enough permissions")
         db_question = db.query(Question).filter(Question.Lesson == questionForTest.Lesson_ID,Question.Question_set == questionForTest.Question_Set).all()
         q_response = []
         for q in db_question:
