@@ -11,6 +11,7 @@ import PrivateRoute from '../Shared/PrivateRoutes';
 import '../../App.css';
 import History from '../Pages/AdminPage/History/HistoryPage';
 import Welcome from '../Pages/Shared/Welcome/WelcomePage';
+import Quizestudent from '../Pages/StudentPage/QuizPage';
 
 const AppLayout = () => (
     <>
@@ -65,6 +66,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Welcome />, 
+      },
+      {
+        path: "/studentquiz",
+        element: <Quizestudent />, 
       },
     ],
   },
