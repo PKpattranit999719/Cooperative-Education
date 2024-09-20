@@ -100,7 +100,8 @@ const Lesson = () => {
   };
 
   return (
-    <div className="container">
+    <div className="lesson-container">
+     <div className='form-group'>
       <h1>Lesson</h1>
 
       {/* ปุ่มสำหรับเลือกห้องเรียน */}
@@ -150,6 +151,7 @@ const Lesson = () => {
             </button>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );

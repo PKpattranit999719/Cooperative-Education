@@ -1,4 +1,4 @@
-.container {
+.home-container {
     display: flex;
     flex-direction: column; /* Vertical arrangement for container */
     gap: 40px; /* Space between forms and table sections */
