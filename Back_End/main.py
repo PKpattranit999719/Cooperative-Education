@@ -415,11 +415,11 @@ async def CreateLesson(lesson:LesssonCerate,user:UserSchema = Depends(get_curren
 
 #น่าจะระเบิด map ไม่ตรง
 #GET 
-@app.get('/lesson',response_model=List[LessonSchema],
+@app.get('/lesson/{ID}',response_model=List[LessonSchema],
          tags=["Lesson"],summary="lsit Lesson ทั้งหมด")
-async def ReadAllLesson(db:Session = Depends(get_db)):
+async def ReadAllLesson(ID:int,db:Session = Depends(get_db)):
     try:
-        return db.query(Lesson).all()
+        return db.query(Lesson).filter(Lesson.year == ID).all()
     except HTTPException as e:
         raise e
     except Exception as e:
@@ -547,20 +547,21 @@ async def DeleteQuestion(ID:int,user:UserSchema = Depends(get_current_user),db:S
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})  
 
-#ดูข้อสอบในRoom
+#ดูข้อสอบแบบปี
 @app.post("/admin/questionset/",response_model=List[QuestionsetbyRoomReponse],
         tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท,Room ออกเป็นlist เอาไว้ดู")
 async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "admin"):
            raise HTTPException(status_code=403, detail="Not enough permissions") 
-        db_QuestSet = (db.query(Question.RoomID,Question.Lesson,Lesson.name_lesson,Question.Question_set,
-                                func.count(Question.ID_Question).label("TotalQuestion"))
+        db_QuestSet = (db.query(Question.Lesson,Lesson.name_lesson,Question.Question_set,
+                                func.count(Question.ID_Question).label("TotalQuestion"),
+                                Lesson.year)
                        .join(Lesson,Question.Lesson == Lesson.ID_Lesson)
-                       .filter(Question.RoomID == questRequest.RoomID,
-                               Question.Question_set == questRequest.Question_set)
+                       .filter(Question.Question_set == questRequest.Question_set,
+                               Lesson.year == questRequest.year)
                        .group_by(Question.Lesson).all())
-        return [QuestionsetbyRoomReponse(TotalQuestion=q.TotalQuestion,RoomID=q.RoomID,Lesson=q.name_lesson,LessonID=q.Lesson,Question_set=q.Question_set) for q in db_QuestSet]
+        return [QuestionsetbyRoomReponse(TotalQuestion=q.TotalQuestion,Year=q.year,Lesson=q.name_lesson,LessonID=q.Lesson,Question_set=q.Question_set) for q in db_QuestSet]
     except HTTPException as e:
         raise e
     except Exception  as e:
@@ -574,7 +575,7 @@ async def ReadAllQuestionForTest(questionForTest:QuestionForTest,user:UserSchema
     try:
         if(user.role != "admin"):
            raise HTTPException(status_code=403, detail="Not enough permissions")
-        db_question = db.query(Question).filter(Question.RoomID == questionForTest.Room_ID,Question.Lesson == questionForTest.Lesson_ID,Question.Question_set == questionForTest.Question_Set).all()
+        db_question = db.query(Question).filter(Question.Lesson == questionForTest.Lesson_ID,Question.Question_set == questionForTest.Question_Set).all()
         q_response = []
         for q in db_question:
             db_choice = db.query(Choice).filter(Choice.ID_Question == q.ID_Question).all()
@@ -582,7 +583,6 @@ async def ReadAllQuestionForTest(questionForTest:QuestionForTest,user:UserSchema
                                               QuestionText=q.QuestionText,
                                               ID_lesson=q.Lesson,
                                               Answer=q.Answer,
-                                              Room_ID=q.RoomID,
                                               Question_set=q.Question_set,
                                               List_Choice=[ChoiceReponse(ID_Choice=c.ID,Choice_Text=c.Choice_Text,Is_Correct=c.Is_Correct)for c in db_choice]
                                               ))  

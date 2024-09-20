@@ -34,15 +34,16 @@ class myRoom(BaseModel):
 class LessonSchema(BaseModel):
     ID_Lesson:int = Field(alias="ID_Lesson")
     Name_Lesson:str = Field(alias="name_lesson")
+    year:int = Field(alias="year")
 
 class LesssonCerate(BaseModel):
     Name_Lsesson:str
 
 #เอาไว้รับจากfont ขอข้อสอบ
 class QuestionForTest(BaseModel):
-    Room_ID:int
     Question_Set:int
     Lesson_ID:int
+
 
 
 class ChoiceSchema(BaseModel):
@@ -77,7 +78,6 @@ class QuestionSet(BaseModel):
     QuestionText: str
     ID_lesson: int
     Answer : str
-    Room_ID: int
     Question_set: int
     List_Choice : List[ChoiceReponse]
 
@@ -171,12 +171,12 @@ class GraphQuestionReponse(BaseModel):
     Question:List[QuestionTureFlase]
 
 class QuestionsetbyRoomRequest(BaseModel):
-    RoomID:int
     Question_set:int
+    year:int
 
 
 class QuestionsetbyRoomReponse(BaseModel):
-    RoomID:int
+    Year:int
     LessonID:int
     Lesson:str
     Question_set:int

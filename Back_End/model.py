@@ -28,7 +28,7 @@ class Room(Base):
 class Lesson(Base):
     __tablename__ = 'lesson'
     ID_Lesson  = Column(Integer,primary_key=True,index=True)
-    yesr = Column(Integer)
+    year = Column(Integer)
     name_lesson = Column(Text)
 
 class Question(Base):
