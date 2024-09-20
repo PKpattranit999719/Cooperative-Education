@@ -108,13 +108,11 @@ const Lesson = () => {
       <div className="button-group">
         {showroom.map((row) => (
           <div key={row.Room_ID}>
-            <button
-              className="bth"
-              value={row.Room_ID}
-              onClick={() => handleRoomClick(row.Room_ID)}
-            >
-              {row.name}
-            </button>
+            <div className="button-group">
+        <button className="bth" value={1}>ประถมศึกษาปีที่ 1</button>
+        <button className="bth" value={2}>ประถมศึกษาปีที่ 2</button>
+        <button className="bth" value={3}>ประถมศึกษาปีที่ 3</button>
+      </div>
           </div>
         ))}
       </div>
