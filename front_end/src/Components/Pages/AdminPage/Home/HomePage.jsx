@@ -1,111 +1,144 @@
-import React, { useState, useEffect  } from 'react';
-import './HomePage.css';
+import React, { useState, useEffect } from "react";
+import "./HomePage.css";
 // import { FaBookReader } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
 // import { PiStudent } from "react-icons/pi";
 
 const Home = () => {
-    const [showroom, setShowroom] = useState([]); // State for classrooms
-    const [classRoom, setClassRoom] = useState('');
+  const [showroom, setShowroom] = useState([]); // State for classrooms
+  const [classRoom, setClassRoom] = useState("");
+  const [year, setYear] = useState("");
 
-
-    useEffect(() => {
-        const fetchRoomData = async () => {
-          try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-              console.error("No token found");
-              return;
-            }
-            const response = await fetch("http://localhost:8000/admin/myRoom", {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            });
-    
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-    
-            const result = await response.json();
-            
-    
-            setShowroom(result.List_Room);
-    
-            
-          } catch (error) {
-            console.error("Fetch error:", error.message);
-          }
-        };
-    
-        fetchRoomData();
-      }, []);
-
-
-    const handleCreateClass = async (e) => {
+  useEffect(() => {
+    const fetchRoomData = async () => {
+      try {
         const token = localStorage.getItem("token");
-        const formData = {
-            "Name_Room": classRoom
-          }
-        e.preventDefault();
-        try {
-            const response = await fetch("http://localhost:8000/admin/room", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${token}`,
-              },
-              body: JSON.stringify(formData), 
-            });
-      
-            const result = await response.json();
-      
-            if (response.ok) {
-              
-              console.log("Login successful:", result);
-              window.location.reload();
-            } else {
-              
-              console.log("Login failed:", result.detail);
-            }
-          } catch (error) {
-            console.error("Error during login:", error);
-          }
-        
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+        const response = await fetch("http://localhost:8000/admin/myRoom", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        setShowroom(result.List_Room);
+      } catch (error) {
+        console.error("Fetch error:", error.message);
+      }
     };
 
-    
-    
-    
+    fetchRoomData();
+  }, []);
 
-    return (
-        <div className='home-container'>
-            <div className='form-group'>
-                <div className='wrapper'>
-                    <form onSubmit={handleCreateClass}>
-                        <h2>Create Class</h2>
-                        
-                        <div className='input-box'>
-                            <input
-                                type="text"
-                                placeholder='Name Room'
-                                value={classRoom}
-                                onChange={(e) => setClassRoom(e.target.value)}
-                                required
-                            />
-                            <SiGoogleclassroom className='icon' />
-                        </div>
+  const handleCreateClass = async (e) => {
+    const token = localStorage.getItem("token");
+    const formData = {
+      Name_Room: classRoom,
+    };
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:8000/admin/room", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
 
-                        <div className='button-group'>
-                            <button type="button" className="cancel-button" onClick={() => {  setClassRoom(''); }}>Cancel</button>
-                            <button type="submit" className="create-button">Create</button>
-                        </div>
-                    </form>
-                </div>
+      const result = await response.json();
 
-                {/* <div className='wrapper'>
+      if (response.ok) {
+        console.log("Login successful:", result);
+        window.location.reload();
+      } else {
+        console.log("Login failed:", result.detail);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
+
+  return (
+    <div className="home-container">
+      <div className="form-group">
+        <div className="wrapper">
+          <form onSubmit={handleCreateClass}>
+            <h2>Create Class</h2>
+
+            <div className="input-box">
+              <input
+                type="text"
+                placeholder="Name Room"
+                value={classRoom}
+                onChange={(e) => setClassRoom(e.target.value)}
+                required
+              />
+              <SiGoogleclassroom className="icon" />
+            </div>
+            <div className="input-box">
+              <div className="radio-group">
+                <label>
+                  <input
+                    type="radio"
+                    name="year"
+                    value="1"
+                    onChange={(e) => setYear(e.target.value)}
+                    required
+                  />
+                  ป.1
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="year"
+                    value="2"
+                    onChange={(e) => setYear(e.target.value)}
+                    required
+                  />
+                  ป.2
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="year"
+                    value="3"
+                    onChange={(e) => setYear(e.target.value)}
+                    required
+                  />
+                  ป.3
+                </label>
+              </div>
+            </div>
+
+            <div className="button-group">
+              <button
+                type="button"
+                className="cancel-button"
+                onClick={() => {
+                  setClassRoom("");
+                }}
+              >
+                Cancel
+              </button>
+              <button type="submit" className="create-button">
+                Create
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* <div className='wrapper'>
                     <form onSubmit={handleAddStudent}>
                         <h2>Add Student</h2>
                         <div className='input-box'>
@@ -135,28 +168,30 @@ const Home = () => {
                         </div>
                     </form>
                 </div> */}
-            </div>
+      </div>
 
-            <div className='wrapper'>
-                <h2>Classrooms</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Class Name</th>
-                            <th>Room</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {showroom.map((row) => (
-                            <tr key={row.Room_ID}>
-                                <td>{row.name}</td>
-                                <td>{row.key}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+      <div className="wrapper">
+        <h2>Classrooms</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Class Name</th>
+              <th>Keyroom</th>
+              <th>ชั้นปีที่</th>
+            </tr>
+          </thead>
+          <tbody>
+            {showroom.map((row) => (
+              <tr key={row.Room_ID}>
+                <td>{row.name}</td>
+                <td>{row.key}</td>
+                <td>{row.year}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-                {/* <h2>Students</h2>
+        {/* <h2>Students</h2>
                 <table>
                     <thead>
                         <tr>
@@ -173,9 +208,9 @@ const Home = () => {
                         ))}
                     </tbody>
                 </table> */}
-            </div>
-        </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default Home;
