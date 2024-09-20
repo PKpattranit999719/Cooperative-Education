@@ -3,7 +3,7 @@ import "./HomeStudent.css";
 import { SiGoogleclassroom } from "react-icons/si";
 
 const Home = () => {
-  const [showroom, setShowroom] = useState([]); // State for classrooms
+  const [showroom, setShowroom] = useState(''); // State for classrooms
   const [classRoom, setClassRoom] = useState("");
   const [hasRoomKey, setHasRoomKey] = useState(false); // State to check room in localStorage
 
@@ -22,7 +22,7 @@ const Home = () => {
           console.error("No token found");
           return;
         }
-        const response = await fetch("http://localhost:8000/admin/myRoom", {
+        const response = await fetch("http://localhost:8000/user/roomuser", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -35,7 +35,8 @@ const Home = () => {
         }
 
         const result = await response.json();
-        setShowroom(result.List_Room);
+        console.log(result);
+        setShowroom(result);
       } catch (error) {
         console.error("Fetch error:", error.message);
       }
@@ -121,7 +122,8 @@ const Home = () => {
           ) : (
             <div>
               <h2>Welcome to your Classroom</h2>
-              <h3> {localStorage.getItem('room')}</h3>
+              <h3>📚ห้องเรียน:{showroom.name}</h3>
+              <h3>👨‍🏫ชั้นประถมศึกษาปีที่:{showroom.Year}</h3>
             </div>
           )}
         </div>
