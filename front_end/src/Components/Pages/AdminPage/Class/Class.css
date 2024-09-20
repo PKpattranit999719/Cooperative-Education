@@ -1,4 +1,161 @@
+/* Global Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Container for Classroom Tabs and Content */
+.class-container {
+  width: 90%;
+  max-width: 1200px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 50px;
+}
+
+/* Classroom Tabs */
 .classroom-tabs {
-    display: flex;
-    margin-bottom: 20px;
-  }
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.tab-link {
+  position: relative;
+}
+
+.tab-link button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.tab-link button:hover {
+  background-color: #0056b3;
+}
+
+.tab-link button.active {
+  background-color: #0056b3;
+}
+
+.tab-link .dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 5px;
+  width: 100%;
+  z-index: 1;
+}
+
+.tab-link .dropdown button {
+  width: 100%;
+  padding: 10px;
+  background-color: #fff;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.tab-link .dropdown button:hover {
+  background-color: #f1f1f1;
+}
+
+/* Classroom Content */
+.tab-content {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.tab-content h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.tab-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.tab-content table th,
+.tab-content table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.tab-content table th {
+  background-color: #007bff;
+  color: white;
+  text-align: center;
+}
+
+.tab-content table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.tab-content table tr:hover {
+  background-color: #e9ecef;
+}
+
+.tab-content table td button {
+  background-color: #28a745;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tab-content table td button:hover {
+  background-color: #218838;
+}
+
+.tab-link .dropdown button {
+  width: 100%;
+  padding: 10px;
+  background-color: #fff;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  color: black; /* เพิ่มบรรทัดนี้เพื่อเปลี่ยนสีตัวอักษรเป็นสีดำ */
+}
+
+.tab-link .dropdown button:hover {
+  background-color: #f1f1f1;
+}
+
+.tab-link .dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 5px;
+  width: 100%;
+  z-index: 1000; /* เพิ่ม z-index เพื่อให้ dropdown อยู่บนสุด */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* เพิ่มเงาเพื่อความสวยงาม */
+}
