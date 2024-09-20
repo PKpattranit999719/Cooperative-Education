@@ -12,6 +12,7 @@ import '../../App.css';
 import History from '../Pages/AdminPage/History/HistoryPage';
 import Welcome from '../Pages/Shared/Welcome/WelcomePage';
 import QuizPage from '../Pages/StudentPage/Quiz/QuizPage';
+import HomeStudent from '../Pages/StudentPage/Home/HomeStudent'
 
 const AppLayout = () => (
     <>
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
       {
         path: "/quiz",
         element: <QuizPage />, 
+      },
+      {
+        path: "/homestudent",
+        element: <HomeStudent />, 
       },
     ],
   },
