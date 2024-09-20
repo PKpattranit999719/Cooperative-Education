@@ -22,11 +22,13 @@ class Room(Base):
     ID_Room = Column(Integer,primary_key=True,index=True)
     Owner_admin = Column(Integer,ForeignKey('admin.ID'))
     name = Column(String)
+    year = Column(Integer)
     key = Column(String(4))
 
 class Lesson(Base):
     __tablename__ = 'lesson'
     ID_Lesson  = Column(Integer,primary_key=True,index=True)
+    yesr = Column(Integer)
     name_lesson = Column(Text)
 
 class Question(Base):
@@ -35,7 +37,6 @@ class Question(Base):
     QuestionText = Column(String)
     Lesson = Column(Integer,ForeignKey("lesson.ID_Lesson"))
     Answer = Column(Text)
-    RoomID = Column(Integer,ForeignKey("room.ID_Room"))
     Question_set = Column(Integer)
 
 class ScoreHistory(Base):
