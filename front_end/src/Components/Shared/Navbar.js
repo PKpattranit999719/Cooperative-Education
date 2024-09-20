@@ -12,6 +12,7 @@ function Navbar() {
     localStorage.removeItem('name');
     localStorage.removeItem('role');
     localStorage.removeItem('token');
+    localStorage.removeItem('id');
   };
 
   return (

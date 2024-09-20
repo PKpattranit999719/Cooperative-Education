@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import "./QuizPage.css";
 
-const QuizPage = () => {
+const StudentQuize = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [questions, setQuestions] = useState([]);
@@ -14,15 +14,8 @@ const QuizPage = () => {
   const [questionSet, setQuestionSet] = useState(null);
   const [roomID, setRoomID] = useState(null);
 
-  useEffect(() => {
-    if (location.state) {
-      const { lessonID, questionSet, roomID } = location.state;
-      setLessonID(lessonID);
-      setQuestionSet(questionSet);
-      setRoomID(roomID);
-      fetchQuestions(lessonID, questionSet, roomID);
-    }
-  }, [location.state]);
+
+  
 
   const fetchQuestions = async (lessonID, questionSet) => {
     const token = localStorage.getItem("token");
@@ -91,7 +84,7 @@ const QuizPage = () => {
       Score: score,
       total_question: questions.length,
       Date: new Date().toISOString().slice(0, 10), // ใช้วันที่ปัจจุบันในรูปแบบ yyyy-mm-dd
-      UserID: localStorage.getItem("email"), // คุณสามารถใช้ข้อมูล UserID จริงได้ (ตรงนี้ควรดึงจาก localStorage หรือ state)
+      UserID: localStorage.getItem("id"), // คุณสามารถใช้ข้อมูล UserID จริงได้ (ตรงนี้ควรดึงจาก localStorage หรือ state)
       Lesson_ID: lessonID,
       Question_set: questionSet,
       UserAns_List: userAnswers,
@@ -123,6 +116,8 @@ const QuizPage = () => {
 
   useEffect(() => {
     fetchQuestions(2, 2);
+    setLessonID(2);
+    setQuestionSet(2);
   }, []);
 
   return (
@@ -179,4 +174,4 @@ const QuizPage = () => {
   );
 };
 
-export default QuizPage;
+export default StudentQuize;
