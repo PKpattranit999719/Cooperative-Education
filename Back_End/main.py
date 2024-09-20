@@ -769,3 +769,69 @@ async def ScoreBylesson(ID:int,user:UserSchema = Depends(get_current_user),db:Se
     except Exception  as e:
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})  
+    
+@app.post("/admin/ScoreUserAns",response_model=ScoreUserAns,
+          tags=["DashBoard"],description="ดูว่าchoceนี้คนตอบกี่คน แบ่งตามบท,ชุด,ห้อง")
+async def ScoreUserAns_Fun(request:ScoreUserRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+    try:
+        # Query for questions, choices, and their respective answer counts filtered by RoomID
+        db_questions = (db.query(
+                            Question.ID_Question, 
+                            Question.QuestionText, 
+                            Question.Lesson, 
+                            Question.Answer,
+                            Question.Question_set,
+                            Lesson.name_lesson,
+                            Choice.ID.label("ID_Choice"), 
+                            Choice.Choice_Text, 
+                            Choice.Is_Correct,
+                            func.count(UserAns.ID).label("Total_Ans")  # Count how many users answered the choice
+                        )
+                        .join(Lesson, Lesson.ID_Lesson == Question.Lesson)
+                        .join(Choice, Choice.ID_Question == Question.ID_Question)
+                        .join(UserAns, UserAns.ID_Choice == Choice.ID)
+                        .join(ScoreHistory, ScoreHistory.ID_ScoreHistory == UserAns.ID_SocreHistory)  # Join to ScoreHistory for UserID
+                        .join(User, User.ID == ScoreHistory.UserID)  # Join to User to filter by RoomID
+                        .filter(
+                            User.RoomID == request.RoomID,  # Filter by RoomID from the User table
+                            Question.Lesson == request.LessonID,
+                            Question.Question_set == request.Question_set
+                        )
+                        .group_by(Question.ID_Question, Choice.ID)
+                        .all())
+
+        # Transform the raw query result into the desired response structure
+        questions = {}
+        for row in db_questions:
+            question_id = row.ID_Question
+
+            if question_id not in questions:
+                questions[question_id] = QuestionSetforGraphScoreUserAns(
+                    ID_Question=question_id,
+                    QuestionText=row.QuestionText,
+                    ID_lesson=row.Lesson,
+                    Answer=row.Answer,
+                    Question_set=row.Question_set,
+                    List_Choice=[]
+                )
+
+            # Append choices to the respective question
+            questions[question_id].List_Choice.append(ChoiceReponseforGraphScoreUserAns(
+                ID_Choice=row.ID_Choice,
+                Choice_Text=row.Choice_Text,
+                Is_Correct=row.Is_Correct,
+                Total_Ans=row.Total_Ans or 0  # Fallback to 0 if no answers
+            ))
+
+        # Prepare the final response
+        score_user_ans = ScoreUserAns(Room_ID=request.RoomID  # RoomID comes from the request
+            ,Lesson_ID=request.LessonID,
+            Lesson=db_questions[0].name_lesson if db_questions else "N/A",
+            Question_set=request.Question_set,
+            Question=list(questions.values())
+        )
+
+        return score_user_ans
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

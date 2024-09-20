@@ -196,3 +196,30 @@ class ScoreBylessonReponse(BaseModel):
     RoomID: int
     Room:str
     Score:List[ScoreHistoryReponse]
+
+
+class ChoiceReponseforGraphScoreUserAns(BaseModel):
+    ID_Choice:int
+    Choice_Text : str
+    Is_Correct : bool
+    Total_Ans: int #คนที่ตอบข้อนี้ในห้องนี้
+
+class QuestionSetforGraphScoreUserAns(BaseModel):
+    ID_Question:int
+    QuestionText: str
+    ID_lesson: int
+    Answer : str
+    Question_set: int
+    List_Choice : List[ChoiceReponseforGraphScoreUserAns]
+
+class ScoreUserAns(BaseModel):
+    Room_ID: int
+    Lesson_ID:int
+    Lesson:str
+    Question_set:int
+    Question:List[QuestionSetforGraphScoreUserAns]
+
+class ScoreUserRequest(BaseModel):
+    LessonID:int
+    RoomID:int
+    Question_set:int   
