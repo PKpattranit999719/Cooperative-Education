@@ -673,11 +673,11 @@ async def QuestionSetbyRoom(questRequest:QuestionsetbyUserRequest,user:UserSchem
 
 #ScoreHistory
 #Cerate
-@app.post("/admin/score",
+@app.post("/user/score",
           tags=["Score"],summary="สร้างScoreHistory หลังตรวจคำตอบเสร็จ")
 async def CerateScoreHistory(score:ScoreHistoryRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
-        if(user.role != "admin"):
+        if(user.role != "user"):
            raise HTTPException(status_code=403, detail="Not enough permissions") 
         db_score = ScoreHistory(Score=score.Score,total_question=score.total_question,Date=score.Date,UserID=score.UserID,Lesson=score.Lesson_ID,Question_set=score.Question_set)
         db.add(db_score)
