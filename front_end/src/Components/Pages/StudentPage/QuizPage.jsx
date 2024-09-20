@@ -96,6 +96,7 @@ const StudentQuize = () => {
       Question_set: questionSet,
       UserAns_List: userAnswers,
     };
+    console.log(payload);
 
     try {
       const response = await fetch("http://localhost:8000/user/score", {
@@ -121,7 +122,7 @@ const StudentQuize = () => {
   const currentQuestion = questions[currentQuestionIndex];
 
   useEffect(() => {
-    fetchQuestions(2, 2); // เรียก fetchQuestions ครั้งเดียวหลังจากคอมโพเนนต์เรนเดอร์
+    fetchQuestions(2, 2);
   }, []);
 
   return (
