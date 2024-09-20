@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Class.css';
+import './ClassPage.css';
 // Component สำหรับสร้าง Tab ของแต่ละชั้นเรียน
 const ClassroomTabs = ({ activeTab, setActiveTab, setActiveClassroom }) => {
   // สร้าง state เพื่อควบคุม dropdown ของแต่ละปุ่ม

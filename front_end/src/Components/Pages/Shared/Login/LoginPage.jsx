@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Login.css";
+import "./LoginPage.css";
 import { Link, useNavigate } from "react-router-dom";
 import { FaLock } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
@@ -35,7 +35,7 @@ const Login = () => {
         localStorage.setItem("name", result.name);
         localStorage.setItem("role", result.role);
         localStorage.setItem("token", result.access_token);
-        navigate("/");
+        navigate("/home");
       } else {
         // Handle login failure
         console.log("Login failed:", result.detail);

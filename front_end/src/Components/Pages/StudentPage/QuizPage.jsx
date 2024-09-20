@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import "./Quiz.css";
+import "./QuizPage.css";
 
 const Quize = () => {
     const navigate = useNavigate();

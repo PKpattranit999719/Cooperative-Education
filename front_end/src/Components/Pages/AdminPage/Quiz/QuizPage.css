@@ -1,0 +1,92 @@
+.questions {
+    background-color: rgb(255, 255, 255);
+    border-left: 5px solid rgb(0, 110, 255);
+    width: 80%;
+    margin: auto 0;
+    padding: 10px 20px;
+}
+
+.lifeline-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.lifeline {
+    position: relative;
+    top: -3px;
+}
+
+h5 {
+    font-size: 1.2rem;
+    margin-bottom: 1g;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.options-container {
+    display: inline-block;
+    width: 50%;
+}
+
+.option {
+    background-color: rgb(0, 110, 255);
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    margin: 10px auto;
+    padding: 12px;
+    transition: all 0.3s linear;
+    text-align: center;
+    width: 90%;
+}
+
+.option:hover {
+    background-color: rgb(0, 88, 204);
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-start;
+    margin: 0 auto 20px auto;
+    padding: 20px;
+    width: 80%;
+}
+
+.button-container button {
+    border: none;
+    color: #f8f9fa;
+    cursor: pointer;
+    font-family: "Quicksand", sans-serif;
+    margin-right: 20px;
+    padding: 5px 20px; 
+}
+
+.button-container button:first-child {
+    background-color: rgb(0, 99, 229); 
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s linear; 
+}
+
+.button-container button:first-child:hover {
+    background-color: rgb(0, 88, 204);
+}
+
+.button-container button:nth-child(2) {
+    background-color: lightseagreen; 
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s linear; 
+}
+
+.button-container button:first-child:hover {
+    background-color: rgb(0, 88, 204);
+}
+
+.button-container button:last-child {
+    background-color: rgb(255, 35, 35); 
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s linear; 
+}
+
+.button-container button:first-child:hover {
+    background-color: rgb(0, 88, 204);
+}

@@ -1,14 +1,3 @@
-/* Global Styles */
-body {
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
 /* Container for Classroom Tabs and Content */
 .class-container {
   width: 90%;

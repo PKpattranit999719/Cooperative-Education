@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // นำเข้า useNavigate
-import "./Lesson.css";
+import "./LessonPage.css";
 
 const Lesson = () => {
   const navigate = useNavigate();

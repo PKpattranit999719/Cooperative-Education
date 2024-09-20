@@ -1,9 +1,17 @@
-import React from "react";
-import "./Welcome.css";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "./WelcomePage.css";
 import { Link } from "react-router-dom";
 import logo1 from '../../../../Components/Assets/logo1.png';
 
 const Welcome = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/home");
+    }
+  }, [navigate]);
 
   return (
     <div className="welcome-body">
