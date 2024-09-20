@@ -288,7 +288,7 @@ async def myRoombyID(user:UserSchema = Depends(get_current_user),db:Session = De
         raise HTTPException(status_code=403, detail="Not enough permissions")
     try:
         db_room = db.query(Room).filter(Room.Owner_admin == user.ID).all()
-        rooms = [RoomSchema(Room_ID=r.ID_Room, name=r.name,key=r.key) for r in db_room]
+        rooms = [RoomSchema(Room_ID=r.ID_Room, name=r.name,key=r.key,Year=r.year) for r in db_room]
         return myRoom(Name_Owner=user.name,List_Room=rooms)
     except HTTPException as e:
         raise e
@@ -365,7 +365,7 @@ async def CreateRoom(room:RoomCertae,user:UserSchema = Depends(get_current_user)
             checkKey = db.query(Room).filter(Room.key == key).first()
             if(checkKey is None):
                 break
-        db_room = Room(Owner_admin=user.ID,name=room.Name_Room,key=key)
+        db_room = Room(Owner_admin=user.ID,name=room.Name_Room,year=room.Year,key=key)
         db.add(db_room)
         db.commit()
         db.refresh(db_room)
