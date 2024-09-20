@@ -13,6 +13,7 @@ function Navbar() {
     localStorage.removeItem('role');
     localStorage.removeItem('token');
     localStorage.removeItem('id');
+    localStorage.removeItem('room');
   };
 
   return (

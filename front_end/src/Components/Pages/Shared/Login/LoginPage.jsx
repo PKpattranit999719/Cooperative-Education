@@ -30,13 +30,17 @@ const Login = () => {
 
       if (response.ok) {
         // Handle successful login
+        if(result.RoomID !== null){
+          localStorage.setItem("room", result.RoomID);
+        }
         console.log("Login successful:", result);
         localStorage.setItem("email", result.email);
         localStorage.setItem("name", result.name);
         localStorage.setItem("role", result.role);
         localStorage.setItem("id", result.ID);
         localStorage.setItem("token", result.access_token);
-        navigate("/home");
+        if(result.role === 'user'){navigate('/homestudent')}
+        else if(result.role === 'admin'){navigate('/home')}
       } else {
         // Handle login failure
         console.log("Login failed:", result.detail);
