@@ -70,7 +70,6 @@ class QuestionRequest(BaseModel):
     QuestionText: str
     Lesson_ID : int
     Answer : str
-    Room_ID: int
     Question_set: int
     List_Choice : List[ChoiceReponse]
 
