@@ -82,7 +82,7 @@ const Lesson = () => {
   }, []);
 
   const handleExploreClick = (lessonID, questionSet) => {
-    navigate("/quiz", {
+    navigate("/result", {
       state: {
         lessonID: lessonID,
         questionSet: questionSet,
@@ -100,7 +100,7 @@ const Lesson = () => {
 
   return (
     <div className="lesson-container">
-      <div className="form-group">
+      <div className="lesson-wrapper">
         <h1>Lesson</h1>
 
       

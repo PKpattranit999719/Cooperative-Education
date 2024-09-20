@@ -2,7 +2,7 @@ import { Outlet, createBrowserRouter } from 'react-router-dom';
 import Home from '../Pages/AdminPage/Home/HomePage'; 
 import Lesson from '../Pages/AdminPage/Lesson/LessonPage';
 import Class from '../Pages/AdminPage/Class/ClassPage';
-import Quiz from '../Pages/AdminPage/Quiz/QuizPage';
+import Result from '../Pages/AdminPage/Result/ResultPage';
 import Login from '../Pages/Shared/Login/LoginPage';
 import Register from '../Pages/Shared/Register/RegisterPage';
 import Navbar from './Navbar';
@@ -11,7 +11,8 @@ import PrivateRoute from '../Shared/PrivateRoutes';
 import '../../App.css';
 import History from '../Pages/AdminPage/History/HistoryPage';
 import Welcome from '../Pages/Shared/Welcome/WelcomePage';
-import Quizestudent from '../Pages/StudentPage/QuizPage';
+import QuizPage from '../Pages/StudentPage/Quiz/QuizPage';
+import HomeStudent from '../Pages/StudentPage/Home/HomeStudent'
 
 const AppLayout = () => (
     <>
@@ -44,12 +45,20 @@ const router = createBrowserRouter([
         element: <PrivateRoute element={Class} />, 
       },
       {
-        path: "/quiz",
-        element: <PrivateRoute element={Quiz} />, 
+        path: "/result",
+        element: <PrivateRoute element={Result} />, 
       },
       {
         path: "/home",
         element: <PrivateRoute element={Home} />, 
+      },
+      {
+        path: "/quiz",
+        element: <QuizPage />, 
+      },
+      {
+        path: "/homestudent",
+        element: <HomeStudent />, 
       },
     ],
   },
@@ -66,10 +75,6 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Welcome />, 
-      },
-      {
-        path: "/studentquiz",
-        element: <Quizestudent />, 
       },
     ],
   },
