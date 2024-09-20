@@ -146,21 +146,21 @@ async def Meanscore(meanrequest:MeanScoreRequest,user:UserSchema = Depends(get_c
 #โครตงง
 #Dasdbord ดูUserตอบถูกผิดของแต่ละข้อ,ชุด,บท
 @app.post("/admin/QuestionTureFalse", response_model=GraphQuestionReponse,
-          tags=["DashBoard"],summary="ดู โดยรวมว่าคนมีกี่คนที่ตอบถูกและผิดในแต่ละข้อ")
+          tags=["DashBoard"],summary="ดู โดยรวมว่าคนมีกี่คนที่ตอบถูกและผิดในแต่ละข้อ ดูจากคนในห้องนั้น")
 async def GraphQuestion(qusetreqquest: GraphQuestionRequest, user: UserSchema = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
         # Query จำนวนการตอบถูก
+        
         db_UserAnsTrue = (db.query(Question.ID_Question, Question.Lesson, Lesson.name_lesson,
-                                    Question.Question_set, Question.QuestionText,Room.ID_Room,
+                                    Question.Question_set, Question.QuestionText,User.RoomID,
                                     Question.Answer, func.count(UserAns.ID).label('CountTrue'))
                           .join(Lesson, Question.Lesson == Lesson.ID_Lesson)
                           .join(Choice, Question.ID_Question == Choice.ID_Question)
                           .join(UserAns, Choice.ID == UserAns.ID_Choice)
-                          .join(ScoreHistory, UserAns.ID_SocreHistory == ScoreHistory.ID_ScoreHistory)
-                          .join(User,User.ID == ScoreHistory.ID_ScoreHistory)
-                          .join(Room,Room.ID_Room == User.RoomID)
+                          .join(ScoreHistory,UserAns.ID_SocreHistory == ScoreHistory.ID_ScoreHistory)
+                          .join(User,User.ID == ScoreHistory.UserID)
                           .filter(Question.Lesson == qusetreqquest.LessonID,
-                                  Room.ID_Room == qusetreqquest.RoomID,
+                                  User.RoomID == qusetreqquest.RoomID,
                                   Question.Question_set == qusetreqquest.Question_set,
                                   Choice.Is_Correct == True)
                           .group_by(Question.ID_Question)
@@ -168,16 +168,15 @@ async def GraphQuestion(qusetreqquest: GraphQuestionRequest, user: UserSchema = 
 
         # Query จำนวนการตอบผิด
         db_UserAnsFalse = (db.query(Question.ID_Question, Question.Lesson, Lesson.name_lesson,
-                                    Room.ID_Room, Question.Question_set, Question.QuestionText,
+                                    User.RoomID, Question.Question_set, Question.QuestionText,
                                     Question.Answer, func.count(UserAns.ID).label('CountFalse'))
                            .join(Lesson, Question.Lesson == Lesson.ID_Lesson)
                            .join(Choice, Question.ID_Question == Choice.ID_Question)
                            .join(UserAns, Choice.ID == UserAns.ID_Choice)
-                           .join(ScoreHistory, UserAns.ID_SocreHistory == ScoreHistory.ID_ScoreHistory)
-                           .join(User,User.ID == ScoreHistory.ID_ScoreHistory)
-                           .join(Room,Room.ID_Room == User.RoomID)
+                           .join(ScoreHistory,UserAns.ID_SocreHistory == ScoreHistory.ID_ScoreHistory)
+                           .join(User,User.ID == ScoreHistory.UserID)
                            .filter(Question.Lesson == qusetreqquest.LessonID,
-                                   Room.ID_Room == qusetreqquest.RoomID,
+                                   User.RoomID == qusetreqquest.RoomID,
                                    Question.Question_set == qusetreqquest.Question_set,
                                    Choice.Is_Correct == False)
                            .group_by(Question.ID_Question)
@@ -714,7 +713,7 @@ async def GetScoreHistorybyUser(user:UserSchema = Depends(get_current_user),db:S
 
 #GetUserAns Bylesson,set,user ข้อสอบ พร้อมuserตอบ
 @app.post("/user/scorebylesson/{ID}", response_model=ScoreHistoryReponsebyUser,
-         tags=["DashBoard"],summary="ดู ScoreHistory+ข้อสอบ+สิ่งที่userตอบ")
+         tags=["DashBoard"],summary="ดู ScoreHistory+ข้อสอบ+สิ่งที่userตอบ IDของ ScoreHistory")
 async def GetUserAnsByLessonSetUser(ID: int, user: UserSchema = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
         db_score = db.query(ScoreHistory).filter(ScoreHistory.ID_ScoreHistory == ID).first()
@@ -722,8 +721,7 @@ async def GetUserAnsByLessonSetUser(ID: int, user: UserSchema = Depends(get_curr
         if not db_score:
             raise HTTPException(status_code=404, detail="History not found")
 
-        db_question = db.query(Question).filter(Question.RoomID == db_user.RoomID,
-                                                Question.Lesson == db_score.Lesson,
+        db_question = db.query(Question).filter(Question.Lesson == db_score.Lesson,
                                                 Question.Question_set == db_score.Question_set
                                                 ).all()
 
@@ -750,7 +748,6 @@ async def GetUserAnsByLessonSetUser(ID: int, user: UserSchema = Depends(get_curr
                                       Question_set=q.Question_set,
                                       Lesson_ID=q.Lesson,
                                       Answer=q.Answer,
-                                      Room_ID=q.RoomID,
                                       List_Choice=choice_repo,
                                       ChoiceUserAns=userAns_repo
                                       ))
@@ -807,7 +804,7 @@ async def ScoreBylesson(ID:int,user:UserSchema = Depends(get_current_user),db:Se
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})  
     
-@app.post("/admin/ScoreUserAns",response_model=ScoreUserAns,
+@app.post("/user/ScoreUserAns",response_model=ScoreUserAns,
           tags=["DashBoard"],description="ดูว่าchoceนี้คนตอบกี่คน แบ่งตามบท,ชุด,ห้อง")
 async def ScoreUserAns_Fun(request:ScoreUserRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
