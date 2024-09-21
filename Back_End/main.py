@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException,File, UploadFile
 from auth import get_current_user, authenticate, create_token,CreatePassword
 from schemas import *
 from fastapi.security import OAuth2PasswordRequestForm
@@ -8,6 +8,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func
 from model import *
+import csv
+from io import StringIO
 import random
 import string
 from collections import defaultdict
@@ -256,7 +258,7 @@ async def CreateUser(userC:UserCreate,db:Session = Depends(get_db)):
 
 #UPDATE
 @app.put("/user",response_model=UserCreate,
-         tags=["Usre"],summary="update User")
+         tags=["User"],summary="update User")
 async def UpdateUser(userP:UserCreate,user:UserSchema = Depends(get_current_user),db :Session = Depends(get_db)):
     if(user.role != "user"):
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -518,6 +520,62 @@ async def CreateQuestion(question:QuestionSchema,user:UserSchema = Depends(get_c
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})
 
+#csv create
+@app.post('/admin/questionAll', 
+          tags=["Question"], summary="สร้างคำถาม พร้อมตัวเลือกจากไฟล์ CSV")
+async def CreateQuestionFromCSV(file: UploadFile = File(...), user: UserSchema = Depends(get_current_user), db: Session = Depends(get_db)):
+    try:
+        if user.role != "admin":
+            raise HTTPException(status_code=403, detail="Not enough permissions")
+        
+        # อ่านข้อมูลจากไฟล์ CSV
+        contents = await file.read()  # อ่านไฟล์เป็น bytes
+        csv_data = StringIO(contents.decode("utf-8-sig"))  # แปลงเป็น string
+        reader = csv.DictReader(csv_data)  # ใช้ DictReader เพื่ออ่าน CSV และแปลงเป็น dict
+
+        required_columns = ["QuestionText", "Lesson_ID", "Answer", "Question_set", "Choice_Text1", "Is_Correct1"]
+
+        # ตรวจสอบว่ามีฟิลด์ที่ต้องการในแต่ละแถว
+        for row in reader:
+            # ตรวจสอบว่าคอลัมน์สำคัญทั้งหมดมีอยู่ในแถว
+
+            print(row)
+            # สร้างคำถาม
+            db_question = Question(
+                QuestionText=row['QuestionText'],
+                Lesson=row['Lesson_ID'],
+                Answer=row['Answer'],
+                Question_set=row['Question_set']
+            )
+            db.add(db_question)
+            db.commit()
+            db.refresh(db_question)
+            
+            # สร้างตัวเลือก
+            choice_index = 1  # เริ่มต้นที่ตัวเลือกที่ 1
+            while f"Choice_Text{choice_index}" in row and f"Is_Correct{choice_index}" in row:
+                choice_text = row[f"Choice_Text{choice_index}"].strip()
+                is_correct = row[f"Is_Correct{choice_index}"].strip().lower() == "true"
+                
+                db_choice = Choice(
+                    ID_Question=db_question.ID_Question,
+                    Choice_Text=choice_text,
+                    Is_Correct=is_correct
+                )
+                db.add(db_choice)
+                
+                choice_index += 1  # ไปยังตัวเลือกถัดไป
+            
+        db.commit()
+        return {"message": "Questions and choices created successfully"}
+    
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+
 
 #update ต้องupdate choiceด้วย 
 @app.put('/admin/question',
@@ -723,7 +781,7 @@ async def GetScoreHistorybyUser(user:UserSchema = Depends(get_current_user),db:S
     
 
 #GetUserAns Bylesson,set,user ข้อสอบ พร้อมuserตอบ
-@app.post("/user/scorebylesson/{ID}", response_model=ScoreHistoryReponsebyUser,
+@app.post("/user/dashboardscore/{ID}", response_model=ScoreHistoryReponsebyUser,
          tags=["DashBoard"],summary="ดู ScoreHistory+ข้อสอบ+สิ่งที่userตอบ IDของ ScoreHistory")
 async def GetUserAnsByLessonSetUser(ID: int, user: UserSchema = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
@@ -800,15 +858,25 @@ async def DeleteScore(ID:int,user:UserSchema = Depends(get_current_user),db:Sess
     
 #ดูscore แต่ละบท 
 @app.get('/scorebylesson/{ID}',response_model=ScoreBylessonReponse,
-          tags=["Score"],summary="ดูScoreแต่ละบทของUser")
+          tags=["Score"],summary="ดูScoreแต่ละบทของUser ใช้ID user")
 async def ScoreBylesson(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
-        db_scorebylesson = (db.query(ScoreHistory).filter(ScoreHistory.UserID == ID).all())
+        db_scores = (db.query(ScoreHistory,Lesson)
+                            .join(Lesson,Lesson.ID_Lesson == ScoreHistory.Lesson)
+                            .filter(ScoreHistory.UserID == ID).all())
         db_user = db.query(User).filter(User.ID == ID).first()
         db_Room = db.query(Room).filter(Room.ID_Room == User.RoomID).first()
         return ScoreBylessonReponse(ID=db_user.ID,email=db_user.email,name=db_user.name,
                                     role="user",RoomID=db_Room.ID_Room,
-                                    Room=db_Room.name,Score=db_scorebylesson)
+                                    Room=db_Room.name,Score=[ScoreHistoryReponsebylesson(
+                                        ID_ScoreHistory=score_history.ID_ScoreHistory,
+                                        Score=score_history.Score,
+                                        total_question=score_history.total_question,
+                                        Date=score_history.Date,
+                                        Lesson=lesson.name_lesson,
+                                        Lesson_ID=score_history.Lesson,
+                                        Question_set=score_history.Question_set
+                                    )for score_history,lesson in db_scores])
     except HTTPException as e:
         raise e
     except Exception  as e:
