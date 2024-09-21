@@ -5,16 +5,17 @@ import "./StudentLesson.css";
 const Lesson = () => {
   const navigate = useNavigate();
   const [lessons, setLesson] = useState([]); // ตั้งค่าเริ่มต้นเป็น array ว่าง
-  const [showroom, setShowroom] = useState([]); // State for classrooms
-  const [Question_set, setQuestion_set] = useState("1"); // State สำหรับ RoomID
-  const [year, setYear] = useState("1"); // State สำหรับ Question_set
+  const [Question_set, setQuestion_set] = useState("");
+
+  useEffect(() => {
+    // สุ่มค่า Question_set ระหว่าง 1 ถึง 3
+    const randomQuestionSet = Math.floor(Math.random() * 3) + 1;
+    setQuestion_set(randomQuestionSet.toString());
+  }, []);
 
   useEffect(() => {
     const fetchLessonData = async () => {
-      const formData = {
-        Question_set: Question_set,
-        year: year,
-      };
+     
 
       try {
         const token = localStorage.getItem("token");
@@ -23,14 +24,13 @@ const Lesson = () => {
           return;
         }
         const response = await fetch(
-          "http://localhost:8000/admin/questionset",
+          `http://localhost:8000/user/questionset/${Question_set}`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(formData),
           }
         );
 
@@ -49,40 +49,11 @@ const Lesson = () => {
     };
 
     fetchLessonData();
-  }, [year, Question_set]); // เรียกใช้ฟังก์ชันเมื่อ RoomID หรือ Question_set เปลี่ยนแปลง
+  }, [ Question_set]); // เรียกใช้ฟังก์ชันเมื่อ RoomID หรือ Question_set เปลี่ยนแปลง
 
-  useEffect(() => {
-    const fetchRoomData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          console.error("No token found");
-          return;
-        }
-        const response = await fetch("http://localhost:8000/admin/myRoom", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        setShowroom(result.List_Room || []); // ตรวจสอบว่ามีข้อมูลหรือไม่
-      } catch (error) {
-        console.error("Fetch error:", error.message);
-      }
-    };
-
-    fetchRoomData();
-  }, []);
 
   const handleExploreClick = (lessonID, questionSet) => {
-    navigate("/result", {
+    navigate("/quiz", {
       state: {
         lessonID: lessonID,
         questionSet: questionSet,
@@ -90,13 +61,6 @@ const Lesson = () => {
     });
   };
 
-  const handleYearClick = (year) => {
-    setYear(year); // เก็บค่า year เมื่อเลือกห้อง
-  };
-
-  const handleQuestionSetChange = (event) => {
-    setQuestion_set(event.target.value); // เก็บค่า Question_set จาก dropdown
-  };
 
   return (
     <div className="lesson-container">
@@ -110,11 +74,11 @@ const Lesson = () => {
             <div key={row.LessonID} className="lesson">
               <h3>{row.Lesson}</h3>
               <p>จำนวนคำถาม: {row.TotalQuestion}</p>
-              <p>ชุดข้อสอบ: {row.Question_set}</p>
+              <p>ชุดข้อสอบ: {Question_set}</p>
               <button
                 className="bth"
                 onClick={() =>
-                  handleExploreClick(row.LessonID, row.Question_set)
+                  handleExploreClick(row.LessonID, Question_set)
                 }
               >
                 Explore
