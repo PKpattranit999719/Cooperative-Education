@@ -9,7 +9,7 @@ const UserScore = () => {
     const navigate = useNavigate();
     const { userName, userId } = location.state || {};
 
-    const [classroom, setClassroom] = useState({ name: 'ห้องเรียนอะไร', id: 1 });
+    const [classroom, setClassroom] = useState('');
     const [lessons, setLessons] = useState([]);
     const [averagedScores, setAveragedScores] = useState({}); // เก็บคะแนนเฉลี่ย
 
@@ -35,7 +35,10 @@ const UserScore = () => {
                 }
 
                 const userData = await response.json();
+                console.log(userData.Room)
+                setClassroom(userData.Room)
                 const scores = userData.Score; // ดึงคะแนนจากข้อมูลที่ได้
+                
 
                 // คำนวณคะแนนเฉลี่ยสำหรับแต่ละบทเรียน
                 const lessonScores = scores.reduce((acc, score) => {
@@ -54,6 +57,7 @@ const UserScore = () => {
                 }));
 
                 setLessons(averaged); // ตั้งค่าบทเรียนที่มีคะแนนเฉลี่ย
+                
 
             } catch (error) {
                 console.error("Error fetching user scores:", error);
@@ -65,7 +69,7 @@ const UserScore = () => {
 
     return (
         <div>
-            <h1>{classroom.name}</h1>
+            <h1>ห้องเรียน: {classroom}</h1>
             <div className="user-section">
                 <h2>คะแนนของนักเรียน: {userName} </h2>
 
@@ -123,7 +127,7 @@ const UserScore = () => {
                             <tbody>
                                 {lessons.map(lesson => (
                                     <tr key={lesson.lessonId}>
-                                        <td>{`บทเรียน ${lesson.lessonId}`}</td>
+                                        <td>{`บทเรียน ${lesson.lessonId  }`}</td>
                                         <td>{lesson.average.toFixed(2)}</td> {/* แสดงคะแนนเฉลี่ย */}
                                     </tr>
                                 ))}
