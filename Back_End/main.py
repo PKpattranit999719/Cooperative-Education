@@ -659,13 +659,11 @@ async def DeleteQuestion(ID:int,user:UserSchema = Depends(get_current_user),db:S
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})  
 
-#ดูข้อสอบแบบปี admin
-@app.post("/admin/questionset/",response_model=List[QuestionsetbyRoomReponse],
-        tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท,Room ออกเป็นlist เอาไว้ดูของ admin")
+#ดูข้อสอบแบบปี 
+@app.post("/questionset/",response_model=List[QuestionsetbyRoomReponse],
+        tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท,Room ออกเป็นlist เอาไว้ดู")
 async def QuestionSetbyRoom(questRequest:QuestionsetbyRoomRequest,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
-        if(user.role != "admin"):
-           raise HTTPException(status_code=403, detail="Not enough permissions") 
         db_QuestSet = (db.query(Question.Lesson,Lesson.name_lesson,Question.Question_set,
                                 func.count(Question.ID_Question).label("TotalQuestion"),
                                 Lesson.year)

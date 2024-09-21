@@ -116,7 +116,7 @@ const router = createBrowserRouter([
         element: <Score />,
       },
       {
-        path: "/room",
+        path: "/room/:ID_Room",
         element: <HistoryCharts />,
       },
     ],
