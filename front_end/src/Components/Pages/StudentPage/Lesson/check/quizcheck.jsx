@@ -1,27 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Helmet } from "react-helmet";
 import "./quizcheck.css";
 
-const predefinedQuestions = [
-  {
-    question: "What is your favorite color?",
-    options: ["Red", "Blue", "Green", "Yellow"],
-  },
-  {
-    question: "What is your age range?",
-    options: ["Under 18", "18-24", "25-34", "35-44", "45+"],
-  },
-  {
-    question: "Which type of pet do you prefer?",
-    options: ["Dog", "Cat", "Bird", "Fish"],
-  },
-];
-
-const QuizCheck  = () => {
-  const [answers, setAnswers] = useState(
-    Array(predefinedQuestions.length).fill("")
-  );
+const QuizCheck = () => {
+  const [answers, setAnswers] = useState([]);
   const [fetchedQuestions, setFetchedQuestions] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
@@ -29,48 +11,40 @@ const QuizCheck  = () => {
 
   useEffect(() => {
     if (location.state) {
-      const { lessonID, questionSet } = location.state;
-  
-      // API Call
-      fetchQuestions(lessonID, questionSet);
+      const { ID_ScoreHistory } = location.state;
+      fetchQuestions(ID_ScoreHistory);
     } else {
-      console.error("No lessonID or questionSet provided");
+      console.error("No ID_ScoreHistory provided");
     }
   }, [location.state]);
-  
-  const fetchQuestions = async (lessonID, questionSet) => {
+
+  const fetchQuestions = async (ID_ScoreHistory) => {
     try {
       const token = localStorage.getItem("token");
-      const payload = {
-        Question_Set: questionSet,
-        Lesson_ID: lessonID,
-      };
-      console.log(payload);
       if (!token) {
         console.error("No token found");
         return;
       }
-      
-      const response = await fetch("http://localhost:8000/question", {
+
+      const response = await fetch(`http://localhost:8000/user/dashboardscore/${ID_ScoreHistory}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload), // ส่ง payload ที่นี่
       });
-  
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-  
+
       const result = await response.json();
-      setFetchedQuestions(result.List_Question); // Assuming the API returns a list of questions
+      setFetchedQuestions(result.UserAns_List); // Assuming the API returns UserAns_List
+      setAnswers(Array(result.UserAns_List.length).fill("")); // Set initial answers
     } catch (error) {
       console.error("Error fetching questions:", error);
     }
   };
-  
 
   const handleAnswerChange = (index, value) => {
     const updatedAnswers = [...answers];
@@ -80,21 +54,25 @@ const QuizCheck  = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    checkAnswers(); // ตรวจสอบคำตอบเมื่อส่งฟอร์ม
+    checkAnswers();
   };
 
   const checkAnswers = () => {
-    const newResults = fetchedQuestions.map((question, index) => {
-      const selectedAnswer = answers[index];
+    const newResults = fetchedQuestions.map((question) => {
+      const selectedAnswer = question.ChoiceUserAns ? question.ChoiceUserAns.Choice_Text : null;
       const correctChoice = question.List_Choice.find(choice => choice.Is_Correct);
       return {
         questionText: question.QuestionText,
         selectedAnswer,
         isCorrect: selectedAnswer === correctChoice.Choice_Text,
-        correctAnswer: correctChoice.Choice_Text
+        correctAnswer: correctChoice.Choice_Text,
       };
     });
     setResults(newResults);
+  };
+
+  const hasUserAnswered = (question) => {
+    return question.ChoiceUserAns !== null; // Check if user has answered
   };
 
   return (
@@ -114,7 +92,10 @@ const QuizCheck  = () => {
                     checked={answers[index] === choice.Choice_Text}
                     onChange={() => handleAnswerChange(index, choice.Choice_Text)}
                   />
-                  {choice.Choice_Text} {choice.Is_Correct && <span>คำตอบที่เคยเลือก</span>}
+                  {choice.Choice_Text} 
+                  {hasUserAnswered(question) && choice.ID_Choice === question.ChoiceUserAns.Choice_Ans.ID_Choice && (
+                    <span   style={{ marginLeft: '10px' }}>  คำตอบที่เคยเลือก👈</span>
+                  )}
                 </label>
               ))}
             </div>
@@ -140,5 +121,4 @@ const QuizCheck  = () => {
   );
 };
 
-
-export default QuizCheck ;
+export default QuizCheck;

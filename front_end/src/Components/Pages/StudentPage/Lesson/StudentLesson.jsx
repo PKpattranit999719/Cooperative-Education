@@ -49,12 +49,12 @@ const Lesson = () => {
   }, [ Question_set]); // เรียกใช้ฟังก์ชันเมื่อ RoomID หรือ Question_set เปลี่ยนแปลง
 
 
-  const handleExploreClick = (lessonID, questionSet) => {
-    console.log(lessonID+","+questionSet)
+  const handleExploreClick = (ID_ScoreHistory) => {
+    console.log(ID_ScoreHistory)
     navigate("/check", {
       state: {
-        lessonID: lessonID,
-        questionSet: questionSet,
+        ID_ScoreHistory: ID_ScoreHistory,
+
       },
     });
   };
@@ -76,7 +76,7 @@ const Lesson = () => {
               <button
                 className="bth"
                 onClick={() =>
-                  handleExploreClick(row.Lesson_ID, row.Question_set)
+                  handleExploreClick(row.ID_ScoreHistory)
                 }
               >
                 Explore
