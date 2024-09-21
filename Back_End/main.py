@@ -359,7 +359,7 @@ async def listUser(ID:int,user:UserSchema = Depends(get_current_user),db:Session
         raise HTTPException(status_code=403, detail="Not enough permissions")
     try:
         db_user = db.query(User).filter(User.RoomID == ID).all()
-        return [UserSchema(email=u.email,ID=u.ID,name=u.name,role='user') for u in db_user]
+        return [UserSchema(email=u.email,ID=u.ID,name=u.name,role='user',RoomID=u.RoomID) for u in db_user]
     except HTTPException as e:
         raise e
     except Exception as e:
