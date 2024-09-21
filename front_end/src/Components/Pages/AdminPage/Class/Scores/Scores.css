@@ -1,0 +1,34 @@
+.user-section {
+    margin-bottom: 20px;
+}
+
+.user-content {
+    display: flex;
+    align-items: flex-start;
+}
+
+.chart-container {
+    flex: 1;
+    max-width: 50%;
+}
+
+.table-container {
+    flex: 1;
+    max-width: 50%;
+    margin-left: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
