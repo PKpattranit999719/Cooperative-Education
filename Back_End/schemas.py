@@ -188,6 +188,15 @@ class QuestionsetbyUserRequest(QuestionsetbyRoomRequest):
 class QuestionsetbyUserReponse(QuestionsetbyRoomReponse):
     UserID : int
 
+class ScoreHistoryReponsebylesson(BaseModel):
+    ID_ScoreHistory:int 
+    Score:int
+    total_question:int
+    Date:date
+    Lesson:str 
+    Lesson_ID:int 
+    Question_set:int
+
 class ScoreBylessonReponse(BaseModel):
     ID:int
     email: str
@@ -195,7 +204,9 @@ class ScoreBylessonReponse(BaseModel):
     role: str
     RoomID: int
     Room:str
-    Score:List[ScoreHistoryReponse]
+    Score:List[ScoreHistoryReponsebylesson]
+
+
 
 
 class ChoiceReponseforGraphScoreUserAns(BaseModel):
