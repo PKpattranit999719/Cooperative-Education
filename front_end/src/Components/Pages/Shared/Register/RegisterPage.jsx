@@ -3,7 +3,8 @@ import "./RegisterPage.css";
 import { FaUser } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { FaLock } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -15,7 +16,6 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ตรวจสอบรหัสผ่าน
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
       return;
@@ -25,11 +25,6 @@ const Register = () => {
       role === "teacher"
         ? "http://localhost:8000/admin"
         : "http://localhost:8000/user";
-
-    // const formData = new URLSearchParams();
-    // formData.append("email", email);
-    // formData.append("name", username);
-    // formData.append("password", password);
 
     const payload = {
       email: email,
@@ -127,10 +122,17 @@ const Register = () => {
               </label>
             </div>
           </div>
+          <div className="register-link">
+            <p>
+              If you already have an account, please log in.{" "}
+              <Link to="/login">Login</Link>
+            </p>
+          </div>
           <button type="submit">Register</button>
         </form>
       </div>
     </div>
   );
 };
+
 export default Register;

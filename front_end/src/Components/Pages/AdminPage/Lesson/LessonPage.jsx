@@ -85,7 +85,7 @@ const Lesson = () => {
     navigate("/result", {
       state: {
         lessonID: lessonID,
-        questionSet: questionSet,
+        questionSet: Question_set,
       },
     });
   };
@@ -136,7 +136,7 @@ const Lesson = () => {
             <div key={row.LessonID} className="lesson">
               <h3>{row.Lesson}</h3>
               <p>จำนวนคำถาม: {row.TotalQuestion}</p>
-              <p>ชุดข้อสอบ: {row.Question_set}</p>
+              <p>ชุดข้อสอบ: {Question_set}</p>
               <button
                 className="bth"
                 onClick={() =>
