@@ -24,6 +24,7 @@ import HomeStudent from "../Pages/StudentPage/Home/HomeStudent";
 import LessonStudent from "../Pages/StudentPage/Lesson/StudentLesson";
 import Dashbord from "../Pages/StudentPage/Dashbord/Dashbord";
 import Sidebarstudent from "../Pages/StudentPage/Sidebarstudent/Sidestu";
+import Quizcheck from '../Pages/StudentPage/Lesson/check/quizcheck'
 
 
 // Admin Layout
@@ -119,6 +120,11 @@ const router = createBrowserRouter([
         path: "/room",
         element: <HistoryCharts />,
       },
+      {
+        path: "/check",
+        element: <Quizcheck />,
+      },
+      
     ],
   },
   {
