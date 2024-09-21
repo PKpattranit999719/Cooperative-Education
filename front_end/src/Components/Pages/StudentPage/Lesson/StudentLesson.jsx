@@ -7,11 +7,7 @@ const Lesson = () => {
   const [lessons, setLesson] = useState([]); // ตั้งค่าเริ่มต้นเป็น array ว่าง
   const [Question_set, setQuestion_set] = useState("");
 
-  useEffect(() => {
-    // สุ่มค่า Question_set ระหว่าง 1 ถึง 3
-    const randomQuestionSet = Math.floor(Math.random() * 3) + 1;
-    setQuestion_set(randomQuestionSet.toString());
-  }, []);
+
 
   useEffect(() => {
     const fetchLessonData = async () => {
@@ -36,6 +32,7 @@ const Lesson = () => {
 
         const result = await response.json();
         const filter = result;
+        setQuestion_set(filter.Question_set)
         console.log(filter);
 
         if (!response.ok) {
@@ -52,11 +49,12 @@ const Lesson = () => {
   }, [ Question_set]); // เรียกใช้ฟังก์ชันเมื่อ RoomID หรือ Question_set เปลี่ยนแปลง
 
 
-  const handleExploreClick = (lessonID, questionSet) => {
+  const handleExploreClick = (ID_ScoreHistory) => {
+    console.log(ID_ScoreHistory)
     navigate("/check", {
       state: {
-        lessonID: lessonID,
-        questionSet: questionSet,
+        ID_ScoreHistory: ID_ScoreHistory,
+
       },
     });
   };
@@ -74,11 +72,11 @@ const Lesson = () => {
             <div key={row.LessonID} className="lesson">
               <h3>{row.Lesson}</h3>
               <p>จำนวนคำถาม: {row.total_question}</p>
-              <p>ชุดข้อสอบ: {Question_set}</p>
+              <p>ชุดข้อสอบ: {row.Question_set}</p>
               <button
                 className="bth"
                 onClick={() =>
-                  handleExploreClick(row.LessonID, Question_set)
+                  handleExploreClick(row.ID_ScoreHistory)
                 }
               >
                 Explore

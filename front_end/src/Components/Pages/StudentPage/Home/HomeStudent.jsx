@@ -36,6 +36,7 @@ const Home = () => {
 
         const result = await response.json();
         console.log(result);
+        localStorage.setItem("year",result.Year)
         setShowroom(result);
       } catch (error) {
         console.error("Fetch error:", error.message);
@@ -78,6 +79,7 @@ const Home = () => {
   
         // Store the room key in localStorage if successful
         localStorage.setItem("room", classRoom);
+        
         setHasRoomKey(true); // Set room key status to true after API call
       } catch (error) {
         console.error("Error joining class:", error.message);
