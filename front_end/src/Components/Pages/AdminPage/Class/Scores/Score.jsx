@@ -8,26 +8,13 @@ const UserScore = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { userName, userId } = location.state || {};
-    
+
     const [classroom, setClassroom] = useState({ name: 'ห้องเรียนอะไร', id: 1 });
     const [lessons, setLessons] = useState([]);
-    const [scores, setScores] = useState([]); // ตั้งเป็น array
+    const [averagedScores, setAveragedScores] = useState({}); // เก็บคะแนนเฉลี่ย
 
     useEffect(() => {
-        const fetchLessons = () => {
-            const lessonsData = [
-                { ID_Lesson: 1, name_lesson: 'การลบ' },
-                { ID_Lesson: 2, name_lesson: 'บวก' },
-                { ID_Lesson: 3, name_lesson: 'คูณ' },
-                { ID_Lesson: 4, name_lesson: 'ครน' },
-                { ID_Lesson: 5, name_lesson: 'พีระมิด' },
-                { ID_Lesson: 6, name_lesson: 'สามเหลี่ยม' },
-                { ID_Lesson: 7, name_lesson: 'ตีโกน' }
-            ];
-            setLessons(lessonsData);
-        };
-
-        const fetchScores = async () => {
+        const fetchData = async () => {
             try {
                 const token = localStorage.getItem("token");
                 if (!token) {
@@ -44,40 +31,53 @@ const UserScore = () => {
                 });
 
                 if (!response.ok) {
-                    throw new Error("Failed to fetch scores");
+                    throw new Error("Failed to fetch user data");
                 }
 
-                const scoresData = await response.json();
-                setScores(Array.isArray(scoresData) ? scoresData : []); // ตรวจสอบให้แน่ใจว่าเป็น array
+                const userData = await response.json();
+                const scores = userData.Score; // ดึงคะแนนจากข้อมูลที่ได้
+
+                // คำนวณคะแนนเฉลี่ยสำหรับแต่ละบทเรียน
+                const lessonScores = scores.reduce((acc, score) => {
+                    if (!acc[score.Lesson]) {
+                        acc[score.Lesson] = { total: 0, count: 0 };
+                    }
+                    acc[score.Lesson].total += score.Score;
+                    acc[score.Lesson].count += 1;
+                    return acc;
+                }, {});
+
+                // สร้างข้อมูลคะแนนเฉลี่ย
+                const averaged = Object.keys(lessonScores).map(lessonId => ({
+                    lessonId: lessonId,
+                    average: lessonScores[lessonId].total / lessonScores[lessonId].count
+                }));
+
+                setLessons(averaged); // ตั้งค่าบทเรียนที่มีคะแนนเฉลี่ย
 
             } catch (error) {
-                console.error("Error fetching scores:", error);
-                setScores([]); // ตั้งค่าเป็น array ว่างหากเกิดข้อผิดพลาด
+                console.error("Error fetching user scores:", error);
             }
         };
 
-        fetchLessons();
-        fetchScores();
+        fetchData();
     }, [userId]);
 
     return (
         <div>
             <h1>{classroom.name}</h1>
             <div className="user-section">
-                <h2>คะแนนของ {userName} (ID: {userId})</h2>
-                
+                <h2>คะแนนของนักเรียน: {userName} </h2>
+
                 <div className="user-content">
                     <div className="chart-container">
-                        <h3>กราฟคะแนน</h3>
+                        <h3>กราฟคะแนนเฉลี่ย</h3>
                         <Line
                             data={{
-                                labels: lessons.map(lesson => lesson.name_lesson),
+                                labels: lessons.map(lesson => `บทเรียน ${lesson.lessonId}`), // สร้างชื่อบทเรียน
                                 datasets: [{
                                     label: userName,
-                                    data: lessons.map(lesson => {
-                                        const scoreData = scores.find(score => score.lesson_id === lesson.ID_Lesson);
-                                        return scoreData ? scoreData.score : 0; // ถ้าไม่มีให้คืนค่า 0
-                                    }),
+                                    data: lessons.map(lesson => lesson.average), // ใช้ค่าเฉลี่ย
                                     fill: false,
                                     borderColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
                                 }]
@@ -112,19 +112,19 @@ const UserScore = () => {
                     </div>
 
                     <div className="table-container">
-                        <h3>ตารางคะแนน</h3>
+                        <h3>ตารางคะแนนเฉลี่ย</h3>
                         <table>
                             <thead>
                                 <tr>
                                     <th>บทเรียน</th>
-                                    <th>คะแนน</th>
+                                    <th>คะแนนเฉลี่ย</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {lessons.map(lesson => (
-                                    <tr key={lesson.ID_Lesson}>
-                                        <td>{lesson.name_lesson}</td>
-                                        <td>{scores.find(score => score.lesson_id === lesson.ID_Lesson)?.score || 0}</td>
+                                    <tr key={lesson.lessonId}>
+                                        <td>{`บทเรียน ${lesson.lessonId}`}</td>
+                                        <td>{lesson.average.toFixed(2)}</td> {/* แสดงคะแนนเฉลี่ย */}
                                     </tr>
                                 ))}
                             </tbody>
