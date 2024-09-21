@@ -114,7 +114,7 @@ const QuizCheck  = () => {
                     checked={answers[index] === choice.Choice_Text}
                     onChange={() => handleAnswerChange(index, choice.Choice_Text)}
                   />
-                  {choice.Choice_Text} {choice.Is_Correct && <span>✅</span>}
+                  {choice.Choice_Text} {choice.Is_Correct && <span>คำตอบที่เคยเลือก</span>}
                 </label>
               ))}
             </div>

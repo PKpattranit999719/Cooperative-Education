@@ -19,7 +19,7 @@ export const SidebarData = [
   },
   {
     title: "Quize",
-    path: "/quizestudent",
+    path: "/lessonQuiz",
     icon: <AiFillCalculator />,
     cName: "nav-text",
   },

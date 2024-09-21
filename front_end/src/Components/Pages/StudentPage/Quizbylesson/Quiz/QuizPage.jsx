@@ -106,7 +106,7 @@ const StudentQuize = () => {
       }
 
       // เมื่อส่งสำเร็จ นำทางกลับไปยังหน้า lesson
-      navigate("/lesson");
+      navigate("/lessonQuiz");
     } catch (error) {
       console.error("Submit error:", error.message);
     }
@@ -115,9 +115,13 @@ const StudentQuize = () => {
   const currentQuestion = questions[currentQuestionIndex];
 
   useEffect(() => {
-    fetchQuestions(2, 2);
-    setLessonID(2);
-    setQuestionSet(2);
+    const { lessonID, questionSet } = location.state || {}; // ตรวจสอบให้แน่ใจว่า location.state มีค่า
+
+    console.log('Received:', lessonID, questionSet); // เพิ่มการตรวจสอบที่นี่
+
+    fetchQuestions(lessonID, questionSet );
+    setLessonID(lessonID);
+    setQuestionSet(questionSet);
   }, []);
 
   return (

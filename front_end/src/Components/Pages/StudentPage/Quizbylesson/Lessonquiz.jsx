@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // นำเข้า useNavigate
-import "./StudentLesson.css";
+import "./Lessonquiz.css";
 
-const Lesson = () => {
+const LessonQuiz = () => {
   const navigate = useNavigate();
   const [lessons, setLesson] = useState([]); // ตั้งค่าเริ่มต้นเป็น array ว่าง
-  const [Question_set, setQuestion_set] = useState("");
+  const [Question_set, setQuestion_set] = useState( );
 
+
+  useEffect(() => {
+    // สุ่มค่า Question_set ระหว่าง 1 ถึง 3
+    const randomQuestionSet = Math.floor(Math.random() * 3) + 1;
+    setQuestion_set(randomQuestionSet.toString());
+  }, []);
 
 
   useEffect(() => {
@@ -20,9 +26,9 @@ const Lesson = () => {
           return;
         }
         const response = await fetch(
-          `http://localhost:8000/user/scorebyuser`,
+          `http://localhost:8000//questionset/${Question_set}`,
           {
-            method: "GET",
+            method: "POST",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
@@ -51,11 +57,11 @@ const Lesson = () => {
 
   const handleExploreClick = (lessonID, questionSet) => {
     console.log(lessonID+","+questionSet)
-    navigate("/check", {
-      state: {
-        lessonID: lessonID,
-        questionSet: questionSet,
-      },
+    navigate("/quiz", {
+        state: {
+            lessonID: lessonID,
+            questionSet: questionSet,
+        },
     });
   };
 
@@ -71,12 +77,12 @@ const Lesson = () => {
           {lessons.map((row) => (
             <div key={row.LessonID} className="lesson">
               <h3>{row.Lesson}</h3>
-              <p>จำนวนคำถาม: {row.total_question}</p>
-              <p>ชุดข้อสอบ: {row.Question_set}</p>
+              <p>จำนวนคำถาม: {row.TotalQuestion}</p>
+              <p>ชุดข้อสอบ: {Question_set}</p>
               <button
                 className="bth"
                 onClick={() =>
-                  handleExploreClick(row.Lesson_ID, row.Question_set)
+                  handleExploreClick(row.Lesson_ID, Question_set)
                 }
               >
                 Explore
@@ -89,4 +95,4 @@ const Lesson = () => {
   );
 };
 
-export default Lesson;
+export default LessonQuiz;
