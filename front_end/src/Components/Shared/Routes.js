@@ -4,6 +4,7 @@ import Home from "../Pages/AdminPage/Home/HomePage";
 import Lesson from "../Pages/AdminPage/Lesson/LessonPage";
 import Class from "../Pages/AdminPage/Class/ClassPage";
 import Result from "../Pages/AdminPage/Result/ResultPage";
+import HistoryCharts from "../Pages/AdminPage/History/HistoryCharts";
 
 // shared
 import Login from "../Pages/Shared/Login/LoginPage";
@@ -14,6 +15,8 @@ import PrivateRoute from "../Shared/PrivateRoutes";
 import "../../App.css";
 import History from "../Pages/AdminPage/History/HistoryPage";
 import Welcome from "../Pages/Shared/Welcome/WelcomePage";
+import Score from "../Pages/AdminPage/Class/Scores/Score";
+
 
 // student
 import QuizPage from "../Pages/StudentPage/Quiz/QuizPage";
@@ -21,7 +24,7 @@ import HomeStudent from "../Pages/StudentPage/Home/HomeStudent";
 import LessonStudent from "../Pages/StudentPage/Lesson/StudentLesson";
 import Dashbord from "../Pages/StudentPage/Dashbord/Dashbord";
 import Sidebarstudent from "../Pages/StudentPage/Sidebarstudent/Sidestu";
-import Score from "../Pages/AdminPage/Class/Scores/Score";
+
 
 // Admin Layout
 const AdminLayout = () => (
@@ -111,6 +114,10 @@ const router = createBrowserRouter([
       {
         path: "/score",
         element: <Score />,
+      },
+      {
+        path: "/room",
+        element: <HistoryCharts />,
       },
     ],
   },

@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
+import History from './History';
 
-class History extends Component {
-    render() {
+const Historypage = () => {
+
         return (
             <div>
                 <h1>History</h1>
+                <History> </History>
             </div>
         );
     }
-}
 
-export default History;
+export default Historypage;
