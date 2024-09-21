@@ -14,6 +14,9 @@ import random
 import string
 from collections import defaultdict
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+import os
+import logging
 app = FastAPI()
 
 
@@ -314,6 +317,17 @@ async def myRoombyID(user:UserSchema = Depends(get_current_user),db:Session = De
     except Exception as e:
         raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
 
+#getRoombyID
+@app.get("/room/{ID}",tags=['Room'],description="RoomByID")
+async def AddRoomByKey(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):  
+    try:
+        db_Room = db.query(Room).filter(Room.ID_Room == ID).first()
+        return db_Room
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail=f"Internal Server Error: {str(e)}")
 #UserAddRoomBykey
 @app.post("/user/RoombyKey",
           tags=["Room"],summary="Add User เข้า Room ให้User ใส่key ")
@@ -575,8 +589,21 @@ async def CreateQuestionFromCSV(file: UploadFile = File(...), user: UserSchema =
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
+FILE_DIRECTORY = "C:\\Users\\ASUS\\Desktop\\coop\\Cooperative-Education\\Back_End\\Download\\testceratequestion.csv"
 
-
+#upload csv
+@app.get("/download")
+async def download_file():
+    try:
+        # ตรวจสอบว่าไฟล์มีอยู่หรือไม่
+        if not os.path.isfile(FILE_DIRECTORY):
+            return {"error": "File not found"}
+        logging.info(f"Sending file: {FILE_DIRECTORY}")
+        return FileResponse(FILE_DIRECTORY, media_type='text/csv', filename='testcerateques.csv')
+    except HTTPException as e:
+        raise e
+    except Exception  as e:
+        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"}) 
 #update ต้องupdate choiceด้วย 
 @app.put('/admin/question',
         tags=["Question"],summary="Update คำถามและตัวเลือก")
@@ -765,14 +792,24 @@ async def CerateScoreHistory(score:ScoreHistoryRequest,user:UserSchema = Depends
         
 #ลืมทำget scoreHistoryโง่ๆ
 #getbyuser
-@app.get("/user/scorebyuser",response_model=List[ScoreHistoryReponse],
+@app.get("/user/scorebyuser",response_model=List[ScoreHistoryReponsebylesson],
          tags=["Score"],summary="get scoreHistoryโง่ๆ เอาไว้ให้Userดูความน่าสมเพช")
 async def GetScoreHistorybyUser(user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
     try:
         if(user.role != "user"):
            raise HTTPException(status_code=403, detail="Not enough permissions") 
-        db_score = db.query(ScoreHistory).filter(ScoreHistory.UserID == user.ID).all()
-        return db_score
+        db_score = (db.query(ScoreHistory,Lesson)
+                    .join(Lesson,Lesson.ID_Lesson == ScoreHistory.Lesson)
+                    .filter(ScoreHistory.UserID == user.ID).all())
+        return [ScoreHistoryReponsebylesson(
+                                        ID_ScoreHistory=score_history.ID_ScoreHistory,
+                                        Score=score_history.Score,
+                                        total_question=score_history.total_question,
+                                        Date=score_history.Date,
+                                        Lesson=lesson.name_lesson,
+                                        Lesson_ID=score_history.Lesson,
+                                        Question_set=score_history.Question_set
+                                    )for score_history,lesson in db_score]
     except HTTPException as e:
         raise e
     except Exception  as e:
