@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import "./ClassPage.css";
 
 // Component for creating Tabs for each grade
-const ClassroomTabs = ({ activeTab, setActiveTab, setActiveClassroom, fetchUserData }) => {
+const ClassroomTabs = ({
+  activeTab,
+  setActiveTab,
+  setActiveClassroom,
+  fetchUserData,
+}) => {
   const [year1, setYear1] = useState([]);
   const [year2, setYear2] = useState([]);
   const [year3, setYear3] = useState([]);
@@ -29,7 +35,9 @@ const ClassroomTabs = ({ activeTab, setActiveTab, setActiveClassroom, fetchUserD
         }
 
         const result = await response.json();
-        const filteredRooms = result.List_Room.filter((room) => room.Year === 1);
+        const filteredRooms = result.List_Room.filter(
+          (room) => room.Year === 1
+        );
         setYear1(filteredRooms || []);
       } catch (error) {
         console.error("Fetch error:", error.message);
@@ -61,7 +69,9 @@ const ClassroomTabs = ({ activeTab, setActiveTab, setActiveClassroom, fetchUserD
         }
 
         const result = await response.json();
-        const filteredRooms = result.List_Room.filter((room) => room.Year === 2);
+        const filteredRooms = result.List_Room.filter(
+          (room) => room.Year === 2
+        );
         setYear2(filteredRooms || []);
       } catch (error) {
         console.error("Fetch error:", error.message);
@@ -92,7 +102,9 @@ const ClassroomTabs = ({ activeTab, setActiveTab, setActiveClassroom, fetchUserD
         }
 
         const result = await response.json();
-        const filteredRooms = result.List_Room.filter((room) => room.Year === 3);
+        const filteredRooms = result.List_Room.filter(
+          (room) => room.Year === 3
+        );
         setYear3(filteredRooms || []);
       } catch (error) {
         console.error("Fetch error:", error.message);
@@ -101,6 +113,9 @@ const ClassroomTabs = ({ activeTab, setActiveTab, setActiveClassroom, fetchUserD
 
     fetchRoomData3();
   }, []);
+  const handleEvent = (id) => {
+    console.log(id);
+  };
 
   // Dropdown state for each grade
   const [dropdownOpen, setDropdownOpen] = useState({
@@ -133,7 +148,7 @@ const ClassroomTabs = ({ activeTab, setActiveTab, setActiveClassroom, fetchUserD
                 key={index}
                 onClick={() => {
                   setActiveClassroom(room.name); // Update active classroom
-                  fetchUserData(room.Room_ID);   // Fetch user data based on Room_ID
+                  fetchUserData(room.Room_ID); // Fetch user data based on Room_ID
                 }}
               >
                 {room.name}
@@ -157,7 +172,7 @@ const ClassroomTabs = ({ activeTab, setActiveTab, setActiveClassroom, fetchUserD
                 key={index}
                 onClick={() => {
                   setActiveClassroom(room.name);
-                  fetchUserData(room.Room_ID);   // Fetch user data
+                  fetchUserData(room.Room_ID); // Fetch user data
                 }}
               >
                 {room.name}
@@ -181,7 +196,7 @@ const ClassroomTabs = ({ activeTab, setActiveTab, setActiveClassroom, fetchUserD
                 key={index}
                 onClick={() => {
                   setActiveClassroom(room.name);
-                  fetchUserData(room.Room_ID);   // Fetch user data
+                  fetchUserData(room.Room_ID); // Fetch user data
                 }}
               >
                 {room.name}
@@ -196,6 +211,11 @@ const ClassroomTabs = ({ activeTab, setActiveTab, setActiveClassroom, fetchUserD
 
 // Component to display users and button for scores
 const ClassroomContent = ({ activeTab, activeClassroom, users }) => {
+  const navigate = useNavigate();
+  const handleEvent = (id,name) => {
+    console.log("user ID"+id+"name"+name);
+    navigate('/score', { state: { userId: id, userName: name } });
+  };
   return (
     <div className="tab-content">
       <h2>รายชื่อนักเรียน {activeClassroom}</h2>
@@ -213,7 +233,7 @@ const ClassroomContent = ({ activeTab, activeClassroom, users }) => {
               <td>{index + 1}</td>
               <td>{user.name}</td>
               <td>
-                <button onClick={() => alert(`ดูคะแนนของ ${user.name}`)}>
+                <button onClick={() => handleEvent(user.ID,user.name)}>
                   ดูคะแนนนักเรียน
                 </button>
               </td>
@@ -227,9 +247,9 @@ const ClassroomContent = ({ activeTab, activeClassroom, users }) => {
 
 // Main Component
 const Class = () => {
-  const [activeTab, setActiveTab] = useState("Grade1");
-  const [activeClassroom, setActiveClassroom] = useState("Classroom 1A");
-  const [users, setUsers] = useState([]);  // State to hold user data
+  const [activeTab, setActiveTab] = useState("");
+  const [activeClassroom, setActiveClassroom] = useState("");
+  const [users, setUsers] = useState([]); // State to hold user data
 
   // Function to fetch users based on Room_ID
   const fetchUserData = async (roomId) => {
@@ -239,20 +259,23 @@ const Class = () => {
         console.error("No token found");
         return;
       }
-      const response = await fetch(`http://localhost:8000/admin/UserRoom/${roomId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:8000/admin/UserRoom/${roomId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
-      setUsers(result || []);  // Set the fetched user data
+      setUsers(result || []); // Set the fetched user data
     } catch (error) {
       console.error("Fetch error:", error.message);
     }
@@ -269,7 +292,7 @@ const Class = () => {
       <ClassroomContent
         activeTab={activeTab}
         activeClassroom={activeClassroom}
-        users={users}  // Pass user data to content
+        users={users} // Pass user data to content
       />
     </>
   );

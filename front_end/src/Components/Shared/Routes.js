@@ -21,6 +21,7 @@ import HomeStudent from "../Pages/StudentPage/Home/HomeStudent";
 import LessonStudent from "../Pages/StudentPage/Lesson/StudentLesson";
 import Dashbord from "../Pages/StudentPage/Dashbord/Dashbord";
 import Sidebarstudent from "../Pages/StudentPage/Sidebarstudent/Sidestu";
+import Score from "../Pages/AdminPage/Class/Scores/Score";
 
 // Admin Layout
 const AdminLayout = () => (
@@ -106,6 +107,10 @@ const router = createBrowserRouter([
       {
         path: "/lessonstudent",
         element: <LessonStudent />,
+      },
+      {
+        path: "/score",
+        element: <Score />,
       },
     ],
   },
