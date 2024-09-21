@@ -19,6 +19,7 @@ import Welcome from "../Pages/Shared/Welcome/WelcomePage";
 import QuizPage from "../Pages/StudentPage/Quiz/QuizPage";
 import HomeStudent from "../Pages/StudentPage/Home/HomeStudent";
 import LessonStudent from "../Pages/StudentPage/Lesson/StudentLesson";
+import Dashbord from "../Pages/StudentPage/Dashbord/Dashbord";
 import Sidebarstudent from "../Pages/StudentPage/Sidebarstudent/Sidestu";
 
 // Admin Layout
@@ -125,6 +126,10 @@ const router = createBrowserRouter([
       {
         path: "/quize",
         element: <QuizPage />,
+      },
+      {
+        path: "/dashbord",
+        element: <Dashbord />,
       },
     ],
   },

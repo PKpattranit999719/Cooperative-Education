@@ -1,6 +1,7 @@
 import React from "react";
 import * as AiIcons from "react-icons/ai";
 import { AiFillCalculator } from "react-icons/ai";
+import { BsFileEarmarkBarGraphFill } from "react-icons/bs";
 
 export const SidebarData = [
   {
@@ -19,6 +20,12 @@ export const SidebarData = [
     title: "Quize",
     path: "/quizestudent",
     icon: <AiFillCalculator />,
+    cName: "nav-text",
+  },
+  {
+    title: "Dashbord",
+    path: "/quizestudent",
+    icon: <BsFileEarmarkBarGraphFill />,
     cName: "nav-text",
   },
 ];
