@@ -122,6 +122,10 @@ const router = createBrowserRouter([
         path: "/",
         element: <Welcome />,
       },
+      {
+        path: "/quize",
+        element: <QuizPage />,
+      },
     ],
   },
 ]);
