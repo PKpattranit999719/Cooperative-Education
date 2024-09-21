@@ -24,9 +24,9 @@ const Lesson = () => {
           return;
         }
         const response = await fetch(
-          `http://localhost:8000/user/questionset/${Question_set}`,
+          `http://localhost:8000/user/scorebyuser`,
           {
-            method: "POST",
+            method: "GET",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
@@ -53,7 +53,7 @@ const Lesson = () => {
 
 
   const handleExploreClick = (lessonID, questionSet) => {
-    navigate("/quiz", {
+    navigate("/check", {
       state: {
         lessonID: lessonID,
         questionSet: questionSet,
@@ -73,7 +73,7 @@ const Lesson = () => {
           {lessons.map((row) => (
             <div key={row.LessonID} className="lesson">
               <h3>{row.Lesson}</h3>
-              <p>จำนวนคำถาม: {row.TotalQuestion}</p>
+              <p>จำนวนคำถาม: {row.total_question}</p>
               <p>ชุดข้อสอบ: {Question_set}</p>
               <button
                 className="bth"
