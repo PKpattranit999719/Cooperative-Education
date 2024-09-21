@@ -1,7 +1,8 @@
+
 import React from "react";
 import * as AiIcons from "react-icons/ai";
-import { AiFillCalculator } from "react-icons/ai";
 import { BsFileEarmarkBarGraphFill } from "react-icons/bs";
+import { AiFillCalculator } from "react-icons/ai";
 
 export const SidebarData = [
   {
@@ -24,8 +25,9 @@ export const SidebarData = [
   },
   {
     title: "Dashbord",
-    path: "/quizestudent",
+    path: "/score",
     icon: <BsFileEarmarkBarGraphFill />,
     cName: "nav-text",
+    sendId: true, // เพิ่มเพื่อบ่งบอกว่าต้องส่ง id
   },
 ];
