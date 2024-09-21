@@ -23,7 +23,7 @@ const Lesson = () => {
           return;
         }
         const response = await fetch(
-          "http://localhost:8000/admin/questionset",
+          "http://localhost:8000/questionset",
           {
             method: "POST",
             headers: {
