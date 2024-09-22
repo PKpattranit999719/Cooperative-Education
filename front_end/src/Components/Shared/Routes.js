@@ -11,13 +11,12 @@ import Uploadpage from "../Pages/AdminPage/Upload/UploadPage";
 import Login from "../Pages/Shared/Login/LoginPage";
 import Register from "../Pages/Shared/Register/RegisterPage";
 import Navbar from "./Navbar";
-import Sidebar from "./Sidebar";
+import Sidebar from "../Pages/Shared/Sidebar/Sidebar";
 import PrivateRoute from "../Shared/PrivateRoutes";
 import "../../App.css";
 import History from "../Pages/AdminPage/History/HistoryPage";
 import Welcome from "../Pages/Shared/Welcome/WelcomePage";
 import Score from "../Pages/AdminPage/Class/Scores/Score";
-
 
 // student
 import QuizPage from "../Pages/StudentPage/Quizbylesson/Quiz/QuizPage";
@@ -27,8 +26,10 @@ import Dashbord from "../Pages/StudentPage/Dashbord/Dashbord";
 import Sidebarstudent from "../Pages/StudentPage/Sidebarstudent/Sidestu";
 import Quizcheck from '../Pages/StudentPage/Lesson/check/quizcheck'
 import LessonQuiz from "../Pages/StudentPage/Quizbylesson/Lessonquiz";
+import Dashboard from "../Pages/StudentPage/Dashbord/Dashbord";
 
-
+//ref CSS
+import "./Sidebar.css"
 
 // Admin Layout
 const AdminLayout = () => (
@@ -139,6 +140,10 @@ const router = createBrowserRouter([
         path: "/upload",
         element: <Uploadpage />,
       },
+      {
+        path: "/dashboard",
+        element: <Dashboard/>
+      }
     ],
   },
   {

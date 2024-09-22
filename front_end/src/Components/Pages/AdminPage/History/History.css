@@ -26,7 +26,7 @@
 .history-container h1{
     text-align: left;
     color: #ffffff;
-    font-size: 3.0em;
+    font-size: 2.2em;
 }
 
 .header-group {
@@ -66,7 +66,7 @@
     text-align: center;
     margin-bottom: 0px;
     font-weight: bold;
-    font-size: 3.0em; /* เพิ่มขนาดตัวอักษร */
+    font-size: 1.7em; /* เพิ่มขนาดตัวอักษร */
     color: #ffffff; /* เพิ่มสีให้ชัดเจนขึ้น */
     word-wrap: break-word;  /* ช่วยตัดข้อความยาว ๆ ให้ลงบรรทัดใหม่ */
     word-break: break-all;  /* ตัดข้อความยาวที่ไม่มีช่องว่างลงบรรทัดใหม่ */

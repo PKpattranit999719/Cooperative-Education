@@ -1,6 +1,5 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import "./Sidebar.css";
 import { SidebarData } from "./SidebarData";
 
 function Sidebar() {
@@ -19,20 +18,21 @@ function Sidebar() {
 
     return (
         <div>
-            <ul className="side-menu">
-                {SidebarData.map((item, index) => {
-                    const isActive = location.pathname === item.path;
-                    return (
-                        <li key={index} className={isActive ? "active" : ""}>
-                            <span onClick={() => handleClick(item.path, item.sendId)} style={{ cursor: 'pointer' }}>
-                                <span className="icon">{item.icon}</span>
-                                <span>{item.title}</span>
-                            </span>
-                        </li>
-                    );
-                })}
-            </ul>
-        </div>
+        <ul className="side-menu">
+          {SidebarData.map((item, index) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <li key={index} className={isActive ? "active" : ""}>
+                <Link to={item.path}>
+                <span onClick={() => handleClick(item.path, item.sendId)} style={{ cursor: 'pointer' }}></span>
+                  <span className="icon">{item.icon}</span>
+                  <span>{item.title}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     );
 }
 

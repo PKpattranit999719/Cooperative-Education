@@ -1,143 +1,176 @@
-import React, { useEffect, useState } from 'react';
-import { Line } from 'react-chartjs-2';
-import { useLocation, useNavigate } from 'react-router-dom';
-import 'chart.js/auto';
-import './Scores.css';
+import React, { useEffect, useState } from "react";
+import { Doughnut, Line } from "react-chartjs-2";
+import { useLocation, useNavigate } from "react-router-dom";
+import "chart.js/auto";
+import "./Scores.css";
 
-const UserScore = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const { userName, userId } = location.state || {};
-
-    const [classroom, setClassroom] = useState('');
-    const [lessons, setLessons] = useState([]);
-    const [averagedScores, setAveragedScores] = useState({}); // เก็บคะแนนเฉลี่ย
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                if (!token) {
-                    console.error("No token found");
-                    return;
-                }
-
-                const response = await fetch(`http://localhost:8000/scorebylesson/${userId}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch user data");
-                }
-
-                const userData = await response.json();
-                console.log(userData.Room)
-                setClassroom(userData.Room)
-                const scores = userData.Score; // ดึงคะแนนจากข้อมูลที่ได้
-                
-
-                // คำนวณคะแนนเฉลี่ยสำหรับแต่ละบทเรียน
-                const lessonScores = scores.reduce((acc, score) => {
-                    if (!acc[score.Lesson]) {
-                        acc[score.Lesson] = { total: 0, count: 0 };
-                    }
-                    acc[score.Lesson].total += score.Score;
-                    acc[score.Lesson].count += 1;
-                    return acc;
-                }, {});
-
-                // สร้างข้อมูลคะแนนเฉลี่ย
-                const averaged = Object.keys(lessonScores).map(lessonId => ({
-                    lessonId: lessonId,
-                    average: lessonScores[lessonId].total / lessonScores[lessonId].count
-                }));
-
-                setLessons(averaged); // ตั้งค่าบทเรียนที่มีคะแนนเฉลี่ย
-                
-
-            } catch (error) {
-                console.error("Error fetching user scores:", error);
-            }
-        };
-
-        fetchData();
-    }, [userId]);
-
-    return (
-        <div>
-            <h1>ห้องเรียน: {classroom}</h1>
-            <div className="user-section">
-                <h2>คะแนนของนักเรียน: {userName} </h2>
-
-                <div className="user-content">
-                    <div className="chart-container">
-                        <h3>กราฟคะแนนเฉลี่ย</h3>
-                        <Line
-                            data={{
-                                labels: lessons.map(lesson => `บทเรียน ${lesson.lessonId}`), // สร้างชื่อบทเรียน
-                                datasets: [{
-                                    label: userName,
-                                    data: lessons.map(lesson => lesson.average), // ใช้ค่าเฉลี่ย
-                                    fill: false,
-                                    borderColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-                                }]
-                            }}
-                            options={{
-                                responsive: true,
-                                plugins: {
-                                    legend: {
-                                        labels: {
-                                            font: { size: 14, weight: 'bold' },
-                                            color: '#000000'
-                                        }
-                                    }
-                                },
-                                scales: {
-                                    x: {
-                                        ticks: {
-                                            font: { size: 14, weight: 'bold' },
-                                            color: '#000000'
-                                        }
-                                    },
-                                    y: {
-                                        ticks: {
-                                            font: { size: 14, weight: 'bold' },
-                                            color: '#000000'
-                                        }
-                                    }
-                                }
-                            }}
-                        />
-                        <button onClick={() => navigate(-1)}>ย้อนกลับ</button>
-                    </div>
-
-                    <div className="table-container">
-                        <h3>ตารางคะแนนเฉลี่ย</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>บทเรียน</th>
-                                    <th>คะแนนเฉลี่ย</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {lessons.map(lesson => (
-                                    <tr key={lesson.lessonId}>
-                                        <td>{`บทเรียน ${lesson.lessonId  }`}</td>
-                                        <td>{lesson.average.toFixed(2)}</td> {/* แสดงคะแนนเฉลี่ย */}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+const mockUserData = {
+  Room: "Class A",
+  Score: [
+    { Lesson: "1", Score: 12 },
+    { Lesson: "2", Score: 12 },
+    { Lesson: "3", Score: 14 },
+    { Lesson: "4", Score: 14 },
+    { Lesson: "5", Score: 14 },
+    { Lesson: "6", Score: 14 },
+  ],
 };
 
-export default UserScore;
+const Score = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { userName, userId } = location.state || {};
+
+  const [classroom, setClassroom] = useState("");
+  const [lessons, setLessons] = useState([]);
+  const [doughnutCharts, setDoughnutCharts] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userData = mockUserData; // Use mock data
+
+        setClassroom(userData.Room);
+        const scores = userData.Score;
+
+        const lessonScores = scores.reduce((acc, score) => {
+          if (!acc[score.Lesson]) {
+            acc[score.Lesson] = { total: 0, count: 0, max: 15 }; // Assume max score is 15
+          }
+          acc[score.Lesson].total += score.Score;
+          acc[score.Lesson].count += 1;
+          return acc;
+        }, {});
+
+        const averaged = Object.keys(lessonScores).map((lessonId) => {
+          const { total, count, max } = lessonScores[lessonId];
+          return {
+            lessonId: lessonId,
+            average: total / count,
+            max,
+          };
+        });
+
+        setLessons(averaged);
+
+        // Prepare data for Doughnut charts with specific mock values
+        const doughnutData = {
+          1: { correct: 8, incorrect: 4 }, // Specific mock values for Lesson 1
+          2: { correct: 10, incorrect: 2 }, // Specific mock values for Lesson 2
+          3: { correct: 12, incorrect: 2 },
+          4: { correct: 12, incorrect: 2 },
+          5: { correct: 12, incorrect: 2 },
+          6: { correct: 12, incorrect: 2 },
+        };
+
+        const formattedDoughnutData = Object.keys(lessonScores).map(
+          (lessonId) => {
+            const { correct, incorrect } = doughnutData[lessonId] || {
+              correct: 0,
+              incorrect: 0,
+            };
+            return {
+              lessonId,
+              correct,
+              incorrect,
+            };
+          }
+        );
+
+        setDoughnutCharts(formattedDoughnutData);
+      } catch (error) {
+        console.error("Error fetching user scores:", error);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
+  return (
+    <div className="score-container">
+      <h1>ห้องเรียน: {classroom}</h1>
+      <div className="user-section">
+        <h2>คะแนนของนักเรียน: {userName} </h2>
+
+        <div className="user-content">
+          <div className="chart-container">
+            <h3>กราฟแนวโน้มคะแนนเฉลี่ย</h3>
+            <Line
+              data={{
+                labels: lessons.map((lesson) => `บทเรียน ${lesson.lessonId}`),
+                datasets: [
+                  {
+                    label: "คะแนนที่ได้",
+                    data: lessons.map((lesson) => lesson.average),
+                    fill: false,
+                    borderColor: `#${Math.floor(
+                      Math.random() * 16777215
+                    ).toString(16)}`,
+                    backgroundColor: "rgba(0,0,0,0.1)",
+                  },
+                  {
+                    label: "คะแนนเต็ม",
+                    data: lessons.map((lesson) => lesson.max),
+                    fill: false,
+                    borderColor: "#FF5733",
+                    borderDash: [5, 5],
+                  },
+                ],
+              }}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: "top",
+                    labels: {
+                      font: { size: 14, weight: "bold" },
+                      color: "#000000",
+                    },
+                  },
+                },
+                scales: {
+                  x: {
+                    ticks: {
+                      font: { size: 14, weight: "bold" },
+                      color: "#000000",
+                    },
+                  },
+                  y: {
+                    ticks: {
+                      font: { size: 14, weight: "bold" },
+                      color: "#000000",
+                    },
+                    suggestedMax: 15,
+                  },
+                },
+              }}
+            />
+          </div>
+
+          <div className="table-container">
+            <h3>ตารางคะแนน</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>บทเรียน</th>
+                  <th>คะแนน</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lessons.map((lesson) => (
+                  <tr key={lesson.lessonId}>
+                    <td>{`บทเรียน ${lesson.lessonId}`}</td>
+                    <td>{lesson.average.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <button onClick={() => navigate(-1)}>ย้อนกลับ</button>
+      </div>
+    </div>
+  );
+};
+
+export default Score;

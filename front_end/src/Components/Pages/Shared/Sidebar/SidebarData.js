@@ -2,6 +2,7 @@ import React from "react";
 import * as AiIcons from "react-icons/ai";
 import * as FaIcons from "react-icons/fa";
 import * as IoIcons from "react-icons/io";
+import { BsFileEarmarkBarGraphFill } from "react-icons/bs";
 
 export const SidebarData = [
   {
