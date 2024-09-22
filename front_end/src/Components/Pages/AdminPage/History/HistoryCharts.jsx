@@ -121,31 +121,22 @@ const HistoryCharts = () => {
           },
         }
       );
-
-      console.log(`API tests ${questionSet}:`, response.data);
-
-      // // ดึงข้อมูลคำถามจาก response
-      // const questions = response.data.Question;
-
-      // // สร้าง counts สำหรับ true และ false จากข้อมูลที่ได้
-      // const trueCounts = questions.map((q) => q.Is_Correct);
-      // const falseCounts = questions.map((q) => q.Is_NotCorrect);
-      const questions = [
-        { Is_Correct: 5, Is_NotCorrect: 2 },
-        { Is_Correct: 8, Is_NotCorrect: 1 },
-        { Is_Correct: 7, Is_NotCorrect: 3 },
-      ];
-      
+  
+      // Check if response is 404
+      if (response.status === 404) {
+        console.error("Data not found for question set:", questionSet);
+        setChartData(null); // Hide chart if data not found
+        return;
+      }
+  
+      // Use the data from the response
+      const questions = response.data.Question; // Adjust according to your response structure
+  
       const trueCounts = questions.map((q) => q.Is_Correct);
       const falseCounts = questions.map((q) => q.Is_NotCorrect);
-
-      console.log("True Counts:", trueCounts);
-      console.log("False Counts:", falseCounts);
-
-      // ตั้งค่าป้ายชื่อสำหรับแต่ละคำถาม
-      const labels = questions.map((q, index) => `ข้อ ${index + 1}`);
-
-      // ตั้งค่าข้อมูลชาร์ต
+  
+      const labels = questions.map((_, index) => `ข้อ ${index + 1}`);
+  
       setChartData({
         labels,
         datasets: [
@@ -167,9 +158,10 @@ const HistoryCharts = () => {
       });
     } catch (error) {
       console.error("Error fetching bar chart data:", error);
+      setChartData(null); // Hide chart in case of an error
     }
   };
-
+  
   useEffect(() => {
     if (selectedLesson) {
       fetchBarChartData(1, setChartData1);
@@ -201,14 +193,22 @@ const HistoryCharts = () => {
               },
             }
           );
+  
+          // Check if the response is 404
+          if (response.status === 404) {
+            console.error("Data not found for lesson:", selectedLesson);
+            setChartData(null); // Do not display the chart
+            return;
+          }
+  
           console.log("API response for Bar Chart:", response.data);
-
-          // ดึงข้อมูลคะแนนเฉลี่ย
-          const meanScores = response.data.MeanScoreSet;
+  
+          // Extract mean scores
+          const meanScores = response.data.MeanScoreSet || [];
           const labels = meanScores.map((set) => `ชุด ${set.QuestionSet}`);
           const scores = meanScores.map((set) => set.MeanScore);
-
-          // ตั้งค่าข้อมูลชาร์ต
+  
+          // Set chart data
           setChartData({
             labels,
             datasets: [
@@ -231,9 +231,10 @@ const HistoryCharts = () => {
           });
         } catch (error) {
           console.error("Error fetching bar chart data:", error);
+          setChartData(null); // Do not display the chart in case of error
         }
       };
-
+  
       fetchBarChartData();
     }
   }, [selectedLesson, ID_Room]);
@@ -305,7 +306,7 @@ const HistoryCharts = () => {
         },
         title: {
           display: true,
-          text: "จำนวนผู้ใช้ที่ได้คะแนนเกิน 9 คะแนน", // ข้อความที่ต้องการแสดง
+          text: "คะแนนเฉลี่ยแต่ละชุด", // ข้อความที่ต้องการแสดง
           color: "#333", // เปลี่ยนสีฟอนต์ของชื่อแกน Y
           font: {
             size: 16, // ขนาดฟอนต์ของชื่อแกน Y
@@ -352,39 +353,41 @@ const HistoryCharts = () => {
           },
         }
       );
-
+  
       // ใช้ข้อมูลจาก response
       const data = response.data.Question; // สมมติว่า `Question` เป็น array ใน response
       const donutDataArray = data.map(question => {
         let i = 1; // ประกาศ i ที่นี่เพื่อนับแต่ละตัวเลือก
-        const labels = question.List_Choice.map(choice => 
-            `ข้อ ${i++}: ${choice.Choice_Text}`
-        );
-        const counts = question.List_Choice.map(choice => choice.Total_Ans);
-    
+        const labels = question.List_Choice.map(choice => {
+          const totalAns = choice.Total_Ans || 0; // กำหนดค่าเป็น 0 ถ้าเป็น null
+          return `ข้อ ${i++}: ${choice.Choice_Text} (Total: ${totalAns})`;
+        });
+  
+        const counts = question.List_Choice.map(choice => choice.Total_Ans || 0);
+  
         return {
-            questionText: question.QuestionText, // เก็บ QuestionText เพื่อใช้ใน modal
-            labels,
-            datasets: [
-                {
-                    data: counts,
-                    backgroundColor: [
-                        "rgba(255, 99, 132, 0.2)",
-                        "rgba(54, 162, 235, 0.2)",
-                        "rgba(255, 206, 86, 0.2)",
-                        "rgba(75, 192, 192, 0.2)",
-                    ],
-                    borderColor: [
-                        "rgba(255, 99, 132, 1)",
-                        "rgba(54, 162, 235, 1)",
-                        "rgba(255, 206, 86, 1)",
-                        "rgba(75, 192, 192, 1)",
-                    ],
-                    borderWidth: 1,
-                },
-            ],
+          questionText: question.QuestionText, // เก็บ QuestionText เพื่อใช้ใน modal
+          labels,
+          datasets: [
+            {
+              data: counts,
+              backgroundColor: [
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(54, 162, 235, 0.2)",
+                "rgba(255, 206, 86, 0.2)",
+                "rgba(75, 192, 192, 0.2)",
+              ],
+              borderColor: [
+                "rgba(255, 99, 132, 1)",
+                "rgba(54, 162, 235, 1)",
+                "rgba(255, 206, 86, 1)",
+                "rgba(75, 192, 192, 1)",
+              ],
+              borderWidth: 1,
+            },
+          ],
         };
-    });
+      });
       setModalContent(donutDataArray);
       setModalIsOpen(true);
     } catch (error) {
