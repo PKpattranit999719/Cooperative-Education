@@ -12,7 +12,8 @@ const StudentQuize = () => {
   const [userAnswers, setUserAnswers] = useState([]);
   const [lessonID, setLessonID] = useState(null);
   const [questionSet, setQuestionSet] = useState(null);
-  
+  const [showScore, setShowScore] = useState(false);
+
   const fetchQuestions = async (lessonID, questionSet) => {
     const token = localStorage.getItem("token");
 
@@ -28,7 +29,10 @@ const StudentQuize = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ Question_Set: questionSet, Lesson_ID: lessonID }),
+        body: JSON.stringify({
+          Question_Set: questionSet,
+          Lesson_ID: lessonID,
+        }),
       });
 
       if (!response.ok) {
@@ -87,7 +91,11 @@ const StudentQuize = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      navigate("/lessonQuiz");
+      // เมื่อส่งคะแนนแล้วให้แสดงคะแนนเป็น pop-up
+      alert(`Your Score: ${score} / ${questions.length}`);
+      
+      // เปลี่ยนสถานะ showScore เป็น true
+      setShowScore(true);
     } catch (error) {
       console.error("Submit error:", error.message);
     }
@@ -112,32 +120,50 @@ const StudentQuize = () => {
           </p>
         </div>
 
-        {questions.length > 0 && currentQuestionIndex < questions.length ? (
-          <div className="question-item">
-            <h5>{questions[currentQuestionIndex].QuestionText}</h5>
-            <div className="options-container">
-              {questions[currentQuestionIndex].List_Choice.map((choice) => (
-                <p
-                  key={choice.ID_Choice}
-                  className="option"
-                  onClick={() => handleNextQuestion(choice.ID_Choice, choice.Is_Correct)}
-                >
-                  {choice.Choice_Text}
-                </p>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <p>Loading questions...</p>
-        )}
+        {/* เงื่อนไขแสดงคำถามหรือคะแนน */}
+          <>
+            {questions.length > 0 && currentQuestionIndex < questions.length ? (
+              <div className="question-item">
+                <h5>{questions[currentQuestionIndex].QuestionText}</h5>
+                <div className="options-container">
+                  {questions[currentQuestionIndex].List_Choice.map((choice) => (
+                    <p
+                      key={choice.ID_Choice}
+                      className="option"
+                      onClick={() =>
+                        handleNextQuestion(choice.ID_Choice, choice.Is_Correct)
+                      }
+                    >
+                      {choice.Choice_Text}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p>Loading questions...</p>
+            )}
 
-        <div className="button-container">
-          {currentQuestionIndex === questions.length - 1 ? (
-            <button onClick={submitQuiz}>Submit Quiz</button>
-          ) : (
-            <button onClick={() => handleNextQuestion(null, false)}>Next Question</button>
-          )}
-        </div>
+            <div className="button-container">
+              {/* ปุ่ม Return */}
+              <button onClick={() => navigate(-1)} className="return-button">
+                Return
+              </button>
+
+              {/* เงื่อนไขแสดงปุ่ม Submit หรือ Next Question */}
+              {currentQuestionIndex === questions.length - 1 ? (
+                <button onClick={submitQuiz} className="submit-button">
+                  Submit Quiz
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleNextQuestion(null, false)}
+                  className="next-button"
+                >
+                  Next Question
+                </button>
+              )}
+            </div>
+          </>
       </div>
     </>
   );
