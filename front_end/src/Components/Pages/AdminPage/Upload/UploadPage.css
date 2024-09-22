@@ -1,0 +1,17 @@
+.upload-container{
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(30px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    color: #fff;
+    border-radius: 10px;
+    padding: 30px;
+}
+
+.upload-section{
+    padding: 10px;
+}
+
+.upload-section a{
+    padding: 10px;
+}

@@ -6,7 +6,7 @@ import Lesson from "../Pages/AdminPage/Lesson/LessonPage";
 import Class from "../Pages/AdminPage/Class/ClassPage";
 import Result from "../Pages/AdminPage/Result/ResultPage";
 import HistoryCharts from "../Pages/AdminPage/History/HistoryCharts";
-import Uploadpage from "../Pages/AdminPage/Upload/upload";
+import Uploadpage from "../Pages/AdminPage/Upload/UploadPage";
 // shared
 import Login from "../Pages/Shared/Login/LoginPage";
 import Register from "../Pages/Shared/Register/RegisterPage";
