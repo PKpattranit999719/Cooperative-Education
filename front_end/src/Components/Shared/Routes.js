@@ -1,3 +1,4 @@
+//admin
 import React, { useState, useEffect } from "react";
 import { Outlet, createBrowserRouter } from "react-router-dom";
 import Home from "../Pages/AdminPage/Home/HomePage";
@@ -5,7 +6,7 @@ import Lesson from "../Pages/AdminPage/Lesson/LessonPage";
 import Class from "../Pages/AdminPage/Class/ClassPage";
 import Result from "../Pages/AdminPage/Result/ResultPage";
 import HistoryCharts from "../Pages/AdminPage/History/HistoryCharts";
-
+import Uploadpage from "../Pages/AdminPage/Upload/upload";
 // shared
 import Login from "../Pages/Shared/Login/LoginPage";
 import Register from "../Pages/Shared/Register/RegisterPage";
@@ -26,6 +27,7 @@ import Dashbord from "../Pages/StudentPage/Dashbord/Dashbord";
 import Sidebarstudent from "../Pages/StudentPage/Sidebarstudent/Sidestu";
 import Quizcheck from '../Pages/StudentPage/Lesson/check/quizcheck'
 import LessonQuiz from "../Pages/StudentPage/Quizbylesson/Lessonquiz";
+
 
 
 // Admin Layout
@@ -132,6 +134,10 @@ const router = createBrowserRouter([
       {
         path: "/lessonQuiz",
         element: <LessonQuiz />,
+      },
+      {
+        path: "/upload",
+        element: <Uploadpage />,
       },
     ],
   },

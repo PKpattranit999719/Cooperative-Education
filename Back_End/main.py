@@ -22,10 +22,10 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Allow your React frontend URL
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*", "Authorization"],  # Allow all headers and Authorization
 )
 
 @app.post("/login",
@@ -593,7 +593,7 @@ FILE_DIRECTORY = "Cooperative-Education\\Back_End\\Download\\testceratequestion.
 
 #upload csv
 @app.get("/download")
-async def download_file():
+async def download_file(user:UserSchema = Depends(get_current_user),db : Session = Depends(get_db)):
     try:
         # ตรวจสอบว่าไฟล์มีอยู่หรือไม่
         if not os.path.isfile(FILE_DIRECTORY):
@@ -604,6 +604,7 @@ async def download_file():
         raise e
     except Exception  as e:
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"}) 
+    
 #update ต้องupdate choiceด้วย 
 @app.put('/admin/question',
         tags=["Question"],summary="Update คำถามและตัวเลือก")

@@ -28,4 +28,10 @@ export const SidebarData = [
     icon: <FaIcons.FaChalkboardTeacher />,
     cName: "nav-text",
   },
+  {
+    title: "Upload",
+    path: "/upload",
+    icon: <FaIcons.FaChalkboardTeacher />,
+    cName: "nav-text",
+  },
 ];
