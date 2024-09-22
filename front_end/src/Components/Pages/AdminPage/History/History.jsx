@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './his.css'; // Assuming you have a CSS file for styling
+import './History.css'; // Assuming you have a CSS file for styling
 
 const History = () => {
     const navigate = useNavigate();
@@ -35,7 +35,7 @@ const History = () => {
     };
 
     return (
-        <div className="history-container">
+        <div>
             <div className="grade-group">
                 <h2 className="grade-text">All Class</h2>
                 <div className="button-group">

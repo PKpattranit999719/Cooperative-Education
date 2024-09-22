@@ -98,46 +98,50 @@ const ResultPage = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-content">
-      {fetchedQuestions.length > 0 ? (
-        fetchedQuestions.map((question, index) => (
-          <div key={index} className="question-card">
-            <h2>ข้อที่ {index + 1}</h2>
-            <label>{question.QuestionText}</label>
-            <div className="options">
-              {question.List_Choice.map((choice, optionIndex) => (
-                <label key={optionIndex} className="option-label">
-                  <input
-                    type="radio"
-                    name={`question-${index}`}
-                    value={choice.Choice_Text}
-                    checked={answers[index] === choice.Choice_Text}
-                    onChange={() => handleAnswerChange(index, choice.Choice_Text)}
-                  />
-                  {choice.Choice_Text} {choice.Is_Correct && <span>✅</span>}
-                </label>
-              ))}
+    <div>
+      <h1>เฉลยคำตอบ</h1>
+      <form onSubmit={handleSubmit} className="form-content">
+        {fetchedQuestions.length > 0 ? (
+          fetchedQuestions.map((question, index) => (
+            <div key={index} className="question-card">
+              <h2>ข้อที่ {index + 1}</h2>
+              <label>{question.QuestionText}</label>
+              <div className="options">
+                {question.List_Choice.map((choice, optionIndex) => (
+                  <label key={optionIndex} className="option-label">
+                    <input
+                      type="radio"
+                      name={`question-${index}`}
+                      value={choice.Choice_Text}
+                      checked={answers[index] === choice.Choice_Text}
+                      onChange={() => handleAnswerChange(index, choice.Choice_Text)}
+                    />
+                    {choice.Choice_Text} {choice.Is_Correct && <span>✅</span>}
+                  </label>
+                ))}
+              </div>
             </div>
+          ))
+        ) : (
+          <p>Loading questions...</p>
+        )}
+  
+        {results.length > 0 && (
+          <div className="results">
+            <h2>Results:</h2>
+            {results.map((result, index) => (
+              <div key={index} className={`result ${result.isCorrect ? 'correct' : 'incorrect'}`}>
+                <p>คำถาม: {result.questionText}</p>
+                <p>คำตอบที่เลือก: {result.selectedAnswer}</p>
+                <p>{result.isCorrect ? "ถูกต้อง!" : `ผิด! คำตอบที่ถูกต้องคือ: ${result.correctAnswer}`}</p>
+              </div>
+            ))}
           </div>
-        ))
-      ) : (
-        <p>Loading questions...</p>
-      )}
-
-      {results.length > 0 && (
-        <div className="results">
-          <h2>Results:</h2>
-          {results.map((result, index) => (
-            <div key={index} className={`result ${result.isCorrect ? 'correct' : 'incorrect'}`}>
-              <p>คำถาม: {result.questionText}</p>
-              <p>คำตอบที่เลือก: {result.selectedAnswer}</p>
-              <p>{result.isCorrect ? "ถูกต้อง!" : `ผิด! คำตอบที่ถูกต้องคือ: ${result.correctAnswer}`}</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </form>
+        )}
+      </form>
+    </div>
   );
+  
 };
 
 
