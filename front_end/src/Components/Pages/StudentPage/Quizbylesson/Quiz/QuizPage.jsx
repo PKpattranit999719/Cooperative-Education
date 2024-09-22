@@ -164,7 +164,6 @@ const StudentQuize = () => {
               )}
             </div>
           </>
-        )}
       </div>
     </>
   );
