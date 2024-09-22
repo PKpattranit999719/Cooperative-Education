@@ -10,6 +10,7 @@ const QuizCheck = () => {
   const [results, setResults] = useState([]);
   const [total_question,settotal_question] = useState([0]);
   const [score,setscore] = useState([0]);
+
   useEffect(() => {
     if (location.state) {
       const { ID_ScoreHistory } = location.state;
@@ -86,80 +87,90 @@ const QuizCheck = () => {
     return question.ChoiceUserAns !== null; // Check if user has answered
   };
 
+  const handleBackClick = () => {
+    navigate(-1); // Navigate to the previous page
+  };
+
   return (
     <>
-        <h1>คำถามทั้งหมด = {total_question}</h1>
-        <h1>คะแนน = {score}</h1>
-    <form onSubmit={handleSubmit} className="form-content">
-      {fetchedQuestions.length > 0 ? (
-        fetchedQuestions.map((question, index) => (
-          <div key={index} className="question-card">
-      <h2>
-        ข้อที่ {index + 1}
-        <span style={{ marginLeft: "500px" }}>
-          {/* Check if ChoiceUserAns and Choice_Ans exist, and then check if the answer is correct */}
-          {question.ChoiceUserAns && question.ChoiceUserAns.Choice_Ans ? (
-            question.ChoiceUserAns.Choice_Ans.Is_Correct ? (
-              <span style={{ color: "green" }}>ถูก</span>
-            ) : (
-              <span style={{ color: "red" }}>ผิด</span>
-            )
-          ) : (
-            <span style={{ color: "red" }}>ผิด</span> // If no answer is selected
-          )}
-        </span>
-      </h2>
-            <label>{question.QuestionText}</label>
-            <div className="options">
-              {question.List_Choice.map((choice, optionIndex) => (
-                <label key={optionIndex} className="option-label">
-                  <input
-                    type="radio"
-                    name={`question-${index}`}
-                    value={choice.Choice_Text}
-                    checked={answers[index] === choice.Choice_Text}
-                    onChange={() =>
-                      handleAnswerChange(index, choice.Choice_Text)
-                    }
-                  />
-                  {choice.Choice_Text}
-                  {hasUserAnswered(question) &&
-                    choice.ID_Choice ===
-                      question.ChoiceUserAns.Choice_Ans.ID_Choice && (
-                      <span style={{ marginLeft: "10px" }}>
-                        {" "}
-                        คำตอบที่เคยเลือก👈
-                      </span>
-                    )}
-                </label>
-              ))}
+      <h1>คำถามทั้งหมด = {total_question}</h1>
+      <h1>คะแนน = {score}</h1>
+      <form onSubmit={handleSubmit} className="form-content">
+        {fetchedQuestions.length > 0 ? (
+          fetchedQuestions.map((question, index) => (
+            <div key={index} className="question-card">
+              <h2>
+                ข้อที่ {index + 1}
+                <span style={{ marginLeft: "500px" }}>
+                  {question.ChoiceUserAns && question.ChoiceUserAns.Choice_Ans ? (
+                    question.ChoiceUserAns.Choice_Ans.Is_Correct ? (
+                      <span style={{ color: "green" }}>ถูก</span>
+                    ) : (
+                      <span style={{ color: "red" }}>ผิด</span>
+                    )
+                  ) : (
+                    <span style={{ color: "red" }}>ผิด</span> // If no answer is selected
+                  )}
+                </span>
+              </h2>
+              <label>{question.QuestionText}</label>
+              <div className="options">
+                {question.List_Choice.map((choice, optionIndex) => (
+                  <label key={optionIndex} className="option-label">
+                    <input
+                      type="radio"
+                      name={`question-${index}`}
+                      value={choice.Choice_Text}
+                      checked={answers[index] === choice.Choice_Text}
+                      onChange={() =>
+                        handleAnswerChange(index, choice.Choice_Text)
+                      }
+                    />
+                    {choice.Choice_Text}
+                    {hasUserAnswered(question) &&
+                      choice.ID_Choice ===
+                        question.ChoiceUserAns.Choice_Ans.ID_Choice && (
+                        <span style={{ marginLeft: "10px" }}>
+                          {" "}
+                          คำตอบที่เคยเลือก👈
+                        </span>
+                      )}
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
-        ))
-      ) : (
-        <p>Loading questions...</p>
-      )}
+          ))
+        ) : (
+          <p>Loading questions...</p>
+        )}
 
-      {results.length > 0 && (
-        <div className="results">
-          <h2>Results:</h2>
-          {results.map((result, index) => (
-            <div
-              key={index}
-              className={`result ${result.isCorrect ? "correct" : "incorrect"}`}
-            >
-              <p>คำถาม: {result.questionText}</p>
-              <p>คำตอบที่เลือก: {result.selectedAnswer}</p>
-              <p>
-                {result.isCorrect
-                  ? "ถูกต้อง!"
-                  : `ผิด! คำตอบที่ถูกต้องคือ: ${result.correctAnswer}`}
-              </p>
-            </div>
-          ))}
+        {results.length > 0 && (
+          <div className="results">
+            <h2>Results:</h2>
+            {results.map((result, index) => (
+              <div
+                key={index}
+                className={`result ${result.isCorrect ? "correct" : "incorrect"}`}
+              >
+                <p>คำถาม: {result.questionText}</p>
+                <p>คำตอบที่เลือก: {result.selectedAnswer}</p>
+                <p>
+                  {result.isCorrect
+                    ? "ถูกต้อง!"
+                    : `ผิด! คำตอบที่ถูกต้องคือ: ${result.correctAnswer}`}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Back Button */}
+        <div className="back-button-container" style={{ marginTop: "20px" }}>
+          <button type="button" onClick={handleBackClick} className="back-button">
+            ย้อนกลับ
+          </button>
         </div>
-      )}
-    </form>
+      </form>
     </>
   );
 };
