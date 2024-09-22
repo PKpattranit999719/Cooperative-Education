@@ -51,28 +51,3 @@
   margin-left: 250px;
   transition: all 0.3s ease;
 }
-
-.tab-link {
-  padding: 10px 20px;
-  background-color: #f1f1f1;
-  border: none;
-  cursor: pointer;
-  outline: none;
-  margin-right: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.tab-link.active {
-  background-color: #036596;
-  color: white;
-}
-
-.tab-content {
-  padding: 20px;
-  border: 1px solid #ddd;
-  background-color: #fff;
-}
-
-.tab-link:hover {
-  background-color: #ddd;
-}

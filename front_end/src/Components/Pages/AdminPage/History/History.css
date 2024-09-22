@@ -9,13 +9,26 @@
     max-width: 1300px;
     width: 100%;
     margin: auto;
-    padding: 0px 20px;
+    padding: 10px 20px;
     display: flex;
     flex-direction: column; /* จัดเรียงในแนวตั้ง */
     gap: 2px;
     text-align: center; /* จัดข้อความและกราฟให้อยู่ตรงกลาง */
     background-size: 150%; /* ปรับขนาดของรูปพื้นหลัง */
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(30px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    color: #fff;
+    border-radius: 10px;
 }
+
+.history-container h1{
+    text-align: left;
+    color: #ffffff;
+    font-size: 2.2em;
+}
+
 .header-group {
     display: flex;
     align-items: center;
@@ -50,12 +63,11 @@
 }
 
 .grade-text, .grade-group h2 {
-    width: 50%;
-    text-align: left;
+    text-align: center;
     margin-bottom: 0px;
     font-weight: bold;
-    font-size: 3.0em; /* เพิ่มขนาดตัวอักษร */
-    color: #080101; /* เพิ่มสีให้ชัดเจนขึ้น */
+    font-size: 1.7em; /* เพิ่มขนาดตัวอักษร */
+    color: #ffffff; /* เพิ่มสีให้ชัดเจนขึ้น */
     word-wrap: break-word;  /* ช่วยตัดข้อความยาว ๆ ให้ลงบรรทัดใหม่ */
     word-break: break-all;  /* ตัดข้อความยาวที่ไม่มีช่องว่างลงบรรทัดใหม่ */
     white-space: normal;    /* อนุญาตให้ข้อความขึ้นบรรทัดใหม่ */

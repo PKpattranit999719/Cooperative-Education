@@ -132,82 +132,94 @@ const ClassroomTabs = ({
     }));
   };
 
-  return (
-    <div className="classroom-tabs">
-      <div className="tab-link">
-        <button
-          className={`${activeTab === "Grade1" ? "active" : ""}`}
-          onClick={() => toggleDropdown("Grade1")}
-        >
-          ชั้นประถมศึกษาปีที่ 1
-        </button>
-        {dropdownOpen.Grade1 && (
-          <div className="dropdown">
-            {year1.map((room, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  setActiveClassroom(room.name); // Update active classroom
-                  fetchUserData(room.Room_ID); // Fetch user data based on Room_ID
-                }}
-              >
-                {room.name}
-              </button>
-            ))}
-          </div>
-        )}
+    return (
+      <div className="classroom-tabs">
+        <div className="tab-link">
+          <button
+            className={`${activeTab === "Grade1" ? "active" : ""}`}
+            onClick={() => toggleDropdown("Grade1")}
+          >
+            ชั้นประถมศึกษาปีที่ 1
+          </button>
+          {dropdownOpen.Grade1 && (
+            <div className="dropdown">
+              {year1.length === 0 ? (
+                <p>ไม่มีข้อมูล</p>
+              ) : (
+                year1.map((room, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setActiveClassroom(room.name); // Update active classroom
+                      fetchUserData(room.Room_ID); // Fetch user data based on Room_ID
+                    }}
+                  >
+                    {room.name}
+                  </button>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+  
+        <div className="tab-link">
+          <button
+            className={`${activeTab === "Grade2" ? "active" : ""}`}
+            onClick={() => toggleDropdown("Grade2")}
+          >
+            ชั้นประถมศึกษาปีที่ 2
+          </button>
+          {dropdownOpen.Grade2 && (
+            <div className="dropdown">
+              {year2.length === 0 ? (
+                <p>ไม่มีข้อมูล</p>
+              ) : (
+                year2.map((room, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setActiveClassroom(room.name);
+                      fetchUserData(room.Room_ID); // Fetch user data
+                    }}
+                  >
+                    {room.name}
+                  </button>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+  
+        <div className="tab-link">
+          <button
+            className={`${activeTab === "Grade3" ? "active" : ""}`}
+            onClick={() => toggleDropdown("Grade3")}
+          >
+            ชั้นประถมศึกษาปีที่ 3
+          </button>
+          {dropdownOpen.Grade3 && (
+            <div className="dropdown">
+              {year3.length === 0 ? (
+                <p>ไม่มีข้อมูล</p>
+              ) : (
+                year3.map((room, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setActiveClassroom(room.name);
+                      fetchUserData(room.Room_ID); // Fetch user data
+                    }}
+                  >
+                    {room.name}
+                  </button>
+                ))
+              )}
+            </div>
+          )}
+        </div>
       </div>
-
-      <div className="tab-link">
-        <button
-          className={`${activeTab === "Grade2" ? "active" : ""}`}
-          onClick={() => toggleDropdown("Grade2")}
-        >
-          ชั้นประถมศึกษาปีที่ 2
-        </button>
-        {dropdownOpen.Grade2 && (
-          <div className="dropdown">
-            {year2.map((room, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  setActiveClassroom(room.name);
-                  fetchUserData(room.Room_ID); // Fetch user data
-                }}
-              >
-                {room.name}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="tab-link">
-        <button
-          className={`${activeTab === "Grade3" ? "active" : ""}`}
-          onClick={() => toggleDropdown("Grade3")}
-        >
-          ชั้นประถมศึกษาปีที่ 3
-        </button>
-        {dropdownOpen.Grade3 && (
-          <div className="dropdown">
-            {year3.map((room, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  setActiveClassroom(room.name);
-                  fetchUserData(room.Room_ID); // Fetch user data
-                }}
-              >
-                {room.name}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
+    );
+  };
 
 // Component to display users and button for scores
 const ClassroomContent = ({ activeTab, activeClassroom, users }) => {

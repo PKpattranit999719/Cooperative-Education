@@ -1,12 +1,21 @@
-import React from "react";
+import React , {useState , useEffect} from "react";
 
-import { Link} from "react-router-dom"; // เพิ่ม useNavigate
+import { Link } from "react-router-dom"; // เพิ่ม useNavigate
 
 import "../../App.css";
 import "./Navbar.css"
-import { FaUser, FaSignOutAlt } from "react-icons/fa";
+import { FaSignOutAlt } from "react-icons/fa";
 
 function Navbar() {
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    const storedName = localStorage.getItem("name");
+    if (storedName) {
+      setName(storedName);
+    }
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem('email');
     localStorage.removeItem('name');
@@ -21,9 +30,7 @@ function Navbar() {
       <div className="navbar">
               <h1>EduQuest Game</h1>
         <div className="profile-logout">
-          <Link to="/profile" aria-label="Profile">
-            <FaUser size={20} />
-          </Link>
+          <b>{name ? name : "Guest"}</b>
           <Link to="/login" aria-label="Logout" onClick={handleLogout}>
             <FaSignOutAlt size={20} />
           </Link>

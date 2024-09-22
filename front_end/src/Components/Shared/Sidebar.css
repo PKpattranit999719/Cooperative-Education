@@ -47,7 +47,6 @@
   
   .side-menu li.active {
     background: var(--primary);
-    color: #fff;
     border-left: 5px solid var(--primary); /* Visual cue for active item */
   }
   

@@ -19,6 +19,10 @@
     margin-left: auto;
 } 
 
+.profile-logout b{
+    padding: 2px;
+}
+
 .profile-logout a {
     color: #333; /* Dark grey for a light background */
     transition: color 0.3s ease;

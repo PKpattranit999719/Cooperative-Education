@@ -25,7 +25,7 @@ export const SidebarData = [
   },
   {
     title: "Dashbord",
-    path: "/score",
+    path: "/dashboard",
     icon: <BsFileEarmarkBarGraphFill />,
     cName: "nav-text",
     sendId: true, // เพิ่มเพื่อบ่งบอกว่าต้องส่ง id

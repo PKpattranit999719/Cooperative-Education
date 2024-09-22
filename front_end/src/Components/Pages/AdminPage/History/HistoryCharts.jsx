@@ -124,10 +124,18 @@ const HistoryCharts = () => {
 
       console.log(`API tests ${questionSet}:`, response.data);
 
-      // ดึงข้อมูลคำถามจาก response
-      const questions = response.data.Question;
+      // // ดึงข้อมูลคำถามจาก response
+      // const questions = response.data.Question;
 
-      // สร้าง counts สำหรับ true และ false จากข้อมูลที่ได้
+      // // สร้าง counts สำหรับ true และ false จากข้อมูลที่ได้
+      // const trueCounts = questions.map((q) => q.Is_Correct);
+      // const falseCounts = questions.map((q) => q.Is_NotCorrect);
+      const questions = [
+        { Is_Correct: 5, Is_NotCorrect: 2 },
+        { Is_Correct: 8, Is_NotCorrect: 1 },
+        { Is_Correct: 7, Is_NotCorrect: 3 },
+      ];
+      
       const trueCounts = questions.map((q) => q.Is_Correct);
       const falseCounts = questions.map((q) => q.Is_NotCorrect);
 
