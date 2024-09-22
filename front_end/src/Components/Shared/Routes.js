@@ -79,8 +79,16 @@ const RoleChecker = () => {
 // Define the router
 const router = createBrowserRouter([
   {
+    path: "/", // Set the root path
+    element: <Welcome />, // Make Welcome the default page when "/" is accessed
+  },
+  {
     element: <RoleChecker />, // Use RoleChecker to determine layout
     children: [
+      {
+        path: "/home", // Admin homepage
+        element: <PrivateRoute element={Home} />,
+      },
       {
         path: "/history",
         element: <PrivateRoute element={History} />,
@@ -98,15 +106,11 @@ const router = createBrowserRouter([
         element: <PrivateRoute element={Result} />,
       },
       {
-        path: "/home",
-        element: <PrivateRoute element={Home} />,
-      },
-      {
         path: "/quiz",
         element: <QuizPage />,
       },
       {
-        path: "/homestudent",
+        path: "/homestudent", // Student homepage
         element: <HomeStudent />,
       },
       {
@@ -129,7 +133,6 @@ const router = createBrowserRouter([
         path: "/lessonQuiz",
         element: <LessonQuiz />,
       },
-      
     ],
   },
   {
@@ -141,14 +144,6 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <Register />,
-      },
-      {
-        path: "/",
-        element: <Welcome />,
-      },
-      {
-        path: "/quize",
-        element: <QuizPage />,
       },
       {
         path: "/dashbord",
