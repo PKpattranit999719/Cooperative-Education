@@ -589,7 +589,7 @@ async def CreateQuestionFromCSV(file: UploadFile = File(...), user: UserSchema =
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
-FILE_DIRECTORY = "C:\\Users\\ASUS\\Desktop\\coop\\Cooperative-Education\\Back_End\\Download\\testceratequestion.csv"
+FILE_DIRECTORY = "Cooperative-Education\\Back_End\\Download\\testceratequestion.csv"
 
 #upload csv
 @app.get("/download")

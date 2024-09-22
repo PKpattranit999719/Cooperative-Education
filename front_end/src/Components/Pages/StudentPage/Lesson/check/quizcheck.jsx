@@ -8,7 +8,8 @@ const QuizCheck = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [results, setResults] = useState([]);
-
+  const [total_question,settotal_question] = useState([0]);
+  const [score,setscore] = useState([0]);
   useEffect(() => {
     if (location.state) {
       const { ID_ScoreHistory } = location.state;
@@ -26,19 +27,25 @@ const QuizCheck = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:8000/user/dashboardscore/${ID_ScoreHistory}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:8000/user/dashboardscore/${ID_ScoreHistory}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
       const result = await response.json();
+      settotal_question(result.total_question);
+      setscore(result.Score);
+      console.log(result.Score);
       setFetchedQuestions(result.UserAns_List); // Assuming the API returns UserAns_List
       setAnswers(Array(result.UserAns_List.length).fill("")); // Set initial answers
     } catch (error) {
@@ -59,8 +66,12 @@ const QuizCheck = () => {
 
   const checkAnswers = () => {
     const newResults = fetchedQuestions.map((question) => {
-      const selectedAnswer = question.ChoiceUserAns ? question.ChoiceUserAns.Choice_Text : null;
-      const correctChoice = question.List_Choice.find(choice => choice.Is_Correct);
+      const selectedAnswer = question.ChoiceUserAns
+        ? question.ChoiceUserAns.Choice_Text
+        : null;
+      const correctChoice = question.List_Choice.find(
+        (choice) => choice.Is_Correct
+      );
       return {
         questionText: question.QuestionText,
         selectedAnswer,
@@ -76,11 +87,28 @@ const QuizCheck = () => {
   };
 
   return (
+    <>
+        <h1>คำถามทั้งหมด = {total_question}</h1>
+        <h1>คะแนน = {score}</h1>
     <form onSubmit={handleSubmit} className="form-content">
       {fetchedQuestions.length > 0 ? (
         fetchedQuestions.map((question, index) => (
           <div key={index} className="question-card">
-            <h2>ข้อที่ {index + 1}</h2>
+      <h2>
+        ข้อที่ {index + 1}
+        <span style={{ marginLeft: "500px" }}>
+          {/* Check if ChoiceUserAns and Choice_Ans exist, and then check if the answer is correct */}
+          {question.ChoiceUserAns && question.ChoiceUserAns.Choice_Ans ? (
+            question.ChoiceUserAns.Choice_Ans.Is_Correct ? (
+              <span style={{ color: "green" }}>ถูก</span>
+            ) : (
+              <span style={{ color: "red" }}>ผิด</span>
+            )
+          ) : (
+            <span style={{ color: "red" }}>ผิด</span> // If no answer is selected
+          )}
+        </span>
+      </h2>
             <label>{question.QuestionText}</label>
             <div className="options">
               {question.List_Choice.map((choice, optionIndex) => (
@@ -90,12 +118,19 @@ const QuizCheck = () => {
                     name={`question-${index}`}
                     value={choice.Choice_Text}
                     checked={answers[index] === choice.Choice_Text}
-                    onChange={() => handleAnswerChange(index, choice.Choice_Text)}
+                    onChange={() =>
+                      handleAnswerChange(index, choice.Choice_Text)
+                    }
                   />
-                  {choice.Choice_Text} 
-                  {hasUserAnswered(question) && choice.ID_Choice === question.ChoiceUserAns.Choice_Ans.ID_Choice && (
-                    <span   style={{ marginLeft: '10px' }}>  คำตอบที่เคยเลือก👈</span>
-                  )}
+                  {choice.Choice_Text}
+                  {hasUserAnswered(question) &&
+                    choice.ID_Choice ===
+                      question.ChoiceUserAns.Choice_Ans.ID_Choice && (
+                      <span style={{ marginLeft: "10px" }}>
+                        {" "}
+                        คำตอบที่เคยเลือก👈
+                      </span>
+                    )}
                 </label>
               ))}
             </div>
@@ -109,15 +144,23 @@ const QuizCheck = () => {
         <div className="results">
           <h2>Results:</h2>
           {results.map((result, index) => (
-            <div key={index} className={`result ${result.isCorrect ? 'correct' : 'incorrect'}`}>
+            <div
+              key={index}
+              className={`result ${result.isCorrect ? "correct" : "incorrect"}`}
+            >
               <p>คำถาม: {result.questionText}</p>
               <p>คำตอบที่เลือก: {result.selectedAnswer}</p>
-              <p>{result.isCorrect ? "ถูกต้อง!" : `ผิด! คำตอบที่ถูกต้องคือ: ${result.correctAnswer}`}</p>
+              <p>
+                {result.isCorrect
+                  ? "ถูกต้อง!"
+                  : `ผิด! คำตอบที่ถูกต้องคือ: ${result.correctAnswer}`}
+              </p>
             </div>
           ))}
         </div>
       )}
     </form>
+    </>
   );
 };
 

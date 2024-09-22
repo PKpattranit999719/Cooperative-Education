@@ -324,62 +324,68 @@ const HistoryCharts = () => {
 
   const openModal = async (questionSet) => {
     try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            console.error("No token found");
-            return;
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+      console.log(questionSet);
+      const response = await axios.post(
+        "http://127.0.0.1:8000/user/ScoreUserAns",
+        {
+          LessonID: selectedLesson,
+          RoomID: ID_Room,
+          Question_set: questionSet,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
-        console.log(questionSet);
-        const response = await axios.post(
-            "http://127.0.0.1:8000/user/ScoreUserAns",
-            {
-                LessonID: selectedLesson,
-                RoomID: ID_Room,
-                Question_set: questionSet,
-            },
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+      );
+
+      // ใช้ข้อมูลจาก response
+      const data = response.data.Question; // สมมติว่า `Question` เป็น array ใน response
+      const donutDataArray = data.map(question => {
+        let i = 1; // ประกาศ i ที่นี่เพื่อนับแต่ละตัวเลือก
+        const labels = question.List_Choice.map(choice => 
+            `ข้อ ${i++}: ${choice.Choice_Text}`
         );
-
-        // ใช้ข้อมูลจาก response
-        const data = response.data.Question; // สมมติว่า `Question` เป็น array ใน response
-        const donutDataArray = data.map(question => {
-            const labels = question.List_Choice.map(choice => choice.Choice_Text);
-            const counts = question.List_Choice.map(choice => choice.Total_Ans);
-
-            return {
-                labels,
-                datasets: [
-                    {
-                        data: counts,
-                        backgroundColor: [
-                            "rgba(255, 99, 132, 0.2)",
-                            "rgba(54, 162, 235, 0.2)",
-                            "rgba(255, 206, 86, 0.2)",
-                            "rgba(75, 192, 192, 0.2)",
-                        ],
-                        borderColor: [
-                            "rgba(255, 99, 132, 1)",
-                            "rgba(54, 162, 235, 1)",
-                            "rgba(255, 206, 86, 1)",
-                            "rgba(75, 192, 192, 1)",
-                        ],
-                        borderWidth: 1,
-                    },
-                ],
-            };
-        });
-
-        setModalContent(donutDataArray);
-        setModalIsOpen(true);
+        const counts = question.List_Choice.map(choice => choice.Total_Ans);
+    
+        return {
+            questionText: question.QuestionText, // เก็บ QuestionText เพื่อใช้ใน modal
+            labels,
+            datasets: [
+                {
+                    data: counts,
+                    backgroundColor: [
+                        "rgba(255, 99, 132, 0.2)",
+                        "rgba(54, 162, 235, 0.2)",
+                        "rgba(255, 206, 86, 0.2)",
+                        "rgba(75, 192, 192, 0.2)",
+                    ],
+                    borderColor: [
+                        "rgba(255, 99, 132, 1)",
+                        "rgba(54, 162, 235, 1)",
+                        "rgba(255, 206, 86, 1)",
+                        "rgba(75, 192, 192, 1)",
+                    ],
+                    borderWidth: 1,
+                },
+            ],
+        };
+    });
+      setModalContent(donutDataArray);
+      setModalIsOpen(true);
     } catch (error) {
-        console.error(`Error fetching data for question set ${questionSet}:`, error);
+      console.error(
+        `Error fetching data for question set ${questionSet}:`,
+        error
+      );
     }
-};
+  };
 
   const closeModal = () => {
     setModalIsOpen(false);
@@ -468,13 +474,13 @@ const HistoryCharts = () => {
           {modalContent &&
             modalContent.map((data, index) => (
               <div key={index} className="donut-chart-container">
-                <h3>ข้อ {index + 1}</h3>
+                <h3>คำถาม: {data.questionText}</h3> {/* แสดง QuestionText */}
                 <Doughnut data={data} />
               </div>
             ))}
         </div>
         <button onClick={closeModal}>ปิด</button>
-      </Modal>
+      </Modal>  
     </div>
   );
 };
