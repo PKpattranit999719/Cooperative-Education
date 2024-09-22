@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import "./UploadPage.css";
 const Uploadpage = () => {
   const [file, setFile] = useState(null);
   const [lessons, setLessons] = useState([]);
