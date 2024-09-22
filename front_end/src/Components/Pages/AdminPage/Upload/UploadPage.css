@@ -1,4 +1,4 @@
-.upload-container{
+.upload-container {
     background: transparent;
     border: 2px solid rgba(255, 255, 255, .2);
     backdrop-filter: blur(30px);
@@ -8,10 +8,49 @@
     padding: 30px;
 }
 
-.upload-section{
+.upload-section {
     padding: 10px;
 }
 
-.upload-section a{
+.upload-section a {
     padding: 10px;
+}
+
+/* ปรับแต่งปุ่ม */
+button {
+    background-color: rgb(0, 110, 255);
+    color: white;
+    border: none;
+    border-radius: 8px; /* โค้งมน */
+    padding: 12px 24px; /* ขนาดใหญ่ขึ้น */
+    font-size: 16px; /* ขนาดตัวอักษร */
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 5px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+}
+
+button:hover {
+    background-color: rgb(0, 88, 204); /* สีเมื่อเอาเมาส์ไปชี้ */
+}
+
+/* ปรับแต่งตาราง */
+table {
+    width: 100%;
+    border-collapse: collapse; /* รวมขอบของเซลล์ */
+    background-color: white; /* พื้นหลังสีขาว */
+}
+
+th, td {
+    border: 1px solid rgba(0, 0, 0, 0.2); /* ขอบของเซลล์ */
+    padding: 12px; /* ระยะห่างภายในเซลล์ */
+    text-align: left; /* จัดข้อความไปทางซ้าย */
+    color: black; /* ตัวอักษรสีดำ */
+}
+
+th {
+    background-color: rgba(0, 110, 255, 0.1); /* พื้นหลังสำหรับหัวตาราง */
+}
+
+tbody tr:hover {
+    background-color: rgba(0, 110, 255, 0.1); /* สีเมื่อเอาเมาส์ไปชี้ที่แถว */
 }
