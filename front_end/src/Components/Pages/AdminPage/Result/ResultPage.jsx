@@ -97,6 +97,10 @@ const ResultPage = () => {
     setResults(newResults);
   };
 
+  const handleBackClick = () => {
+    navigate(-1); // Go back to the previous page
+  };
+
   return (
     <div>
       <h1>เฉลยคำตอบ</h1>
@@ -138,11 +142,17 @@ const ResultPage = () => {
             ))}
           </div>
         )}
+
+        {/* Back Button */}
+        <div className="back-button-container" style={{ marginTop: "50px" }}>
+          <button type="button" onClick={handleBackClick} className="back-button">
+            ย้อนกลับ
+          </button>
+        </div>
       </form>
     </div>
   );
   
 };
-
 
 export default ResultPage;

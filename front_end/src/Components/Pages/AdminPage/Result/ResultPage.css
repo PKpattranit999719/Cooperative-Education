@@ -1,3 +1,4 @@
+/* Styles for the question card and options */
 .question-card {
     border: 1px solid #ccc;
     padding: 20px;
@@ -31,7 +32,7 @@
     position: relative; /* Ensure relative positioning */
 }
 
-
+/* Styles for navigation buttons */
 .navigation-buttons {
     display: flex;
     justify-content: space-between;
@@ -39,15 +40,36 @@
 }
 
 .btn {
-    padding: 10px 20px;
+    padding: 15px 30px; /* Increase padding for a larger button */
     border: none;
-    border-radius: 5px;
-    background-color: #4CAF50;
-    color: white;
+    border-radius: 30px; /* Increase border radius for more rounded corners */
     cursor: pointer;
+    transition: 0.3s ease;
+    font-size: 16px; /* Adjust font size if needed */
+}
+
+/* General button hover style */
+.btn:hover {
+    opacity: 0.9;
+}
+
+/* Specific styles for the back button */
+.back-button {
+    background-color: #f44336; /* Red background */
+    color: white;
+    padding: 15px 30px; /* Increase padding for a larger button */
+    border-radius: 25px; /* More rounded corners */
+    font-size: 16px; /* Increase font size */
+    max-width: 150px; /* Adjust the width */
+    width: 100%; /* Ensure it adjusts to parent container */
+    border: none; /* Remove border */
+    cursor: pointer; /* Pointer cursor */
     transition: 0.3s ease;
 }
 
-.btn:hover {
-    background-color: #45a049;
+/* Hover effect for the back button */
+.back-button:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+    opacity: 0.9; /* Add hover effect */
 }
+
