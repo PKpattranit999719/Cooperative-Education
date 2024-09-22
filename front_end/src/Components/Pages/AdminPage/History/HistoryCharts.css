@@ -1,0 +1,77 @@
+.history-container {
+    padding: 20px;
+  }
+  
+  .header-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .grade-text {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .dropdown-group {
+    margin-left: 20px;
+  }
+  
+  .dropdown-label {
+    margin-right: 10px;
+    font-size: 16px;
+  }
+  
+  .dropdown-select {
+    padding: 10px; /* เพิ่มขนาด padding */
+    font-size: 16px; /* เพิ่มขนาดฟอนต์ */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+  }
+  
+  .chart-container {
+    margin-top: 20px;
+  }
+  
+  .bar-chart-container {
+    margin-bottom: 40px;
+  }
+  
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .chart-header h3 {
+    margin: 0;
+  }
+  
+  button {
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .modal-body {
+    margin-top: 20px;
+  }
+  
+  .donut-chart-container {
+    margin-bottom: 20px;
+  }
+  

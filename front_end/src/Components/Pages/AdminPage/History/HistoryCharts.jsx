@@ -6,6 +6,7 @@ import { Bar, Doughnut } from "react-chartjs-2";
 import "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import Modal from "react-modal";
+import './HistoryCharts.css';
 
 const HistoryCharts = () => {
   const { ID_Room } = useParams();

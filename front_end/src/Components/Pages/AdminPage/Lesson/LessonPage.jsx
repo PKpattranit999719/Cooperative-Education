@@ -127,6 +127,7 @@ const Lesson = () => {
             <option value="1">ชุดที่ 1</option>
             <option value="2">ชุดที่ 2</option>
             <option value="3">ชุดที่ 3</option>
+            <option value="3">ชุดที่คุณสร้าง</option>
           </select>
         </div>
 
