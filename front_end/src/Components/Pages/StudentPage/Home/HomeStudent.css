@@ -74,9 +74,12 @@
     outline: none;
     border-radius: 40px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
+    text-align: center;
+    line-height: 45px;
     font-weight: 700;
-    margin: 10px 0;
+    margin: 20px 0;
+    padding-top: 2px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
 }
 
@@ -113,4 +116,24 @@
 
 .wrapper table th {
     background-color: rgba(255, 255, 255, .2);
+}
+
+.leave-button {
+    width: 100%; /* ปรับขนาดปุ่มให้เต็มความกว้าง */
+    height: 45px; /* กำหนดความสูงของปุ่ม */
+    background: #dc3545; /* สีพื้นหลังของปุ่ม */
+    color: white; /* สีตัวอักษร */
+    border: none; /* ไม่มีเส้นขอบ */
+    outline: none;
+    border-radius: 40px; /* ทำให้มุมปุ่มโค้ง */
+    cursor: pointer;
+    font-size: 16px; /* ขนาดตัวอักษร */
+    font-weight: 700; /* ความหนาของตัวอักษร */
+    text-align: center; /* จัดข้อความให้อยู่กลาง */
+    line-height: 45px; /* จัดข้อความให้อยู่กลางในแนวตั้ง */
+    margin: 20px 0; /* เพิ่มช่องว่างด้านบนและล่าง */
+}
+
+.leave-button:hover {
+    background: #c82333; /* สีของปุ่มเมื่อวางเมาส์ */
 }
