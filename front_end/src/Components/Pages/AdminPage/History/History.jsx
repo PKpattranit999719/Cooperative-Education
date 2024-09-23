@@ -18,7 +18,7 @@ const History = ({ year }) => { // รับค่า year เป็น props
                 });
                 console.log(response.data); // test
                 // เข้าถึง List_Room และกรองห้องที่ตรงกับปีที่เลือก
-                const filteredRooms = response.data.List_Room.filter(room => room.year === year);
+                const filteredRooms = response.data.List_Room.filter(room => room.Year === year);
                 setRooms(filteredRooms || []); // ตั้งค่าให้เป็น array ของห้องที่ตรงกับปีที่เลือก
             } catch (error) {
                 console.error('Error fetching rooms:', error);
