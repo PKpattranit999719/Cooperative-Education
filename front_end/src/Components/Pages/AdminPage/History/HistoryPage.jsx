@@ -10,7 +10,7 @@ const Historypage = () => {
     };
 
     return (
-        <div className="history-container">
+        <div className="history-container"> {/* ใช้ class history-container */}
             <h1>History</h1>
             <div className="button-group">
                 <button className="bth" onClick={() => handleYearClick(1)}>
