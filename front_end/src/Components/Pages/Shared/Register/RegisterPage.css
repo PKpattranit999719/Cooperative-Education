@@ -18,6 +18,9 @@
     color: #fff;
     border-radius: 10px;
     padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* จัดปุ่มและเนื้อหาให้อยู่ตรงกลาง */
 }
 
 .wrapper h1 {
