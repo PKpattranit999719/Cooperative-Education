@@ -446,7 +446,7 @@ async def CreateLesson(lesson:LesssonCerate,user:UserSchema = Depends(get_curren
     try:
         if(user.role != "admin"):
            raise HTTPException(status_code=403, detail="Not enough permissions")
-        db_lesson = Lesson(name_lesson=lesson.Name_Lsesson)
+        db_lesson = Lesson(name_lesson=lesson.Name_Lesson,year=lesson.year)
         db.add(db_lesson)
         db.commit()
         db.refresh(db_lesson)
@@ -589,21 +589,24 @@ async def CreateQuestionFromCSV(file: UploadFile = File(...), user: UserSchema =
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
-FILE_DIRECTORY = "Cooperative-Education\\Back_End\\Download\\testceratequestion.csv"
+# กำหนดเส้นทางของไฟล์
+FILE_DIRECTORY = os.path.join(os.getcwd(), "Download", "createquestion.csv")
 
-#upload csv
 @app.get("/download")
-async def download_file(user:UserSchema = Depends(get_current_user),db : Session = Depends(get_db)):
+async def download_file():
     try:
-        # ตรวจสอบว่าไฟล์มีอยู่หรือไม่
+        # ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่
         if not os.path.isfile(FILE_DIRECTORY):
-            return {"error": "File not found"}
+            logging.error(f"File not found at {FILE_DIRECTORY}")
+            raise HTTPException(status_code=404, detail=f"File not found at {FILE_DIRECTORY}")
+
         logging.info(f"Sending file: {FILE_DIRECTORY}")
-        return FileResponse(FILE_DIRECTORY, media_type='text/csv', filename='testcerateques.csv')
+        return FileResponse(FILE_DIRECTORY, media_type='text/csv', filename='createquestion.csv')
     except HTTPException as e:
         raise e
-    except Exception  as e:
-        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"}) 
+    except Exception as e:
+        logging.error(f"Internal Server Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
     
 #update ต้องupdate choiceด้วย 
 @app.put('/admin/question',
@@ -704,6 +707,7 @@ async def QuestionSetbyRoom(ID:int,user:UserSchema = Depends(get_current_user),d
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"}) 
 
 
+
 #GETAllByRoom,lesson,set สำหรับgetข้อสอบของแต่ละroomที่แบ่งบทแบ่งชุด เอาไว้สอบ
 @app.post('/question',response_model=QuestionReponse,
           tags=["Question"],summary="ข้อสอบ ที่Groupไว้ให้แล้ว แบ่งชุด,บท เอาไว้ใช้สอบ")
@@ -727,7 +731,29 @@ async def ReadAllQuestionForTest(questionForTest:QuestionForTest,user:UserSchema
     except Exception  as e:
         db.rollback()
         raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})   
-
+#ดูข้อสอบตามID
+@app.get("/questionbyid/{ID}",tags=["Question"],summary="ดูคำถามตามID")
+async def questionbyid(ID:int,user:UserSchema = Depends(get_current_user),db:Session = Depends(get_db)):
+    try:
+        db_question = db.query(Question).filter(Question.ID_Question == ID).first()
+        if(db_question is None):
+            raise HTTPException(status_code=404, detail=f"Not Found Question:{ID}")
+        db_choice = db.query(Choice).filter(Choice.ID_Question == db_question.ID_Question).all()
+        q_response = []
+        q_response.append(QuestionSet(ID_Question=db_question.ID_Question,
+                                              QuestionText=db_question.QuestionText,
+                                              ID_lesson=db_question.Lesson,
+                                              Answer=db_question.Answer,
+                                              Question_set=db_question.Question_set,
+                                              List_Choice=[ChoiceReponse(ID_Choice=c.ID,Choice_Text=c.Choice_Text,Is_Correct=c.Is_Correct)for c in db_choice]
+                                              ))  
+        return q_response
+    except HTTPException as e:
+        raise e
+    except Exception  as e:
+        db.rollback()
+        raise HTTPException(status_code=500,detail={f"Internal Server Error:{str(e)}"})
+    
 
 #ดูข้อสอบที่ยังไม่ได้ทำ
 @app.get("/user/questionuser/",response_model=List[QuestionsetbyUserReponse],

@@ -7,6 +7,8 @@ import Class from "../Pages/AdminPage/Class/ClassPage";
 import Result from "../Pages/AdminPage/Result/ResultPage";
 import HistoryCharts from "../Pages/AdminPage/History/HistoryCharts";
 import Uploadpage from "../Pages/AdminPage/Upload/UploadPage";
+import Createlesson from "../Pages/AdminPage/Lesson/CreateLesson";
+import Updatequestion from "../Pages/AdminPage/question/updatequestion";
 // shared
 import Login from "../Pages/Shared/Login/LoginPage";
 import Register from "../Pages/Shared/Register/RegisterPage";
@@ -143,7 +145,16 @@ const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard/>
+      },
+      {
+        path: "/createlesson",
+        element: <Createlesson/>
+      },
+      {
+        path: "/updatequestion/:questionId",
+        element: <Updatequestion/>
       }
+
     ],
   },
   {

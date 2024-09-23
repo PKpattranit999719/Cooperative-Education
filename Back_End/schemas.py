@@ -40,7 +40,8 @@ class LessonSchema(BaseModel):
     year:int = Field(alias="year")
 
 class LesssonCerate(BaseModel):
-    Name_Lsesson:str
+    Name_Lesson:str
+    year:int
 
 #เอาไว้รับจากfont ขอข้อสอบ
 class QuestionForTest(BaseModel):

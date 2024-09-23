@@ -1,43 +1,156 @@
 .upload-container {
     background: transparent;
-    border: 2px solid rgba(255, 255, 255, .2);
+    border: 2px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(30px);
-    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     color: #fff;
     border-radius: 10px;
     padding: 30px;
+    max-width: 800px; /* กำหนดความกว้างสูงสุด */
+    margin: auto; /* จัดกลางหน้าจอ */
 }
 
 .upload-section {
-    padding: 10px;
+    display: flex; /* ใช้ flexbox เพื่อจัดเรียง */
+    align-items: center; /* จัดกลางแนวตั้ง */
+    gap: 10px; /* ระยะห่างระหว่างปุ่ม */
+    margin-bottom: 20px; /* ระยะห่างด้านล่าง */
 }
 
-.upload-section a {
-    padding: 10px;
+.button-container-year {
+    display: flex; /* ใช้ flexbox เพื่อจัดเรียงปุ่ม */
+    align-items: center; /* จัดกลางแนวตั้ง */
+    gap: 10px; /* ระยะห่างระหว่างปุ่ม */
+    margin-bottom: 20px; /* ระยะห่างด้านล่าง */
 }
 
-/* ปรับแต่งปุ่ม */
-button {
-    background-color: rgb(0, 110, 255);
-    color: white;
-    border: none;
+.input-file {
+    margin: 10px 0; /* เพิ่มระยะห่างบนและล่าง */
+    padding: 5px; /* เพิ่มระยะห่างภายใน */
+    border: 1px solid #ccc; /* ขอบของกล่อง */
+    border-radius: 4px; /* มุมกลม */
+    font-size: 16px; /* ขนาดฟอนต์ */
+}
+
+.create-lesson-button {
+    width: 150px; /* กำหนดความกว้างของปุ่ม */
+    height: 50px; /* กำหนดความสูงของปุ่ม */
+    display: flex; /* ใช้ flexbox เพื่อจัดตำแหน่งข้อความ */
+    justify-content: center; /* จัดตำแหน่งข้อความกลางแนวนอน */
+    align-items: center; /* จัดตำแหน่งข้อความกลางแนวตั้ง */
+    color: white; /* สีตัวอักษร */
+    border: none; /* ไม่มีขอบ */
     border-radius: 8px; /* โค้งมน */
-    padding: 12px 24px; /* ขนาดใหญ่ขึ้น */
-    font-size: 16px; /* ขนาดตัวอักษร */
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin: 5px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+    cursor: pointer; /* แสดงลูกศรเมื่อชี้ */
+    transition: background-color 0.3s; /* การเปลี่ยนสีเมื่อเอาเมาส์ไปชี้ */
+}
+.create-lesson-button-link{
+    text-decoration: none; /* ห้ามเส้นใต้ */
 }
 
-button:hover {
-    background-color: rgb(0, 88, 204); /* สีเมื่อเอาเมาส์ไปชี้ */
+/* ปรับสีปุ่มให้สอดคล้องกับชื่อ */
+.upload-button {
+    background-color: #52d959; /* สีสำหรับปุ่มอัปโหลด */
+    width: 150px; /* กำหนดความกว้างของปุ่ม */
+    height: 50px; /* กำหนดความสูงของปุ่ม */
+    display: flex; /* ใช้ flexbox เพื่อจัดตำแหน่งข้อความ */
+    justify-content: center; /* จัดตำแหน่งข้อความกลางแนวนอน */
+    align-items: center; /* จัดตำแหน่งข้อความกลางแนวตั้ง */
+    color: white; /* สีตัวอักษร */
+    border: none; /* ไม่มีขอบ */
+    border-radius: 8px; /* โค้งมน */
+    cursor: pointer; /* แสดงลูกศรเมื่อชี้ */
+    transition: background-color 0.3s; /* การเปลี่ยนสีเมื่อเอาเมาส์ไปชี้ */
+}
+
+.upload-button:hover {
+    background-color: rgb(0, 204, 0); /* สีเมื่อเอาเมาส์ไปชี้ */
+}
+
+.download-button {
+    background-color: #697ab3; /* สีสำหรับปุ่มดาวน์โหลด */
+    width: 150px; /* กำหนดความกว้างของปุ่ม */
+    height: 50px; /* กำหนดความสูงของปุ่ม */
+    display: flex; /* ใช้ flexbox เพื่อจัดตำแหน่งข้อความ */
+    justify-content: center; /* จัดตำแหน่งข้อความกลางแนวนอน */
+    align-items: center; /* จัดตำแหน่งข้อความกลางแนวตั้ง */
+    color: white; /* สีตัวอักษร */
+    border: none; /* ไม่มีขอบ */
+    border-radius: 8px; /* โค้งมน */
+    cursor: pointer; /* แสดงลูกศรเมื่อชี้ */
+    transition: background-color 0.3s; /* การเปลี่ยนสีเมื่อเอาเมาส์ไปชี้ */
+}
+.download-button-link{
+    text-decoration: none; /* ห้ามเส้นใต้ */
+}
+
+.download-button:hover {
+    background-color: #69acb3; /* สีเมื่อเอาเมาส์ไปชี้ */
+}
+
+.year-button-1 {
+    background-color: #f26c63; /* สีสำหรับปี 1 */
+    width: 150px; /* กำหนดความกว้างของปุ่ม */
+    height: 50px; /* กำหนดความสูงของปุ่ม */
+    display: flex; /* ใช้ flexbox เพื่อจัดตำแหน่งข้อความ */
+    justify-content: center; /* จัดตำแหน่งข้อความกลางแนวนอน */
+    align-items: center; /* จัดตำแหน่งข้อความกลางแนวตั้ง */
+    color: white; /* สีตัวอักษร */
+    border: none; /* ไม่มีขอบ */
+    border-radius: 8px; /* โค้งมน */
+    cursor: pointer; /* แสดงลูกศรเมื่อชี้ */
+    transition: background-color 0.3s; /* การเปลี่ยนสีเมื่อเอาเมาส์ไปชี้ */
+}
+
+.year-button-1:hover {
+    background-color: #bf3930; /* สีเมื่อเอาเมาส์ไปชี้ */
+
+}
+
+.year-button-2 {
+    background-color: #6cf573; /* สีสำหรับปี 2 */
+    width: 150px; /* กำหนดความกว้างของปุ่ม */
+    height: 50px; /* กำหนดความสูงของปุ่ม */
+    display: flex; /* ใช้ flexbox เพื่อจัดตำแหน่งข้อความ */
+    justify-content: center; /* จัดตำแหน่งข้อความกลางแนวนอน */
+    align-items: center; /* จัดตำแหน่งข้อความกลางแนวตั้ง */
+    color: white; /* สีตัวอักษร */
+    border: none; /* ไม่มีขอบ */
+    border-radius: 8px; /* โค้งมน */
+    cursor: pointer; /* แสดงลูกศรเมื่อชี้ */
+    transition: background-color 0.3s; /* การเปลี่ยนสีเมื่อเอาเมาส์ไปชี้ */
+}
+
+.year-button-2:hover {
+    background-color: #48964c; /* สีเมื่อเอาเมาส์ไปชี้ */
+}
+
+.year-button-3 {
+    background-color: #40cdf7; /* สีสำหรับปี 3 */
+    width: 150px; /* กำหนดความกว้างของปุ่ม */
+    height: 50px; /* กำหนดความสูงของปุ่ม */
+    display: flex; /* ใช้ flexbox เพื่อจัดตำแหน่งข้อความ */
+    justify-content: center; /* จัดตำแหน่งข้อความกลางแนวนอน */
+    align-items: center; /* จัดตำแหน่งข้อความกลางแนวตั้ง */
+    color: white; /* สีตัวอักษร */
+    border: none; /* ไม่มีขอบ */
+    border-radius: 8px; /* โค้งมน */
+    cursor: pointer; /* แสดงลูกศรเมื่อชี้ */
+    transition: background-color 0.3s; /* การเปลี่ยนสีเมื่อเอาเมาส์ไปชี้ */
+}
+
+.year-button-3:hover {
+    background-color: #3794b0; /* สีเมื่อเอาเมาส์ไปชี้ */
 }
 
 /* ปรับแต่งตาราง */
 table {
     width: 100%;
     border-collapse: collapse; /* รวมขอบของเซลล์ */
+    margin-top: 20px; /* ระยะห่างด้านบน */
     background-color: white; /* พื้นหลังสีขาว */
+    border-radius: 8px; /* โค้งมน */
+    overflow: hidden; /* ซ่อนมุมที่โค้ง */
 }
 
 th, td {
