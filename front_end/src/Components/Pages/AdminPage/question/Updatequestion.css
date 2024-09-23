@@ -13,12 +13,7 @@ h1 {
     color: #333;
 }
 
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
-}
+
 
 input[type="text"] {
     width: 100%;

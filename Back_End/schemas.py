@@ -181,6 +181,7 @@ class QuestionsetbyRoomReponse(BaseModel):
     Year:int
     LessonID:int
     Lesson:str
+    Question_set:int
     TotalQuestion:int
 
 class QuestionsetbyUserRequest(QuestionsetbyRoomRequest):

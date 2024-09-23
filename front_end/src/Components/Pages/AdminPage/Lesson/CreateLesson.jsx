@@ -57,7 +57,7 @@ const Createlesson = () => {
         <div className="form-group">
           <label>ปีการศึกษา:</label>
           <div className="radio-group">
-            <label className="radio-option">
+            <label className="radio-year">
               <input
                 type="radio"
                 value="1"
@@ -66,7 +66,7 @@ const Createlesson = () => {
               />
               ปี 1
             </label>
-            <label className="radio-option">
+            <label className="radio-year">
               <input
                 type="radio"
                 value="2"
@@ -75,7 +75,7 @@ const Createlesson = () => {
               />
               ปี 2
             </label>
-            <label className="radio-option">
+            <label className="radio-year">
               <input
                 type="radio"
                 value="3"

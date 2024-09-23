@@ -99,7 +99,7 @@ const Register = () => {
             <FaLock className="icon" />
           </div>
           <div className="input-box">
-            <div className="radio-group">
+            <div className="radio-group-register">
               <label>
                 <input
                   type="radio"
@@ -128,7 +128,7 @@ const Register = () => {
               <Link to="/login">Login</Link>
             </p>
           </div>
-          <button type="submit">Register</button>
+          <button className="register" type="submit">Register</button>
         </form>
       </div>
     </div>

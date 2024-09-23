@@ -67,21 +67,7 @@
     margin-top: 20px;
 }
 
-.wrapper button {
-    width: 48%;
-    height: 45px;
-    border: none;
-    outline: none;
-    border-radius: 40px;
-    cursor: pointer;
-    font-size: 14px;
-    text-align: center;
-    line-height: 45px;
-    font-weight: 700;
-    margin: 20px 0;
-    padding-top: 2px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-}
+
 
 .wrapper .create-button {
     background: #28a745; /* Green color */
@@ -119,19 +105,19 @@
 }
 
 .leave-button {
-    width: 100%; /* ปรับขนาดปุ่มให้เต็มความกว้าง */
-    height: 45px; /* กำหนดความสูงของปุ่ม */
-    background: #dc3545; /* สีพื้นหลังของปุ่ม */
-    color: white; /* สีตัวอักษร */
-    border: none; /* ไม่มีเส้นขอบ */
+    width: 48%;
+    height: 45px;
+    border: none;
     outline: none;
-    border-radius: 40px; /* ทำให้มุมปุ่มโค้ง */
+    border-radius: 40px;
     cursor: pointer;
-    font-size: 16px; /* ขนาดตัวอักษร */
-    font-weight: 700; /* ความหนาของตัวอักษร */
-    text-align: center; /* จัดข้อความให้อยู่กลาง */
-    line-height: 45px; /* จัดข้อความให้อยู่กลางในแนวตั้ง */
-    margin: 20px 0; /* เพิ่มช่องว่างด้านบนและล่าง */
+    font-size: 14px;
+    text-align: center;
+    line-height: 45px;
+    font-weight: 700;
+    margin: 20px 0;
+    padding-top: 2px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
 }
 
 .leave-button:hover {

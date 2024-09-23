@@ -42,6 +42,7 @@ const Login = () => {
         if(result.role === 'user'){navigate('/homestudent')}
         else if(result.role === 'admin'){navigate('/home')}
       } else {
+        alert(result.detail)
         // Handle login failure
         console.log("Login failed:", result.detail);
       }

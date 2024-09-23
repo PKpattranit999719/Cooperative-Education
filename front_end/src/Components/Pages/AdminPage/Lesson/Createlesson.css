@@ -64,3 +64,9 @@
     background-color: #45a049;
   }
   
+  .radio-option-year{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: black;
+  }

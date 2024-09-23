@@ -18,7 +18,7 @@ export const SidebarData = [
     cName: "nav-text",
   },
   {
-    title: "Quize",
+    title: "Quiz",
     path: "/lessonQuiz",
     icon: <AiFillCalculator />,
     cName: "nav-text",

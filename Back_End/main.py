@@ -764,10 +764,11 @@ async def QuestionSetbyRoom(user:UserSchema = Depends(get_current_user),db:Sessi
            raise HTTPException(status_code=403, detail="Not enough permissions") 
         db_user = db.query(User).filter(User.ID == user.ID).first()
         db_room = db.query(Room).filter(Room.ID_Room == db_user.RoomID).first()
-        db_QuestSet = (db.query(Question.Lesson,Lesson.name_lesson,
+        db_QuestSet = (db.query(Question.Lesson,Lesson.name_lesson,Question.Question_set,
                                 func.count(Question.ID_Question).label("TotalQuestion"))
                        .join(Lesson,Question.Lesson == Lesson.ID_Lesson)
-                       .group_by(Question.Lesson).all())
+                       .filter(Lesson.year == db_room.year)
+                       .group_by(Question.Lesson,Question.Question_set).all())
         db_QuserionUser = (db.query(ScoreHistory.Lesson,Lesson.name_lesson)
                            .join(Lesson,Lesson.ID_Lesson == ScoreHistory.Lesson)
                            .join(User,User.ID == ScoreHistory.UserID)
@@ -780,6 +781,7 @@ async def QuestionSetbyRoom(user:UserSchema = Depends(get_current_user),db:Sessi
                 Year=db_room.year,
                 TotalQuestion=q.TotalQuestion,
                 Lesson=q.name_lesson,
+                Question_set=q.Question_set,
                 LessonID=q.Lesson,
             ) 
             for q in db_QuestSet if q.Lesson not in completed_lessons
