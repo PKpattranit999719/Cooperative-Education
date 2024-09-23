@@ -264,7 +264,7 @@ const HistoryCharts = () => {
         },
         title: {
           display: true,
-          text: "จำนวนนักเรียนในคลาส", // ข้อความที่ต้องการแสดง
+          text: "จำนวน(คน)", // ข้อความที่ต้องการแสดง
           color: "#333", // เปลี่ยนสีฟอนต์ของชื่อแกน Y
           font: {
             size: 16, // ขนาดฟอนต์ของชื่อแกน Y
@@ -307,7 +307,7 @@ const HistoryCharts = () => {
         },
         title: {
           display: true,
-          text: "คะแนนเฉลี่ยแต่ละชุด", // ข้อความที่ต้องการแสดง
+          text: "คะแนน", // ข้อความที่ต้องการแสดง
           color: "#333", // เปลี่ยนสีฟอนต์ของชื่อแกน Y
           font: {
             size: 16, // ขนาดฟอนต์ของชื่อแกน Y
@@ -398,6 +398,7 @@ const HistoryCharts = () => {
       );
     }
   };
+  
 
   const closeModal = () => {
     setModalIsOpen(false);
@@ -463,7 +464,9 @@ const HistoryCharts = () => {
             </div>
           </div>
         )}
+        
       </div>
+      
       {/* <button onClick={handleViewCharts}>ดูกราฟ</button> */}
 
       {/* <Modal
@@ -477,6 +480,7 @@ const HistoryCharts = () => {
                 {modalContent && <Doughnut data={modalContent} />}
                 <button onClick={closeModal}>ปิด</button>
             </Modal> */}
+            
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -494,7 +498,8 @@ const HistoryCharts = () => {
               </div>
             ))}
         </div>
-        <button onClick={closeModal}>ปิด</button>
+        {/* <button onClick={closeModal}>ปิด</button> */}
+        <button className="close-button" onClick={closeModal}>ปิด</button>
       </Modal>  
     </div>
   );

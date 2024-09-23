@@ -64,14 +64,34 @@
   }
   
   .modal-content {
-    padding: 20px;
+    max-width: 80%; /* กำหนดขนาดสูงสุดของ Modal */
+    margin: auto;
   }
   
   .modal-body {
-    margin-top: 20px;
+    display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   }
   
   .donut-chart-container {
-    margin-bottom: 20px;
+    width: 300px; /* กำหนดความกว้างของกราฟ */
+  height: 300px; /* กำหนดความสูงของกราฟ */
+  margin: 0 auto; /* จัดกึ่งกลาง */
+  padding-top: 50px; /* เพิ่มระยะห่างจากขอบบน */
+  }
+  .close-button {
+    margin-top: 100px; /* เพิ่มระยะห่างด้านบน */
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .close-button:hover {
+    background-color: #45a049;
   }
   
