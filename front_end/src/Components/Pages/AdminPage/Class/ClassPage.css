@@ -19,14 +19,17 @@
 }
 
 .class-container {
-  width: 90%;
-  max-width: 1200px;
-  background-color: #fff;
+  width: 100%;
+  max-width: 1300px;
+  background-color: rgba(255, 255, 255, 0.1); /* พื้นหลังโปร่งแสง */
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  margin-top: 50px;
+  margin-top: 50px auto;
+  backdrop-filter: blur(20px); /* ทำให้พื้นหลังเบลอ */
+  border: 2px solid rgba(255, 255, 255, 0.2); /* เพิ่มขอบ */
 }
+
 
 /* Classroom Tabs */
 .classroom-tabs {
