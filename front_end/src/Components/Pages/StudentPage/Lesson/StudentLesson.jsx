@@ -33,7 +33,8 @@ const Lesson = () => {
         const result = await response.json();
         const filter = result;
         setQuestion_set(filter.Question_set)
-        console.log(filter);
+        console.log("lessons");
+        console.log(lessons);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -70,7 +71,7 @@ const Lesson = () => {
         <div className="lessons">
           {lessons.map((row) => (
             <div key={row.LessonID} className="lesson">
-              <h3>{row.Lesson}</h3>
+              <h3>บทที่: {row.Lesson_ID} {row.Lesson}</h3>
               <p>จำนวนคำถาม: {row.total_question}</p>
               <p>ชุดข้อสอบ: {row.Question_set}</p>
               <button

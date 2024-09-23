@@ -78,7 +78,7 @@ const LessonQuiz = () => {
         <div className="lessons">
           {lessons.map((row) => (
             <div key={row.LessonID} className="lesson">
-              <h3>{row.Lesson}</h3>
+              <h3>บทที่: {row.LessonID} {row.Lesson}</h3>
               <p>จำนวนคำถาม: {row.TotalQuestion}</p>
               <p>ชุดข้อสอบ: {Question_set}</p>
               <button

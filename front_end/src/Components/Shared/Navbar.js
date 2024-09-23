@@ -23,6 +23,7 @@ function Navbar() {
     localStorage.removeItem('token');
     localStorage.removeItem('id');
     localStorage.removeItem('room');
+    localStorage.removeItem('year');
   };
 
   return (

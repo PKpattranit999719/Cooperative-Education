@@ -118,7 +118,7 @@ const QuizCheck = () => {
                 {question.List_Choice.map((choice, optionIndex) => (
                   <label key={optionIndex} className="option-label">
                     <input
-                      type="radio"
+                      type="hidden"
                       name={`question-${index}`}
                       value={choice.Choice_Text}
                       checked={answers[index] === choice.Choice_Text}
