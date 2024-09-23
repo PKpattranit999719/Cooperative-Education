@@ -13,17 +13,17 @@ const Historypage = () => {
         <div className="history-container">
             <h1>History</h1>
             <div className="button-group">
-                <button className="bth" value={1} onClick={() => handleYearClick(1)}>
+                <button className="bth" onClick={() => handleYearClick(1)}>
                     ประถมศึกษาปีที่ 1
                 </button>
-                <button className="bth" value={2} onClick={() => handleYearClick(2)}>
+                <button className="bth" onClick={() => handleYearClick(2)}>
                     ประถมศึกษาปีที่ 2
                 </button>
-                <button className="bth" value={3} onClick={() => handleYearClick(3)}>
+                <button className="bth" onClick={() => handleYearClick(3)}>
                     ประถมศึกษาปีที่ 3
                 </button>
             </div>
-            <History year={selectedYear} />
+            {selectedYear && <History year={selectedYear} />} {/* ส่งค่า year ไปที่ History */}
         </div>
     );
 };

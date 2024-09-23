@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './History.css'; // Assuming you have a CSS file for styling
 
-const History = () => {
+const History = ({ year }) => { // รับค่า year เป็น props
     const navigate = useNavigate();
     const [rooms, setRooms] = useState([]);
 
@@ -17,19 +17,20 @@ const History = () => {
                     },
                 });
                 console.log(response.data); // test
-                // เข้าถึง List_Room
-                setRooms(response.data.List_Room || []); // ตั้งค่าให้เป็น array จาก List_Room
+                // เข้าถึง List_Room และกรองห้องที่ตรงกับปีที่เลือก
+                const filteredRooms = response.data.List_Room.filter(room => room.year === year);
+                setRooms(filteredRooms || []); // ตั้งค่าให้เป็น array ของห้องที่ตรงกับปีที่เลือก
             } catch (error) {
                 console.error('Error fetching rooms:', error);
                 setRooms([]); // ตั้งค่าเป็น array ว่างในกรณีเกิดข้อผิดพลาด
             }
         };
     
-        fetchRooms();
-    }, []);
-    
-    
-    
+        if (year !== null) { // เรียกข้อมูลเมื่อมีการเลือกปี
+            fetchRooms();
+        }
+    }, [year]); // เรียกใช้ useEffect เมื่อค่า year เปลี่ยนแปลง
+
     const handleButtonClick = (ID_Room, roomName) => {
         navigate(`/room/${ID_Room}`, { state: { roomName } });
     };
@@ -37,10 +38,10 @@ const History = () => {
     return (
         <div>
             <div className="grade-group">
-                <h2 className="grade-text">All Class</h2>
+                <h2 className="grade-text">Classrooms for Year {year}</h2>
                 <div className="button-group">
                     {rooms.length === 0 ? (
-                        <p>No rooms available</p> // แสดงข้อความเมื่อไม่มีข้อมูล
+                        <p>No rooms available for this year</p> // แสดงข้อความเมื่อไม่มีข้อมูล
                     ) : (
                         rooms.map(room => (
                             <button
@@ -56,8 +57,6 @@ const History = () => {
             </div>
         </div>
     );
-    
-    
 };
 
 export default History;
