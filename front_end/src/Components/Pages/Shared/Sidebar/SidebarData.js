@@ -2,6 +2,7 @@ import React from "react";
 import * as AiIcons from "react-icons/ai";
 import * as FaIcons from "react-icons/fa";
 import * as IoIcons from "react-icons/io";
+import { FaCloudUploadAlt } from "react-icons/fa";
 import { BsFileEarmarkBarGraphFill } from "react-icons/bs";
 
 export const SidebarData = [
@@ -32,7 +33,7 @@ export const SidebarData = [
   {
     title: "Upload",
     path: "/upload",
-    icon: <FaIcons.FaChalkboardTeacher />,
+    icon: <FaCloudUploadAlt />,
     cName: "nav-text",
   },
 ];
