@@ -433,29 +433,32 @@ const HistoryCharts = () => {
         </div>
       )}
       <div className="charts-wrapper">
+      <h3>กราฟแสดงชุดข้อสอบที่ 1</h3> 
         {chartData1 && (
           <div className="chart-container bar-chart-container">
             <Bar data={chartData1} options={chartOptionsBar1} />
             <div className="chart-header">
-              <h3>กราฟแสดงชุดข้อสอบที่ 1</h3>
+              
               <button onClick={() => openModal(1)}>ดูข้อมูลเพิ่มเติม</button>
             </div>
           </div>
         )}
+        <h3>กราฟแสดงชุดข้อสอบที่ 2</h3>
         {chartData2 && (
           <div className="chart-container bar-chart-container">
             <Bar data={chartData2} options={chartOptionsBar1} />
             <div className="chart-header">
-              <h3>กราฟแสดงชุดข้อสอบที่ 2</h3>
+              
               <button onClick={() => openModal(2)}>ดูข้อมูลเพิ่มเติม</button>
             </div>
           </div>
         )}
+        <h3>กราฟแสดงชุดข้อสอบที่ 3</h3>
         {chartData3 && (
           <div className="chart-container bar-chart-container">
             <Bar data={chartData3} options={chartOptionsBar1} />
             <div className="chart-header">
-              <h3>กราฟแสดงชุดข้อสอบที่ 3</h3>
+              
               <button onClick={() => openModal(3)}>ดูข้อมูลเพิ่มเติม</button>
             </div>
           </div>
