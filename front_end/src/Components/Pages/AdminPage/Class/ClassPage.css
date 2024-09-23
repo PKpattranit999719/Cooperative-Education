@@ -1,4 +1,23 @@
 /* Container for Classroom Tabs and Content */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+.wrapper {
+  width: 420px;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(30px);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  border-radius: 10px;
+  padding: 30px 40px;
+  text-align: center;
+}
+
 .class-container {
   width: 90%;
   max-width: 1200px;
@@ -60,6 +79,7 @@
   font-size: 14px;
   cursor: pointer;
   border-bottom: 1px solid #eee;
+  color: black; /* Added to change text color */
 }
 
 .tab-link .dropdown button:hover {
@@ -71,80 +91,5 @@
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.tab-content h2 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 15px;
-}
-
-.tab-content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-.tab-content table th,
-.tab-content table td {
-  padding: 12px;
-  border: 1px solid #ddd;
-  text-align: left;
-}
-
-.tab-content table th {
-  background-color: #007bff;
-  color: white;
-  text-align: center;
-}
-
-.tab-content table tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-.tab-content table tr:hover {
-  background-color: #e9ecef;
-}
-
-.tab-content table td button {
-  background-color: #28a745;
-  color: white;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.tab-content table td button:hover {
-  background-color: #218838;
-}
-
-.tab-link .dropdown button {
-  width: 100%;
-  padding: 10px;
-  background-color: #fff;
-  border: none;
-  text-align: left;
-  font-size: 14px;
-  cursor: pointer;
-  border-bottom: 1px solid #eee;
-  color: black; /* เพิ่มบรรทัดนี้เพื่อเปลี่ยนสีตัวอักษรเป็นสีดำ */
-}
-
-.tab-link .dropdown button:hover {
-  background-color: #f1f1f1;
-}
-
-.tab-link .dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-top: 5px;
-  width: 100%;
-  z-index: 1000; /* เพิ่ม z-index เพื่อให้ dropdown อยู่บนสุด */
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* เพิ่มเงาเพื่อความสวยงาม */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
