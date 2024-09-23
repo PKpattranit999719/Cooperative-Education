@@ -1,25 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "chart.js/auto";
 import "./Dashboard.css";
-
-const mockUserData = {
-  Room: "Class A",
-  Score: [
-    { Lesson: "1", Score: 12 },
-    { Lesson: "2", Score: 12 },
-    { Lesson: "3", Score: 14 },
-    { Lesson: "4", Score: 14 },
-    { Lesson: "5", Score: 14 },
-    { Lesson: "6", Score: 14 },
-  ],
-};
 
 const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { userName, userId } = location.state || {};
+  const { userId } = location.state || {};
+  const userName = localStorage.getItem("name");
 
   const [classroom, setClassroom] = useState("");
   const [lessons, setLessons] = useState([]);
@@ -28,17 +18,37 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userData = mockUserData; // Use mock data
+        // ดึง ID ของผู้ใช้จาก localStorage
+        const token = localStorage.getItem("token"); // ดึง token จาก localStorage
+        const id = localStorage.getItem("id");
+        const response = await axios.get(
+          `http://localhost:8000/scorebylesson/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // ใส่ token ใน headers
+            },
+          }
+        );
 
+        const userData = response.data;
+
+        // ตั้งค่าห้องเรียน
         setClassroom(userData.Room);
+
+        // จัดการข้อมูลคะแนน
         const scores = userData.Score;
 
+        // คำนวณคะแนนเฉลี่ยต่อบทเรียน
         const lessonScores = scores.reduce((acc, score) => {
-          if (!acc[score.Lesson]) {
-            acc[score.Lesson] = { total: 0, count: 0, max: 15 }; // Assume max score is 15
+          if (!acc[score.Lesson_ID]) {
+            acc[score.Lesson_ID] = {
+              total: 0,
+              count: 0,
+              max: score.total_question,
+            };
           }
-          acc[score.Lesson].total += score.Score;
-          acc[score.Lesson].count += 1;
+          acc[score.Lesson_ID].total += score.Score;
+          acc[score.Lesson_ID].count += 1;
           return acc;
         }, {});
 
@@ -53,22 +63,21 @@ const Dashboard = () => {
 
         setLessons(averaged);
 
-        // Prepare data for Doughnut charts with specific mock values
-        const doughnutData = {
-          1: { correct: 8, incorrect: 4 }, // Specific mock values for Lesson 1
-          2: { correct: 10, incorrect: 2 }, // Specific mock values for Lesson 2
-          3: { correct: 12, incorrect: 2 },
-          4: { correct: 12, incorrect: 2 },
-          5: { correct: 12, incorrect: 2 },
-          6: { correct: 12, incorrect: 2 },
-        };
-
+        // เตรียมข้อมูลสำหรับกราฟ Doughnut
         const formattedDoughnutData = Object.keys(lessonScores).map(
           (lessonId) => {
-            const { correct, incorrect } = doughnutData[lessonId] || {
-              correct: 0,
-              incorrect: 0,
-            };
+            const scoreData = scores.filter(
+              (score) => score.Lesson_ID === parseInt(lessonId)
+            );
+            const correct = scoreData.reduce(
+              (acc, item) => acc + item.Score,
+              0
+            );
+            const incorrect = scoreData.reduce(
+              (acc, item) => acc + (item.total_question - item.Score),
+              0
+            );
+
             return {
               lessonId,
               correct,
