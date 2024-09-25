@@ -357,6 +357,9 @@ async def ExitRoom(ID:int,user:UserSchema = Depends(get_current_user),db:Session
         raise HTTPException(status_code=403, detail="Not enough permissions")
     try:
         db_user = db.query(User).filter(User.ID == user.ID).first()
+        db_scoerHis =  db.query(ScoreHistory).filter(ScoreHistory.UserID == db_user.ID).all()
+        for score in db_scoerHis:
+            db.delete(score)
         db_user.RoomID = None
         db.add(db_user)
         db.commit()
